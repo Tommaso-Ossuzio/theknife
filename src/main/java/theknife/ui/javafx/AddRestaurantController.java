@@ -78,15 +78,28 @@ public class AddRestaurantController {
         String numTel = campoTelefono.getText();
         String stelle="0";
 
-        //Converto il prezzo
+        //TODO: Conversione prezzo
+        /*
+            € → meno di 35 €
+            €€ → tra 35 € e 60 €
+            €€€ → tra 60 € e 100 €
+            €€€€ → oltre 100 €
+
+            Michelin li descrive anche così:
+
+            € = “per tutte le tasche”
+            €€ = “costo ragionevole”
+            €€€ = “occasione speciale”
+            €€€€ = “piccola follia”
+        */
         String p = "";
-        if(prezzo <= 20)
+        if(prezzo <= 35)
             p="€";
-        else if(prezzo > 20 && prezzo <= 40)
+        else if(prezzo > 35 && prezzo <= 60)
             p="€€";
-        else if(prezzo > 40 && prezzo <= 60)
+        else if(prezzo > 60 && prezzo <= 100)
             p="€€€";
-        else if(prezzo > 60)
+        else if(prezzo > 100)
             p="€€€€";
 
         // Controllo base: il nome del ristorante è obbligatorio

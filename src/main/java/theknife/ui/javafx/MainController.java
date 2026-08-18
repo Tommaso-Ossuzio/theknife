@@ -174,7 +174,22 @@ public class MainController {
         String nazione = s.length > 1 ? pulisci(s[1]) : null;
 
 
+        //TODO: Conversione prezzo
+        /*
+            € → meno di 35 €
+            €€ → tra 35 € e 60 €
+            €€€ → tra 60 € e 100 €
+            €€€€ → oltre 100 €
+
+            Michelin li descrive anche così:
+
+            € = “per tutte le tasche”
+            €€ = “costo ragionevole”
+            €€€ = “occasione speciale”
+            €€€€ = “piccola follia”
+        */
         double prezzo = pulisci(parti[3]).length() * 20; //ogni simbolo = 20€
+
 
         LinkedList<String> tipoCucina= new LinkedList<>();
         s = parti[4].split(",");
