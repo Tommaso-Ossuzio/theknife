@@ -1,30 +1,45 @@
 <?xml version="1.0" encoding="UTF-8"?>
+
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
-<?import javafx.geometry.Insets?>
 
 <BorderPane xmlns="http://javafx.com/javafx"
             xmlns:fx="http://javafx.com/fxml"
-            fx:controller="theknife.ui.javafx.MyRestaurantsController">
+            fx:controller="theknife.ui.javafx.MyRestaurantsController"
+            stylesheets="@style.css"
+            styleClass="app-root"
+            prefWidth="920" prefHeight="560">
+
     <top>
-        <Label text="I miei ristoranti"
-               style="-fx-font-size: 18; -fx-font-weight: bold; -fx-padding: 10 10 10 10;"/>
+        <VBox styleClass="dialog-header">
+            <Label text="I miei ristoranti" styleClass="page-title"/>
+            <Label text="Le attività che hai pubblicato su TheKnife."
+                   styleClass="subtitle"/>
+        </VBox>
     </top>
+
     <center>
-        <TableView fx:id="tabellaRistoranti">
-            <columns>
-                <TableColumn fx:id="colonnaNome" text="Nome" prefWidth="180"/>
-                <TableColumn fx:id="colonnaCitta" text="Città" prefWidth="120"/>
-                <TableColumn fx:id="colonnaIndirizzo" text="Indirizzo" prefWidth="180"/>
-                <TableColumn fx:id="colonnaCucina" text="Cucina" prefWidth="120"/>
-                <TableColumn fx:id="colonnaStelle" text="Valutazione media" prefWidth="120"/>
-                <TableColumn fx:id="colonnaRecensioni" text="Numero recensioni" prefWidth="120"/>
-            </columns>
-        </TableView>
+        <!-- Il controller nasconde la tabella quando è vuota: lo StackPane
+             fa comparire al suo posto il messaggio, centrato nell'area. -->
+        <StackPane styleClass="content-pane">
+            <TableView fx:id="tabellaRistoranti">
+                <columns>
+                    <TableColumn fx:id="colonnaNome" text="Nome" prefWidth="180"/>
+                    <TableColumn fx:id="colonnaCitta" text="Città" prefWidth="120"/>
+                    <TableColumn fx:id="colonnaIndirizzo" text="Indirizzo" prefWidth="180"/>
+                    <TableColumn fx:id="colonnaCucina" text="Cucina" prefWidth="120"/>
+                    <TableColumn fx:id="colonnaStelle" text="Valutazione media" prefWidth="140"/>
+                    <TableColumn fx:id="colonnaRecensioni" text="Numero recensioni" prefWidth="140"/>
+                </columns>
+            </TableView>
+
+            <VBox styleClass="empty-state" mouseTransparent="true">
+                <!-- Solo questa Label è pilotata dal controller: l'icona non
+                     va aggiunta qui, resterebbe visibile a tabella piena. -->
+                <Label fx:id="etichettaVuota"
+                       text="Non hai ancora inserito ristoranti."
+                       styleClass="empty-state-text"/>
+            </VBox>
+        </StackPane>
     </center>
-    <bottom>
-        <Label fx:id="etichettaVuota"
-               text="Non hai ancora inserito ristoranti."
-               style="-fx-text-fill: #6b7280; -fx-padding: 8 10 8 10;"/>
-    </bottom>
 </BorderPane>

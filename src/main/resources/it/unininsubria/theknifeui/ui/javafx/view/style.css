@@ -1,317 +1,1010 @@
-/* =======================================================
-   BASE APP
-   Usato in:
-   - main.fxml → BorderPane root con styleClass="app-root"
-   ======================================================= */
-.app-root {
-    -fx-font-family: Arial;
-    -fx-font-size: 16px;
-    -fx-background-color: #f2f4f6;
+/* =========================================================================
+   THEKNIFE — DESIGN SYSTEM
+   -------------------------------------------------------------------------
+   Foglio di stile unico dell'applicazione.
+
+   REGOLA FONDAMENTALE:
+   nessun colore, font o dimensione va scritto dentro gli FXML o dentro il
+   codice Java (niente style="..." e niente setStyle(...)).
+   Tutto vive qui, e i colori vivono UNA SOLA VOLTA nel blocco PALETTE
+   qui sotto: cambiando un valore lì, cambia tutta l'applicazione.
+
+   Organizzazione del file:
+     1. PALETTE           variabili di colore
+     2. BASE              root, tipografia, testi generici
+     3. LAYOUT            barre, pagine, pannelli, contenitori
+     4. BOTTONI           varianti primario / secondario / ghost / pericolo
+     5. CAMPI DI INPUT    TextField, TextArea, CheckBox, RadioButton...
+     6. CARD RISTORANTE   griglia impaginata della schermata principale
+     7. PAGINAZIONE
+     8. DETTAGLI RISTORANTE
+     9. RECENSIONI        lista, singola recensione, risposta del ristoratore
+    10. STELLE            valutazioni e selettori a stelle
+    11. TABELLE
+    12. LISTE E SCROLLBAR
+    13. DIALOG DI SISTEMA (Alert)
+   ========================================================================= */
+
+
+/* =========================================================================
+   1. PALETTE
+   -------------------------------------------------------------------------
+   Unico punto in cui i colori sono dichiarati.
+   Sono "looked-up colors" JavaFX: definiti su .root, ereditati da tutti
+   i nodi di ogni finestra che carica questo foglio di stile.
+   ========================================================================= */
+.root {
+
+    /* --- Verde istituzionale (azioni principali, brand) --- */
+    -color-primary:         #0B6B5B;
+    -color-primary-hover:   #085449;
+    -color-primary-press:   #063D35;
+    -color-primary-soft:    #E3F1EC;
+
+    /* --- Accento lime (evidenziazioni, badge, chiamate all'azione) --- */
+    -color-accent:          #C6E84B;
+    -color-accent-hover:    #B4D93A;
+    -color-accent-fg:       #14211E;
+
+    /* --- Superfici --- */
+    -color-bg:              #F6F7F5;
+    -color-surface:         #FFFFFF;
+    -color-surface-alt:     #F0F2EF;
+
+    /* --- Bordi --- */
+    -color-border:          #E1E5E1;
+    -color-border-strong:   #C9D0CB;
+
+    /* --- Testo --- */
+    -color-text:            #14211E;
+    -color-text-muted:      #6B7B76;
+    -color-text-invert:     #FFFFFF;
+
+    /* --- Stati --- */
+    -color-danger:          #D64545;
+    -color-danger-hover:    #B93636;
+    -color-danger-soft:     #FBEAEA;
+
+    /* --- Valutazioni a stelle --- */
+    -color-star-on:         #F5A623;
+    -color-star-off:        #D8DEDA;
+
+    /* --- Ombre --- */
+    -color-shadow:          rgba(20, 33, 30, 0.10);
+    -color-shadow-strong:   rgba(20, 33, 30, 0.18);
+
+    /* --- Override dei colori di sistema di JavaFX (tema Modena) ---
+       Servono a far combaciare focus, selezioni e controlli nativi
+       con la palette dell'applicazione. */
+    -fx-accent:             -color-primary;
+    -fx-focus-color:        -color-primary;
+    -fx-faint-focus-color:  transparent;
+    -fx-selection-bar:      -color-primary-soft;
+    -fx-selection-bar-text: -color-text;
 }
 
-/* =======================================================
-   TOP BAR (barra superiore)
-   Usato in:
-   - main.fxml → VBox con styleClass="top-bar"
-   ======================================================= */
-.top-bar {
-    -fx-padding: 10;
-    -fx-background-color: #ffffff;
-    -fx-border-color: #dfe3e6;
-    -fx-border-width: 0 0 1 0;
-    -fx-alignment: center;
-}
 
-/* Testo "🍴 TheKnife" in alto a sinistra (main.fxml) */
-.logo-label {
-    -fx-font-size: 20px;
-    -fx-font-weight: bold;
-    -fx-text-fill: #1f2933;
-}
-
-/* Etichetta che mostra il ruolo/utente loggato (etichettaRuolo in main.fxml) */
-#etichettaRuolo {
-    -fx-text-fill: #52616b;
-    -fx-font-size: 13px;
-}
-
-/* =======================================================
-   BOTTONI GENERICI (stile base)
-   Usato implicitamente da tutti i Button senza styleClass
-   (es. bottoni nella top bar, se non hanno stile personalizzato)
-   ======================================================= */
-.button {
-    -fx-background-color: #2d6a4f;
-    -fx-text-fill: #ffffff;
-    -fx-background-radius: 14;
-    -fx-padding: 6 16 6 16;
-    -fx-font-weight: 600;
+/* =========================================================================
+   2. BASE
+   ========================================================================= */
+.root {
+    -fx-font-family: "Segoe UI", "Inter", "Helvetica Neue", Arial, sans-serif;
     -fx-font-size: 14px;
-    -fx-cursor: hand;
-    -fx-border-color: transparent;
-}
-.button:hover {
-    -fx-background-color: #1e5a40;
+    -fx-text-fill: -color-text;
+    -fx-background-color: -color-bg;
 }
 
-/* Bottone di logout (main.fxml → fx:id="bottoneLogout") */
-#bottoneLogout {
-    -fx-background-color: #e55353;
-}
-#bottoneLogout:hover {
-    -fx-background-color: #c53a3a;
+/* Radice della finestra principale e delle finestre secondarie */
+.app-root {
+    -fx-background-color: -color-bg;
 }
 
-/* =======================================================
-   FOOTER (barra in basso)
-   Usato in:
-   - main.fxml → HBox con styleClass="footer-bar"
-   ======================================================= */
-.footer-bar {
-    -fx-padding: 6 12 6 12;
-    -fx-background-color: #ffffff;
-    -fx-border-color: #dfe3e6;
+/* Radice delle finestre modali (login, registrazione, filtri, form) */
+.dialog-root {
+    -fx-background-color: -color-surface;
+}
+
+/* Ogni Label eredita il colore del testo invece del nero di default */
+.label {
+    -fx-text-fill: -color-text;
+}
+
+/* --- Scala tipografica --- */
+
+/* Titolo grande di una schermata (es. "Ristoranti", "Accedi") */
+.page-title {
+    -fx-font-size: 24px;
+    -fx-font-weight: bold;
+    -fx-text-fill: -color-text;
+}
+
+/* Titolo di sezione dentro una schermata */
+.section-title {
+    -fx-font-size: 18px;
+    -fx-font-weight: bold;
+    -fx-text-fill: -color-text;
+}
+
+/* Sottotitolo esplicativo sotto un titolo */
+.subtitle {
+    -fx-font-size: 13px;
+    -fx-text-fill: -color-text-muted;
+}
+
+/* Testo secondario, meno importante */
+.muted-text {
+    -fx-font-size: 13px;
+    -fx-text-fill: -color-text-muted;
+}
+
+/* Etichetta sopra un campo di un form */
+.field-label {
+    -fx-font-size: 12px;
+    -fx-font-weight: bold;
+    -fx-text-fill: -color-text-muted;
+}
+
+/* Messaggio di errore di validazione sotto un form */
+.error-label {
+    -fx-font-size: 13px;
+    -fx-font-weight: bold;
+    -fx-text-fill: -color-danger;
+}
+
+/* Emoji usate come icone accanto alle etichette */
+.emoticon {
+    -fx-font-size: 15px;
+    -fx-font-family: "Segoe UI Emoji", "Apple Color Emoji", "Noto Color Emoji", sans-serif;
+}
+
+/* Separatore orizzontale */
+.separator .line {
+    -fx-border-color: -color-border;
     -fx-border-width: 1 0 0 0;
-    -fx-alignment: center-right;
+}
+
+
+/* =========================================================================
+   3. LAYOUT
+   ========================================================================= */
+
+/* --- Barra superiore della finestra principale --- */
+.top-bar {
+    -fx-background-color: -color-surface;
+    -fx-border-color: -color-border;
+    -fx-border-width: 0 0 1 0;
+    -fx-padding: 12 20 12 20;
+    -fx-spacing: 14;
+}
+
+/* Riga con logo a sinistra e azioni utente a destra */
+.top-bar-row {
+    -fx-alignment: center-left;
     -fx-spacing: 10;
 }
 
-/* Testo informativo nel footer (main.fxml) */
-.footer-text {
-    -fx-text-fill: #52616b;
+/* Blocco marchio: pittogramma + nome */
+.brand {
+    -fx-alignment: center-left;
+    -fx-spacing: 8;
+}
+
+.brand-name {
+    -fx-font-size: 21px;
+    -fx-font-weight: bold;
+    -fx-text-fill: -color-primary;
+}
+
+/* Etichetta del ruolo / utente loggato, resa come "pillola" */
+.user-chip {
+    -fx-background-color: -color-primary-soft;
+    -fx-text-fill: -color-primary;
+    -fx-font-size: 12px;
+    -fx-font-weight: bold;
+    -fx-background-radius: 999;
+    -fx-padding: 5 12 5 12;
+}
+
+/* Gruppo di bottoni di navigazione nella barra superiore */
+.nav-group {
+    -fx-alignment: center-right;
+    -fx-spacing: 8;
+}
+
+/* --- Area centrale --- */
+.content-pane {
+    -fx-background-color: transparent;
+    -fx-padding: 20 20 12 20;
+}
+
+/* Intestazione dell'area centrale: titolo + conteggio risultati */
+.content-header {
+    -fx-alignment: center-left;
+    -fx-spacing: 12;
+    -fx-padding: 0 0 14 0;
+}
+
+/* --- Barra di ricerca come card sollevata --- */
+.search-bar {
+    -fx-background-color: -color-surface;
+    -fx-background-radius: 14;
+    -fx-border-color: -color-border;
+    -fx-border-radius: 14;
+    -fx-padding: 12 14 12 14;
+    -fx-spacing: 10;
+    -fx-alignment: center-left;
+    -fx-effect: dropshadow(gaussian, -color-shadow, 10, 0.0, 0, 2);
+}
+
+/* Contenuto di una finestra modale (form di login, registrazione, ecc.) */
+.form-body {
+    -fx-background-color: -color-surface;
+    -fx-spacing: 14;
+    -fx-padding: 22;
+}
+
+/* Gruppo etichetta + campo dentro un form */
+.field-group {
+    -fx-spacing: 5;
+}
+
+/* Intestazione di una finestra modale */
+.dialog-header {
+    -fx-background-color: -color-surface;
+    -fx-border-color: -color-border;
+    -fx-border-width: 0 0 1 0;
+    -fx-padding: 20 22 18 22;
+    -fx-spacing: 4;
+}
+
+/* Piede di una finestra modale con i bottoni di conferma/annulla */
+.dialog-footer {
+    -fx-background-color: -color-surface-alt;
+    -fx-border-color: -color-border;
+    -fx-border-width: 1 0 0 0;
+    -fx-padding: 14 22 14 22;
+    -fx-spacing: 10;
+    -fx-alignment: center-right;
+}
+
+/* --- Piede della finestra principale --- */
+.footer-bar {
+    -fx-background-color: -color-surface;
+    -fx-border-color: -color-border;
+    -fx-border-width: 1 0 0 0;
+    -fx-padding: 12 20 12 20;
+    -fx-spacing: 10;
+    -fx-alignment: center-right;
+}
+
+
+/* =========================================================================
+   4. BOTTONI
+   -------------------------------------------------------------------------
+   .button        stile di base condiviso (si applica a ogni Button)
+   .btn-primary   azione principale, verde pieno
+   .btn-accent    azione di richiamo, lime
+   .btn-secondary azione neutra, contorno grigio
+   .btn-ghost     azione terziaria, senza sfondo
+   .btn-danger    azione distruttiva o di uscita (logout)
+   .btn-icon      bottone quadrato con sola icona
+   ========================================================================= */
+.button {
+    -fx-background-color: -color-primary;
+    -fx-text-fill: -color-text-invert;
+    -fx-font-size: 13px;
+    -fx-font-weight: bold;
+    -fx-background-radius: 10;
+    -fx-border-radius: 10;
+    -fx-border-color: transparent;
+    -fx-padding: 8 16 8 16;
+    -fx-cursor: hand;
+}
+.button:hover {
+    -fx-background-color: -color-primary-hover;
+}
+.button:pressed {
+    -fx-background-color: -color-primary-press;
+}
+.button:disabled {
+    -fx-opacity: 0.45;
+    -fx-cursor: default;
+}
+
+/* --- Primario (esplicito, per leggibilità negli FXML) --- */
+.btn-primary {
+    -fx-background-color: -color-primary;
+    -fx-text-fill: -color-text-invert;
+}
+.btn-primary:hover  { -fx-background-color: -color-primary-hover; }
+.btn-primary:pressed { -fx-background-color: -color-primary-press; }
+
+/* --- Accento lime --- */
+.btn-accent {
+    -fx-background-color: -color-accent;
+    -fx-text-fill: -color-accent-fg;
+}
+.btn-accent:hover   { -fx-background-color: -color-accent-hover; }
+.btn-accent:pressed { -fx-background-color: -color-accent-hover; }
+
+/* --- Secondario: contorno, sfondo chiaro --- */
+.btn-secondary {
+    -fx-background-color: -color-surface;
+    -fx-text-fill: -color-text;
+    -fx-border-color: -color-border-strong;
+    -fx-border-width: 1;
+    -fx-border-radius: 10;
+}
+.btn-secondary:hover {
+    -fx-background-color: -color-surface-alt;
+    -fx-border-color: -color-primary;
+}
+.btn-secondary:pressed {
+    -fx-background-color: -color-border;
+}
+
+/* --- Ghost: nessuno sfondo finché non ci passi sopra --- */
+.btn-ghost {
+    -fx-background-color: transparent;
+    -fx-text-fill: -color-text;
+    -fx-font-weight: normal;
+}
+.btn-ghost:hover {
+    -fx-background-color: -color-primary-soft;
+    -fx-text-fill: -color-primary;
+}
+.btn-ghost:pressed {
+    -fx-background-color: -color-border;
+}
+
+/* --- Pericolo / uscita --- */
+.btn-danger {
+    -fx-background-color: -color-danger-soft;
+    -fx-text-fill: -color-danger;
+}
+.btn-danger:hover {
+    -fx-background-color: -color-danger;
+    -fx-text-fill: -color-text-invert;
+}
+.btn-danger:pressed {
+    -fx-background-color: -color-danger-hover;
+    -fx-text-fill: -color-text-invert;
+}
+
+/* --- Bottone compatto con sola icona --- */
+.btn-icon {
+    -fx-background-color: transparent;
+    -fx-text-fill: -color-text-muted;
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+    -fx-padding: 4 8 4 8;
+    -fx-background-radius: 8;
+}
+.btn-icon:hover {
+    -fx-background-color: -color-danger-soft;
+    -fx-text-fill: -color-danger;
+}
+
+/* --- Variante piccola, per bottoni dentro le celle di una lista --- */
+.btn-small {
+    -fx-font-size: 12px;
+    -fx-padding: 6 14 6 14;
+}
+
+
+/* =========================================================================
+   5. CAMPI DI INPUT
+   ========================================================================= */
+.text-field,
+.password-field,
+.text-area {
+    -fx-background-color: -color-surface;
+    -fx-text-fill: -color-text;
+    -fx-prompt-text-fill: -color-text-muted;
+    -fx-border-color: -color-border-strong;
+    -fx-border-width: 1;
+    -fx-border-radius: 10;
+    -fx-background-radius: 10;
+    -fx-padding: 8 12 8 12;
     -fx-font-size: 13px;
 }
 
-/* Bottoni nel footer (main.fxml → styleClass="footer-button") */
-.footer-button {
-    -fx-background-color: #2d6a4f;
-    -fx-text-fill: #ffffff;
+.text-field:focused,
+.password-field:focused,
+.text-area:focused {
+    -fx-border-color: -color-primary;
+    -fx-border-width: 1.5;
+}
+
+/* La TextArea ha una viewport interna che va ricolorata a parte */
+.text-area {
+    -fx-padding: 4;
+}
+.text-area .content {
+    -fx-background-color: -color-surface;
+    -fx-background-radius: 8;
+    -fx-padding: 8 10 8 10;
+}
+
+/* --- CheckBox --- */
+.check-box {
+    -fx-text-fill: -color-text;
+    -fx-font-size: 13px;
+    -fx-cursor: hand;
+}
+.check-box .box {
+    -fx-background-color: -color-surface;
+    -fx-border-color: -color-border-strong;
+    -fx-border-radius: 5;
+    -fx-background-radius: 5;
+    -fx-padding: 3;
+}
+.check-box:selected .box {
+    -fx-background-color: -color-primary;
+    -fx-border-color: -color-primary;
+}
+.check-box:selected .mark {
+    -fx-background-color: -color-text-invert;
+}
+
+/* --- RadioButton (scelta del ruolo in registrazione) --- */
+.radio-button {
+    -fx-text-fill: -color-text;
+    -fx-font-size: 13px;
+    -fx-cursor: hand;
+}
+.radio-button .radio {
+    -fx-background-color: -color-surface;
+    -fx-border-color: -color-border-strong;
+    -fx-border-radius: 999;
+    -fx-background-radius: 999;
+    -fx-padding: 4;
+}
+.radio-button:selected .radio {
+    -fx-border-color: -color-primary;
+}
+.radio-button:selected .dot {
+    -fx-background-color: -color-primary;
+    -fx-background-insets: 0;
+}
+
+/* --- Scelta del ruolo presentata come due card selezionabili --- */
+.role-option {
+    -fx-background-color: -color-surface;
+    -fx-border-color: -color-border-strong;
+    -fx-border-radius: 12;
+    -fx-background-radius: 12;
+    -fx-padding: 12 14 12 14;
+    -fx-spacing: 4;
+    -fx-cursor: hand;
+}
+.role-option:hover {
+    -fx-border-color: -color-primary;
+    -fx-background-color: -color-primary-soft;
+}
+
+/* --- Hyperlink --- */
+.hyperlink {
+    -fx-text-fill: -color-primary;
+    -fx-border-color: transparent;
+    -fx-padding: 0;
+    -fx-cursor: hand;
+}
+.hyperlink:hover,
+.hyperlink:visited:hover {
+    -fx-underline: true;
+}
+.hyperlink:focused {
+    -fx-border-color: transparent;
+}
+
+/* --- Tooltip --- */
+.tooltip {
+    -fx-background-color: -color-text;
+    -fx-text-fill: -color-text-invert;
+    -fx-font-size: 12px;
+    -fx-background-radius: 8;
+    -fx-padding: 6 10 6 10;
+}
+
+
+/* =========================================================================
+   6. CARD RISTORANTE
+   -------------------------------------------------------------------------
+   Griglia della schermata principale: ogni ristorante è una card,
+   le card sono distribuite su più pagine (vedi sezione PAGINAZIONE).
+   ========================================================================= */
+
+/* Contenitore della griglia di card */
+.card-grid {
+    -fx-background-color: transparent;
+    -fx-hgap: 14;
+    -fx-vgap: 14;
+    -fx-padding: 4 2 4 2;
+    -fx-pref-columns: 3;
+    -fx-tile-alignment: top-left;
+}
+
+/* Card singola */
+.restaurant-card {
+    -fx-pref-width: 336;
+    -fx-min-height: 150;
+    -fx-background-color: -color-surface;
     -fx-background-radius: 14;
-    -fx-padding: 6 16 6 16;
-    -fx-font-weight: 600;
-    -fx-font-size: 14px;
+    -fx-border-color: -color-border;
+    -fx-border-radius: 14;
+    -fx-padding: 16;
+    -fx-spacing: 8;
+    -fx-cursor: hand;
+    -fx-effect: dropshadow(gaussian, -color-shadow, 8, 0.0, 0, 2);
 }
-.footer-button:hover {
-    -fx-background-color: #1e5a40;
-}
-
-/* =======================================================
-   CONTENUTO CENTRALE
-   Usato in:
-   - main.fxml → BorderPane con styleClass="content-pane"
-   ======================================================= */
-.content-pane {
-    -fx-padding: 14;
-    -fx-background-color: transparent;
+.restaurant-card:hover {
+    -fx-border-color: -color-primary;
+    -fx-effect: dropshadow(gaussian, -color-shadow-strong, 14, 0.0, 0, 4);
 }
 
-/* Titolo sezioni (es. "Ristoranti" in main.fxml) */
-.section-title {
-    -fx-font-size: 20px;
+/* Card attualmente selezionata */
+.restaurant-card-selected {
+    -fx-border-color: -color-primary;
+    -fx-border-width: 2;
+    -fx-background-color: -color-primary-soft;
+}
+
+/* Nome del ristorante dentro la card */
+.restaurant-name {
+    -fx-font-size: 17px;
     -fx-font-weight: bold;
-    -fx-text-fill: #1f2933;
-    -fx-padding: 0 0 10 0;
+    -fx-text-fill: -color-text;
 }
 
-/* =======================================================
-   LISTA RISTORANTI (ListView)
-   Usato in:
-   - main.fxml → ListView fx:id="listaRistoranti" styleClass="restaurant-list"
-   ======================================================= */
-.restaurant-list {
+/* Riga con icona + testo dentro la card (indirizzo, prezzo...) */
+.card-line {
+    -fx-alignment: center-left;
+    -fx-spacing: 6;
+}
+
+.card-line-text {
+    -fx-font-size: 12px;
+    -fx-text-fill: -color-text-muted;
+}
+
+/* Riga finale della card con i badge */
+.card-tags {
+    -fx-spacing: 6;
+    -fx-alignment: center-left;
+}
+
+/* Badge del tipo di cucina */
+.tag {
+    -fx-background-color: -color-surface-alt;
+    -fx-text-fill: -color-text-muted;
+    -fx-font-size: 11px;
+    -fx-font-weight: bold;
+    -fx-background-radius: 999;
+    -fx-padding: 3 10 3 10;
+}
+
+/* Badge verde per le informazioni positive (delivery, prenotazione) */
+.tag-accent {
+    -fx-background-color: -color-primary-soft;
+    -fx-text-fill: -color-primary;
+}
+
+/* Badge delle stelle Michelin */
+.tag-michelin {
+    -fx-background-color: -color-danger-soft;
+    -fx-text-fill: -color-danger;
+}
+
+/* Link al sito dentro la card */
+.restaurant-link {
+    -fx-font-size: 12px;
+    -fx-text-fill: -color-primary;
+}
+
+/* Messaggio mostrato quando la ricerca non produce risultati */
+.empty-state {
+    -fx-alignment: center;
+    -fx-spacing: 8;
+    -fx-padding: 40;
+}
+
+.empty-state-icon {
+    -fx-font-size: 40px;
+    -fx-font-family: "Segoe UI Emoji", "Apple Color Emoji", "Noto Color Emoji", sans-serif;
+}
+
+.empty-state-text {
+    -fx-font-size: 15px;
+    -fx-font-weight: bold;
+    -fx-text-fill: -color-text-muted;
+}
+
+
+/* =========================================================================
+   7. PAGINAZIONE
+   ========================================================================= */
+.pagination {
     -fx-background-color: transparent;
+    /* Con migliaia di ristoranti l'indicazione "pagina X / Y" è indispensabile */
+    -fx-page-information-visible: true;
+    -fx-page-information-alignment: bottom;
+    -fx-max-page-indicator-count: 7;
 }
 
-.restaurant-list .list-cell {
+.pagination .pagination-control {
+    -fx-background-color: transparent;
+    -fx-padding: 8 0 0 0;
+}
+
+.pagination .pagination-control .button {
+    -fx-background-color: -color-surface;
+    -fx-text-fill: -color-text;
+    -fx-border-color: -color-border;
+    -fx-border-radius: 8;
+    -fx-background-radius: 8;
+    -fx-font-size: 12px;
+    -fx-padding: 6 10 6 10;
+}
+.pagination .pagination-control .button:hover {
+    -fx-background-color: -color-primary-soft;
+    -fx-border-color: -color-primary;
+    -fx-text-fill: -color-primary;
+}
+
+/* Numero di pagina attualmente selezionato */
+.pagination .pagination-control .toggle-button:selected {
+    -fx-background-color: -color-primary;
+    -fx-text-fill: -color-text-invert;
+    -fx-border-color: -color-primary;
+}
+
+.pagination .pagination-control .page-information {
+    -fx-text-fill: -color-text-muted;
+    -fx-font-size: 12px;
+}
+
+/* Riga informativa "Pagina X di Y — N ristoranti" sotto la griglia */
+.page-status {
+    -fx-font-size: 12px;
+    -fx-text-fill: -color-text-muted;
+}
+
+
+/* =========================================================================
+   8. DETTAGLI RISTORANTE
+   ========================================================================= */
+.details-root {
+    -fx-background-color: -color-bg;
+    -fx-spacing: 14;
+    -fx-padding: 18;
+}
+
+/* Intestazione: nome, indirizzo, azioni */
+.details-header {
+    -fx-background-color: -color-surface;
+    -fx-background-radius: 14;
+    -fx-border-color: -color-border;
+    -fx-border-radius: 14;
+    -fx-padding: 18;
+    -fx-spacing: 12;
+    -fx-alignment: center-left;
+}
+
+/* Nome del ristorante nella finestra dei dettagli */
+.details-title {
+    -fx-font-size: 26px;
+    -fx-font-weight: bold;
+    -fx-text-fill: -color-text;
+}
+
+/* Riga di testo sotto il nome (indirizzo, città) */
+.details-line {
+    -fx-font-size: 13px;
+    -fx-text-fill: -color-text-muted;
+}
+
+/* Riquadro con le informazioni tabellari */
+.details-info-panel {
+    -fx-background-color: -color-surface;
+    -fx-background-radius: 14;
+    -fx-border-color: -color-border;
+    -fx-border-radius: 14;
+    -fx-padding: 18;
+}
+
+/* Etichetta di sinistra (es. "Prezzo medio:") */
+.details-label {
+    -fx-font-size: 13px;
+    -fx-text-fill: -color-text-muted;
+}
+
+/* Valore di destra (es. "€€€") */
+.details-value {
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+    -fx-text-fill: -color-text;
+}
+
+/* Anteprima del sito web del ristorante */
+.details-map {
+    -fx-background-color: -color-surface;
+    -fx-border-color: -color-border;
+    -fx-border-width: 1;
+    -fx-border-radius: 12;
+    -fx-background-radius: 12;
+}
+
+
+/* =========================================================================
+   9. RECENSIONI
+   ========================================================================= */
+
+/* Lista delle recensioni: trasparente, sono le celle ad avere lo stile */
+.review-list {
+    -fx-background-color: transparent;
+    -fx-border-color: transparent;
+    -fx-padding: 4;
+}
+.review-list .list-cell,
+.review-list .list-cell:filled:selected,
+.review-list .list-cell:filled:selected:focused,
+.review-list .list-cell:empty {
     -fx-background-color: transparent;
     -fx-padding: 6 4 6 4;
 }
 
-/* Rimuove l’azzurrino di selezione di default di JavaFX */
-.restaurant-list .list-cell:filled:selected,
-.restaurant-list .list-cell:filled:selected:focused {
-    -fx-background-color: transparent;
-}
-
-/* Evidenzia la card interna quando una riga è selezionata */
-.restaurant-list .list-cell:filled:selected .restaurant-card,
-.restaurant-list .list-cell:filled:selected:focused .restaurant-card {
-    -fx-background-color: rgba(99, 151, 103, 0.3);    /* verde chiaro */
-    -fx-border-color: #2d6a4f;
-}
-
-/* Il nome resta scuro anche da selezionato */
-.restaurant-list .list-cell:filled:selected .restaurant-name,
-.restaurant-list .list-cell:filled:selected:focused .restaurant-name {
-    -fx-text-fill: #0f172a;
-}
-
-/* Anche le altre label restano leggibili */
-.restaurant-list .list-cell:filled:selected .label,
-.restaurant-list .list-cell:filled:selected:focused .label {
-    -fx-text-fill: #3b4a54;
-}
-
-/* =======================================================
-   CARD RISTORANTE (nella ListView)
-   Usato in:
-   - creato da MainController dentro la ListView
-   ======================================================= */
-.restaurant-card {
-    -fx-background-color: #ffffff;
-    -fx-border-color: #dfe3e6;
-    -fx-border-radius: 12;
-    -fx-background-radius: 12;
-    -fx-padding: 10 14 10 14;
-    -fx-spacing: 4;
-    -fx-effect: dropshadow(gaussian, rgba(15,23,42,0.03), 8, 0.1, 0, 2);
-    -fx-min-height: 88;
-}
-
-/* Titolo del ristorante, usato sia nella lista che nei dettagli */
-.restaurant-name {
-    -fx-font-family: Arial;
-    -fx-font-size: 24px;
-    -fx-font-weight: bold;
-    -fx-text-fill: #0b150c;
-}
-
-/* Etichette generiche dentro la card (indirizzo, ecc.) */
-.restaurant-card .label {
-    -fx-text-fill: #5f6b7a;
-    -fx-font-size: 14px;
-}
-
-/* Link al sito nella card (MainController) */
-.restaurant-link {
-    -fx-text-fill: #1d72b8;
-    -fx-font-size: 14px;
-}
-.restaurant-link:hover {
-    -fx-underline: true;
-}
-
-/* Tipo di cucina / premi (usato come “badge”) */
-.restaurant-awards {
-    -fx-text-fill: #c05621;
-    -fx-font-size: 14px;
-    -fx-font-weight: 600;
-}
-
-/* =======================================================
-   DETTAGLI RISTORANTE (finestra RestaurantDetails)
-   Usato in:
-   - restaurant_details.fxml
-   ======================================================= */
-
-/* VBox root dei dettagli (RestaurantDetailsController) */
-.details-root {
-    -fx-background-color: #ffffff;
-    -fx-spacing: 12;
-}
-
-/* Header con nome + indirizzo + bottone preferiti */
-.details-header {
-    -fx-alignment: CENTER_LEFT;
-}
-
-/* Pannello informazioni (prezzo, cucina, consegna, prenotazione, sito) */
-.details-info-panel {
-    -fx-background-color: #f5f5f5;
-    -fx-background-radius: 10;
-    -fx-padding: 12;
-}
-
-/* Etichette di sinistra (es. “Prezzo medio”) */
-.details-label {
-    -fx-text-fill: #6b7280;
-    -fx-font-size: 16px;
-}
-
-/* Valori di destra (es. “€€€”, “Italian”) */
-.details-value {
-    -fx-text-fill: #6b7280;
-    -fx-font-size: 16px;
-    -fx-font-weight: bold;
-}
-
-/* Riga di testo generica sotto il nome (indirizzo, città) */
-.details-line {
-    -fx-font-size: 14px;
-    -fx-text-fill: #4e4e4e;
-}
-
-/* Link al sito web nei dettagli */
-.details-link {
-    -fx-text-fill: #1d4ed8;
-}
-
-/* Bottone "Aggiungi ai preferiti" nella finestra dettagli */
-.details-fav-btn {
-    -fx-background-color: #2d6a4f;
-    -fx-text-fill: #ffffff;
-    -fx-background-radius: 14;
-    -fx-padding: 6 16 6 16;
-    -fx-font-weight: 600;
-    -fx-font-size: 14px;
-}
-.details-fav-btn:hover {
-    -fx-background-color: #1e5a40;
-}
-
-/* WebView per la mappa o il sito nei dettagli */
-.details-map {
-    -fx-background-color: #ffffff;
-    -fx-border-color: #dfe3e6;
-    -fx-border-width: 1;
-    -fx-border-radius: 10;
-    -fx-background-radius: 10;
-}
-
-/* =======================================================
-   EMOTICON
-   ======================================================= */
-.emoticon {
-    -fx-text-fill: #2d6a4f;
-    -fx-font-size: 18px;
-    -fx-font-family: "Segoe UI Emoji", "Apple Color Emoji", "Noto Color Emoji", sans-serif;
-}
-
-/* =======================================================
-   LISTA RECENSIONI
-   ======================================================= */
-
-.review-list .list-cell {
-    -fx-background-color: transparent;
-    -fx-padding: 5px;
-}
-
-.review-list .list-cell:empty {
-    -fx-background-color: transparent;
-}
-
+/* Riquadro di una singola recensione */
 .review-item {
-    -fx-background-color: white;
-    -fx-background-radius: 8px;
-    -fx-border-radius: 8px;
-    -fx-border-color: #e0e0e0;
-    -fx-padding: 10px;
-    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.05), 5, 0, 0, 2);
+    -fx-background-color: -color-surface;
+    -fx-background-radius: 12;
+    -fx-border-color: -color-border;
+    -fx-border-radius: 12;
+    -fx-padding: 14;
+    -fx-spacing: 6;
+    -fx-effect: dropshadow(gaussian, -color-shadow, 6, 0.0, 0, 1);
 }
 
-.review-stars {
-    -fx-text-fill: gold;
+/* Nome del ristorante in cima a una recensione ricevuta */
+.review-title {
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+    -fx-text-fill: -color-text;
+}
+
+/* Corpo testuale della recensione */
+.review-text {
+    -fx-font-size: 13px;
+    -fx-text-fill: -color-text;
+}
+
+/* Corpo testuale in corsivo (citazione della recensione) */
+.review-quote {
+    -fx-font-size: 13px;
+    -fx-font-style: italic;
+    -fx-text-fill: -color-text;
+}
+
+/* Blocco della risposta del ristoratore, rientrato e verde tenue */
+.review-reply {
+    -fx-background-color: -color-primary-soft;
+    -fx-background-radius: 10;
+    -fx-border-color: -color-primary;
+    -fx-border-width: 0 0 0 3;
+    -fx-padding: 10 12 10 12;
+    -fx-spacing: 3;
+}
+
+.review-reply-title {
+    -fx-font-size: 12px;
+    -fx-font-weight: bold;
+    -fx-text-fill: -color-primary;
+}
+
+.review-reply-text {
+    -fx-font-size: 12px;
+    -fx-font-style: italic;
+    -fx-text-fill: -color-text;
+}
+
+
+/* =========================================================================
+   10. STELLE
+   -------------------------------------------------------------------------
+   Usate in tre punti: selettore voto (add_review), filtro per media
+   (advanced_filter) e visualizzazione (view_reviews, dettagli).
+   ========================================================================= */
+
+/* Stella non selezionata, cliccabile */
+.star-button {
+    -fx-background-color: transparent;
+    -fx-border-color: transparent;
+    -fx-text-fill: -color-star-off;
+    -fx-font-size: 30px;
+    -fx-padding: 0 2 0 2;
+    -fx-cursor: hand;
+}
+.star-button:hover {
+    -fx-background-color: transparent;
+    -fx-text-fill: -color-star-on;
+}
+.star-button:pressed {
+    -fx-background-color: transparent;
+}
+
+/* Stella selezionata */
+.star-button-on {
+    -fx-text-fill: -color-star-on;
+}
+
+/* Variante compatta usata nel filtro avanzato */
+.star-button-small {
+    -fx-font-size: 24px;
+}
+
+/* Stelle in sola lettura dentro una recensione */
+.star-display {
+    -fx-text-fill: -color-star-on;
     -fx-font-size: 16px;
     -fx-font-weight: bold;
 }
 
-.review-user-info {
-    -fx-text-fill: #7f8c8d;
+/* Stelle Michelin nella finestra dei dettagli */
+.michelin-stars {
+    -fx-text-fill: -color-star-on;
+    -fx-font-size: 18px;
     -fx-font-weight: bold;
-    -fx-font-size: 12px;
 }
 
-.review-text {
-    -fx-text-fill: #2c3e50;
-    -fx-font-size: 14px;
+/* Testo mostrato quando non ci sono stelle Michelin */
+.michelin-none {
+    -fx-text-fill: -color-text-muted;
+    -fx-font-size: 13px;
+    -fx-font-weight: normal;
+}
+
+
+/* =========================================================================
+   11. TABELLE
+   ========================================================================= */
+.table-view {
+    -fx-background-color: -color-surface;
+    -fx-background-radius: 12;
+    -fx-border-color: -color-border;
+    -fx-border-radius: 12;
+    -fx-padding: 0;
+}
+.table-view:focused {
+    -fx-border-color: -color-border;
+}
+
+/* Intestazione */
+.table-view .column-header-background {
+    -fx-background-color: -color-surface-alt;
+    -fx-background-radius: 12 12 0 0;
+}
+.table-view .column-header,
+.table-view .filler {
+    -fx-background-color: transparent;
+    -fx-border-color: -color-border;
+    -fx-border-width: 0 0 1 0;
+    -fx-size: 40;
+}
+.table-view .column-header .label {
+    -fx-text-fill: -color-text-muted;
+    -fx-font-size: 12px;
+    -fx-font-weight: bold;
+    -fx-alignment: center-left;
+    -fx-padding: 0 10 0 10;
+}
+
+/* Righe */
+.table-view .table-row-cell {
+    -fx-background-color: -color-surface;
+    -fx-border-color: transparent transparent -color-border transparent;
+    -fx-cell-size: 38;
+}
+.table-view .table-row-cell:odd {
+    -fx-background-color: -color-surface-alt;
+}
+.table-view .table-row-cell:hover {
+    -fx-background-color: -color-primary-soft;
+}
+.table-view .table-row-cell:selected {
+    -fx-background-color: -color-primary-soft;
+}
+.table-view .table-row-cell:selected .table-cell {
+    -fx-text-fill: -color-text;
+}
+.table-view .table-row-cell:empty {
+    -fx-background-color: transparent;
+    -fx-border-color: transparent;
+}
+
+.table-view .table-cell {
+    -fx-text-fill: -color-text;
+    -fx-font-size: 13px;
+    -fx-padding: 0 10 0 10;
+    -fx-alignment: center-left;
+}
+
+.table-view .placeholder .label {
+    -fx-text-fill: -color-text-muted;
+}
+
+
+/* =========================================================================
+   12. LISTE E SCROLLBAR
+   ========================================================================= */
+.list-view {
+    -fx-background-color: transparent;
+    -fx-border-color: transparent;
+}
+.list-view:focused {
+    -fx-border-color: transparent;
+}
+.list-view .placeholder .label {
+    -fx-text-fill: -color-text-muted;
+}
+
+.scroll-pane,
+.scroll-pane .viewport {
+    -fx-background-color: transparent;
+}
+.scroll-pane {
+    -fx-border-color: transparent;
+}
+
+.scroll-bar {
+    -fx-background-color: transparent;
+    -fx-padding: 2;
+}
+.scroll-bar .track {
+    -fx-background-color: transparent;
+    -fx-border-color: transparent;
+}
+.scroll-bar .thumb {
+    -fx-background-color: -color-border-strong;
+    -fx-background-radius: 999;
+}
+.scroll-bar .thumb:hover {
+    -fx-background-color: -color-text-muted;
+}
+.scroll-bar .increment-button,
+.scroll-bar .decrement-button {
+    -fx-background-color: transparent;
+    -fx-padding: 0;
+}
+.scroll-bar .increment-arrow,
+.scroll-bar .decrement-arrow {
+    -fx-shape: " ";
+    -fx-padding: 0;
+}
+
+
+/* =========================================================================
+   13. DIALOG DI SISTEMA (Alert)
+   ========================================================================= */
+.dialog-pane {
+    -fx-background-color: -color-surface;
+    -fx-font-family: "Segoe UI", "Inter", "Helvetica Neue", Arial, sans-serif;
+}
+.dialog-pane .header-panel {
+    -fx-background-color: -color-surface-alt;
+}
+.dialog-pane .header-panel .label {
+    -fx-font-size: 15px;
+    -fx-font-weight: bold;
+    -fx-text-fill: -color-text;
+}
+.dialog-pane .content.label {
+    -fx-font-size: 13px;
+    -fx-text-fill: -color-text;
+}
+.dialog-pane .button-bar .button {
+    -fx-background-color: -color-primary;
+    -fx-text-fill: -color-text-invert;
+}
+.dialog-pane .button-bar .button:hover {
+    -fx-background-color: -color-primary-hover;
 }

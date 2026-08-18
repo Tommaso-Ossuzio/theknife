@@ -1,30 +1,39 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.geometry.Insets?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
 <BorderPane xmlns="http://javafx.com/javafx"
             xmlns:fx="http://javafx.com/fxml"
-            fx:controller="theknife.ui.javafx.FavoritesController">
+            fx:controller="theknife.ui.javafx.FavoritesController"
+            stylesheets="@style.css"
+            styleClass="app-root"
+            prefWidth="700" prefHeight="520">
 
     <top>
-        <Label text="I miei preferiti"
-               style="-fx-font-size: 18; -fx-font-weight: bold; -fx-padding: 10 10 10 10;"/>
+        <VBox styleClass="dialog-header">
+            <Label text="I miei preferiti" styleClass="page-title"/>
+            <Label text="I ristoranti che hai salvato per non perderli di vista."
+                   styleClass="subtitle"/>
+        </VBox>
     </top>
 
     <center>
-        <TableView fx:id="tabellaPreferiti">
-            <columns>
-                <TableColumn fx:id="colonnaRistorante" text="Nome ristorante" prefWidth="180"/>
-                <TableColumn fx:id="colonnaLuogo" text="Luogo" prefWidth="450"/>
-            </columns>
-        </TableView>
-    </center>
+        <!-- Il controller nasconde la tabella quando è vuota: lo StackPane
+             fa comparire al suo posto il messaggio, centrato nell'area. -->
+        <StackPane styleClass="content-pane">
+            <TableView fx:id="tabellaPreferiti">
+                <columns>
+                    <TableColumn fx:id="colonnaRistorante" text="Nome ristorante" prefWidth="220"/>
+                    <TableColumn fx:id="colonnaLuogo" text="Luogo" prefWidth="420"/>
+                </columns>
+            </TableView>
 
-    <bottom>
-        <Label fx:id="etichettaVuota"
-               text="Non hai ancora aggiunto ristoranti ai preferiti."
-               style="-fx-text-fill: #6b7280; -fx-padding: 5 10 10 10;"/>
-    </bottom>
+            <VBox styleClass="empty-state" mouseTransparent="true">
+                <Label fx:id="etichettaVuota"
+                       text="Non hai ancora aggiunto ristoranti ai preferiti."
+                       styleClass="empty-state-text"/>
+            </VBox>
+        </StackPane>
+    </center>
 </BorderPane>

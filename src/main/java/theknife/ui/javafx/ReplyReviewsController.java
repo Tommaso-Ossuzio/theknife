@@ -80,19 +80,19 @@ public class ReplyReviewsController {
             private final VBox layout = new VBox(8);
 
             {
-                lblRistorante.setStyle("-fx-font-weight: bold; -fx-font-size: 14px; -fx-text-fill: #2c3e50;");
-                lblStelle.setStyle("-fx-text-fill: gold; -fx-font-size: 14px;");
+                // Tutto l'aspetto grafico arriva da style.css tramite le styleClass
+                lblRistorante.getStyleClass().add("review-title");
+                lblStelle.getStyleClass().add("star-display");
                 lblTesto.setWrapText(true);
-                lblTesto.setStyle("-fx-font-style: italic;");
+                lblTesto.getStyleClass().add("review-quote");
 
                 areaRisposta.setPromptText("Scrivi qui la tua risposta pubblica...");
                 areaRisposta.setPrefRowCount(2);
                 areaRisposta.setWrapText(true);
 
-                btnInvia.getStyleClass().add("footer-button");
-                btnInvia.setStyle("-fx-font-size: 12px; -fx-padding: 5 15;");
+                btnInvia.getStyleClass().addAll("btn-primary", "btn-small");
 
-                layout.setStyle("-fx-padding: 10; -fx-background-color: white; -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.1), 5, 0, 0, 1);");
+                layout.getStyleClass().add("review-item");
                 layout.getChildren().addAll(lblRistorante, lblStelle, lblTesto, new Separator(), areaRisposta, btnInvia);
             }
 

@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.geometry.Insets?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
@@ -8,51 +7,39 @@
             xmlns:fx="http://javafx.com/fxml"
             fx:controller="theknife.ui.javafx.ViewReviewsController"
             stylesheets="@style.css"
-            prefWidth="500" prefHeight="600">
+            styleClass="app-root"
+            prefWidth="540" prefHeight="620">
 
     <top>
-        <VBox spacing="5" style="-fx-background-color: white; -fx-border-color: #ddd; -fx-border-width: 0 0 1 0;">
-            <padding>
-                <Insets top="20" right="20" bottom="20" left="20"/>
-            </padding>
-
+        <VBox styleClass="dialog-header">
             <Label fx:id="etichettaTitolo"
                    text="Recensioni"
-                   styleClass="section-title"/>
+                   styleClass="page-title"/>
 
-
-
-            <HBox spacing="15" alignment="CENTER_LEFT">
+            <HBox styleClass="card-tags">
                 <Label fx:id="etichettaMedia"
                        text="Media stelle: -"
-                       styleClass="footer-text"/>
-
+                       styleClass="tag, tag-accent"/>
                 <Label fx:id="etichettaConteggio"
                        text="Numero di recensioni: 0"
-                       styleClass="footer-text"/>
+                       styleClass="tag"/>
             </HBox>
         </VBox>
-
     </top>
 
     <center>
-        <ListView fx:id="listaRecensioni" styleClass="review-list">
-            <placeholder>
-                <Label text="Non ci sono ancora recensioni."/>
-            </placeholder>
-        </ListView>
+        <VBox styleClass="content-pane">
+            <ListView fx:id="listaRecensioni" styleClass="review-list" VBox.vgrow="ALWAYS">
+                <placeholder>
+                    <Label text="Non ci sono ancora recensioni." styleClass="muted-text"/>
+                </placeholder>
+            </ListView>
+        </VBox>
     </center>
 
     <bottom>
-        <HBox alignment="CENTER_RIGHT" style="-fx-background-color: #f9f9f9;">
-            <padding>
-                <Insets top="15" right="20" bottom="15" left="20"/>
-            </padding>
-            <Button text="Chiudi"
-                    onAction="#onChiudi"
-                    styleClass="footer-button"
-                    style="-fx-background-color: #95a5a6;"/>
-
+        <HBox styleClass="dialog-footer">
+            <Button text="Chiudi" onAction="#onChiudi" styleClass="btn-secondary"/>
         </HBox>
     </bottom>
 

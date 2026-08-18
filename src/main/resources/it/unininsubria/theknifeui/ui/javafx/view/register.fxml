@@ -1,70 +1,97 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.geometry.*?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<BorderPane xmlns="http://javafx.com/javafx/17.0.12"
-            xmlns:fx="http://javafx.com/fxml/1"
+<!--
+    Finestra di registrazione.
+
+    Il ruolo è una scelta esclusiva: un account è Cliente OPPURE Ristoratore.
+    La doppia appartenenza non è più prevista.
+-->
+<BorderPane xmlns="http://javafx.com/javafx"
+            xmlns:fx="http://javafx.com/fxml"
             fx:controller="theknife.ui.javafx.RegisterController"
             stylesheets="@style.css"
-            styleClass="app-root"
-            prefWidth="400">
+            styleClass="dialog-root"
+            prefWidth="460" prefHeight="720">
+
+    <fx:define>
+        <ToggleGroup fx:id="gruppoRuolo"/>
+    </fx:define>
+
+    <top>
+        <VBox styleClass="dialog-header">
+            <Label text="Crea il tuo account" styleClass="page-title"/>
+            <Label text="Bastano pochi secondi per iniziare a usare TheKnife."
+                   styleClass="subtitle"/>
+        </VBox>
+    </top>
 
     <center>
-        <VBox alignment="TOP_LEFT" spacing="15" style="-fx-background-color: white;">
-            <padding>
-                <Insets bottom="20" left="20" right="20" top="20" />
-            </padding>
+        <ScrollPane fitToWidth="true">
+            <VBox styleClass="form-body">
 
-            <Label text="Registrazione utente" styleClass="section-title" />
+                <VBox styleClass="field-group">
+                    <Label text="NOME" styleClass="field-label"/>
+                    <TextField fx:id="campoNome" promptText="Il tuo nome"/>
+                </VBox>
 
-            <Separator />
+                <VBox styleClass="field-group">
+                    <Label text="COGNOME" styleClass="field-label"/>
+                    <TextField fx:id="campoCognome" promptText="Il tuo cognome"/>
+                </VBox>
 
-            <VBox spacing="5">
-                <Label text="Nome" style="-fx-font-weight: bold; -fx-text-fill: #555;"/>
-                <TextField fx:id="campoNome" promptText="Il tuo nome" />
+                <VBox styleClass="field-group">
+                    <Label text="USERNAME *" styleClass="field-label"/>
+                    <TextField fx:id="campoUsername" promptText="Scegli uno username"/>
+                </VBox>
+
+                <VBox styleClass="field-group">
+                    <Label text="PASSWORD *" styleClass="field-label"/>
+                    <PasswordField fx:id="campoPassword" promptText="Scegli una password"/>
+                </VBox>
+
+                <VBox styleClass="field-group">
+                    <Label text="CITTÀ / DOMICILIO" styleClass="field-label"/>
+                    <TextField fx:id="campoCitta" promptText="Es. Varese"/>
+                </VBox>
+
+                <Separator/>
+
+                <!-- SCELTA DEL RUOLO: esclusiva -->
+                <VBox styleClass="field-group">
+                    <Label text="COME VUOI USARE THEKNIFE?" styleClass="field-label"/>
+
+                    <VBox styleClass="role-option" onMouseClicked="#onScegliCliente">
+                        <RadioButton fx:id="radioCliente"
+                                     text="Cliente"
+                                     toggleGroup="$gruppoRuolo"
+                                     selected="true"/>
+                        <Label text="Cerchi ristoranti, salvi i preferiti e scrivi recensioni."
+                               styleClass="muted-text"
+                               wrapText="true"/>
+                    </VBox>
+
+                    <VBox styleClass="role-option" onMouseClicked="#onScegliRistoratore">
+                        <RadioButton fx:id="radioRistoratore"
+                                     text="Ristoratore"
+                                     toggleGroup="$gruppoRuolo"/>
+                        <Label text="Pubblichi i tuoi ristoranti e rispondi alle recensioni ricevute."
+                               styleClass="muted-text"
+                               wrapText="true"/>
+                    </VBox>
+                </VBox>
+
+                <Label fx:id="etichettaErrore" styleClass="error-label" wrapText="true"/>
             </VBox>
-
-            <VBox spacing="5">
-                <Label text="Cognome" style="-fx-font-weight: bold; -fx-text-fill: #555;"/>
-                <TextField fx:id="campoCognome" promptText="Il tuo cognome" />
-            </VBox>
-
-            <VBox spacing="5">
-                <Label text="Username *" style="-fx-font-weight: bold; -fx-text-fill: #555;"/>
-                <TextField fx:id="campoUsername" promptText="Scegli uno username" />
-            </VBox>
-
-            <VBox spacing="5">
-                <Label text="Password *" style="-fx-font-weight: bold; -fx-text-fill: #555;"/>
-                <PasswordField fx:id="campoPassword" promptText="Scegli una password" />
-            </VBox>
-
-            <VBox spacing="5">
-                <Label text="Città / Domicilio" style="-fx-font-weight: bold; -fx-text-fill: #555;"/>
-                <TextField fx:id="campoCitta" promptText="Es. Varese" />
-            </VBox>
-
-            <!-- TODO da modificare, mettere radioButton, o uno o l'altro  -->
-
-            <VBox spacing="5">
-                <Label text="Ruolo (puoi selezionarli entrambi)" style="-fx-font-weight: bold; -fx-text-fill: #555;"/>
-                <HBox spacing="15">
-                    <CheckBox fx:id="checkCliente" text="Cliente" selected="true" />
-                    <CheckBox fx:id="checkRistoratore" text="Ristoratore" />
-                </HBox>
-            </VBox>
-
-            <Label fx:id="etichettaErrore" textFill="red" wrapText="true"/>
-
-            <Pane VBox.vgrow="ALWAYS" />
-            <Separator />
-
-            <HBox spacing="10" alignment="CENTER_RIGHT">
-                <Button onAction="#onBack" text="Annulla" styleClass="footer-button" style="-fx-background-color: #95a5a6;"/>
-                <Button onAction="#onCreate" text="Crea account" styleClass="footer-button" />
-            </HBox>
-        </VBox>
+        </ScrollPane>
     </center>
+
+    <bottom>
+        <HBox styleClass="dialog-footer">
+            <Button onAction="#onBack" text="Annulla" styleClass="btn-secondary"/>
+            <Button onAction="#onCreate" text="Crea account" styleClass="btn-primary"/>
+        </HBox>
+    </bottom>
 </BorderPane>

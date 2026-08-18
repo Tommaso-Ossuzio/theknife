@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.geometry.Insets?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
@@ -8,41 +7,32 @@
             xmlns:fx="http://javafx.com/fxml"
             fx:controller="theknife.ui.javafx.ReplyReviewsController"
             stylesheets="@style.css"
-            prefWidth="600" prefHeight="700">
+            styleClass="app-root"
+            prefWidth="640" prefHeight="700">
 
     <top>
-        <VBox spacing="5" style="-fx-background-color: white; -fx-border-color: #ddd; -fx-border-width: 0 0 1 0;">
-            <padding>
-                <Insets top="20" right="20" bottom="20" left="20"/>
-            </padding>
-
-            <Label text="Gestione Recensioni"
-                   styleClass="section-title"/>
-
+        <VBox styleClass="dialog-header">
+            <Label text="Gestione recensioni" styleClass="page-title"/>
             <Label text="Qui puoi rispondere alle recensioni ricevute nei tuoi ristoranti."
-                   style="-fx-text-fill: #7f8c8d; -fx-font-size: 14px;"/>
+                   styleClass="subtitle"/>
         </VBox>
     </top>
 
     <!-- TODO una volta scritta la risposta va tolta dalla lista -->
 
     <center>
-        <ListView fx:id="listaRecensioni" styleClass="review-list">
-            <placeholder>
-                <Label text="Non hai ancora ricevuto recensioni."/>
-            </placeholder>
-        </ListView>
+        <VBox styleClass="content-pane">
+            <ListView fx:id="listaRecensioni" styleClass="review-list" VBox.vgrow="ALWAYS">
+                <placeholder>
+                    <Label text="Non hai ancora ricevuto recensioni." styleClass="muted-text"/>
+                </placeholder>
+            </ListView>
+        </VBox>
     </center>
 
     <bottom>
-        <HBox alignment="CENTER_RIGHT" style="-fx-background-color: #f9f9f9;">
-            <padding>
-                <Insets top="15" right="20" bottom="15" left="20"/>
-            </padding>
-            <Button text="Chiudi"
-                    onAction="#onChiudi"
-                    styleClass="footer-button"
-                    style="-fx-background-color: #95a5a6;"/>
+        <HBox styleClass="dialog-footer">
+            <Button text="Chiudi" onAction="#onChiudi" styleClass="btn-secondary"/>
         </HBox>
     </bottom>
 

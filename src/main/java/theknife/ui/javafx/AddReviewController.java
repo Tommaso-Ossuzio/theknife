@@ -101,12 +101,12 @@ public class AddReviewController {
         Button[] stars = {star1, star2, star3, star4, star5};
 
         for (int i = 0; i < stars.length; i++) {
-            // Se l'indice è inferiore al voto selezionato, la stella è Oro
-            // Es. voto 3: indici 0, 1, 2 sono Oro.
+            // Se l'indice è inferiore al voto selezionato la stella è accesa.
+            // Es. voto 3: indici 0, 1, 2 sono accesi.
+            // L'aspetto è definito in style.css dalle classi .star-button / .star-button-on
+            stars[i].getStyleClass().remove("star-button-on");
             if (i < votoSelezionato) {
-                stars[i].setStyle("-fx-background-color: transparent; -fx-font-size: 30px; -fx-cursor: hand; -fx-padding: 0; -fx-text-fill: gold;"); // Oro
-            } else {
-                stars[i].setStyle("-fx-background-color: transparent; -fx-font-size: 30px; -fx-cursor: hand; -fx-padding: 0; -fx-text-fill: lightgray;"); // Grigio
+                stars[i].getStyleClass().add("star-button-on");
             }
         }
     }

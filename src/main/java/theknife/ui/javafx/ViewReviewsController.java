@@ -143,12 +143,11 @@ public class ViewReviewsController {
             protected void updateItem(Recensione item, boolean empty) {
                 super.updateItem(item, empty);
 
+                // Tutto l'aspetto grafico arriva da style.css tramite le styleClass
                 if (empty || item == null) {
                     setGraphic(null);
-                    getStyleClass().remove("review-item");
-                    setStyle("");
                 } else {
-                    VBox box = new VBox(5);
+                    VBox box = new VBox();
                     box.getStyleClass().add("review-item");
 
                     StringBuilder stelleStr = new StringBuilder();
@@ -156,32 +155,27 @@ public class ViewReviewsController {
                     for(int i=item.getNumeroStelle(); i<5; i++) stelleStr.append("☆");
 
                     Label lblStelle = new Label(stelleStr.toString());
-                    lblStelle.setStyle("-fx-text-fill: gold; -fx-font-size: 16px; -fx-font-weight: bold;");
+                    lblStelle.getStyleClass().add("star-display");
 
                     Label lblTesto = new Label(item.getText());
                     lblTesto.setWrapText(true);
                     lblTesto.setMaxWidth(350);
-                    lblTesto.setStyle("-fx-text-fill: black; -fx-font-size: 14px;");
+                    lblTesto.getStyleClass().add("review-text");
 
                     box.getChildren().addAll(lblStelle, lblTesto);
 
                     if (item.getRisposta() != null) {
-                        VBox boxRisposta = new VBox(2);
-
-                        boxRisposta.setStyle("-fx-background-color: lightgray; -fx-background-radius: 5; -fx-padding: 8;");
+                        VBox boxRisposta = new VBox();
+                        boxRisposta.getStyleClass().add("review-reply");
                         VBox.setMargin(boxRisposta, new Insets(10, 0, 0, 0));
 
-                        Label lblTitolo = new Label("Risposta del Ristoratore:");
-                        lblTitolo.getStyleClass().add("footer-text");
-                        lblTitolo.setStyle("-fx-font-weight: bold;");
+                        Label lblTitolo = new Label("Risposta del ristoratore");
+                        lblTitolo.getStyleClass().add("review-reply-title");
 
                         Label lblRisposta = new Label(item.getRisposta().getTextString());
                         lblRisposta.setWrapText(true);
                         lblRisposta.setMaxWidth(330);
-
-                        // Usa la classe CSS richiesta + forza l'italic
-                        lblRisposta.getStyleClass().add("footer-text");
-                        lblRisposta.setStyle("-fx-font-style: italic;");
+                        lblRisposta.getStyleClass().add("review-reply-text");
 
                         boxRisposta.getChildren().addAll(lblTitolo, lblRisposta);
                         box.getChildren().add(boxRisposta);

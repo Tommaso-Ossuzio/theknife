@@ -67,10 +67,10 @@ public class AdvancedFilterController {
     private void aggiornaGraficaStelle() {
         Button[] stars = {star1, star2, star3, star4, star5};
         for (int i = 0; i < stars.length; i++) {
+            // L'aspetto è definito in style.css: .star-button / .star-button-on
+            stars[i].getStyleClass().remove("star-button-on");
             if (i < stelleSelezionate) {
-                stars[i].setStyle("-fx-background-color: transparent; -fx-font-size: 24px; -fx-text-fill: gold; -fx-cursor: hand; -fx-padding: 0;");
-            } else {
-                stars[i].setStyle("-fx-background-color: transparent; -fx-font-size: 24px; -fx-text-fill: lightgray; -fx-cursor: hand; -fx-padding: 0;");
+                stars[i].getStyleClass().add("star-button-on");
             }
         }
     }

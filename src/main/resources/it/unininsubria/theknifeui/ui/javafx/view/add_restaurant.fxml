@@ -1,69 +1,105 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.geometry.Insets?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
 <BorderPane xmlns="http://javafx.com/javafx"
             xmlns:fx="http://javafx.com/fxml"
-            fx:controller="theknife.ui.javafx.AddRestaurantController">
+            fx:controller="theknife.ui.javafx.AddRestaurantController"
+            stylesheets="@style.css"
+            styleClass="dialog-root"
+            prefWidth="520" prefHeight="720">
+
+    <top>
+        <VBox styleClass="dialog-header">
+            <Label text="Nuovo ristorante" styleClass="page-title"/>
+            <Label text="Inserisci i dati della tua attività: i campi con * sono obbligatori."
+                   styleClass="subtitle"/>
+        </VBox>
+    </top>
 
     <center>
-        <VBox spacing="10">
-            <padding>
-                <Insets top="15" right="15" bottom="15" left="15"/>
-            </padding>
+        <ScrollPane fitToWidth="true">
+            <VBox styleClass="form-body">
 
-            <Label text="Nuovo ristorante" style="-fx-font-size: 18; -fx-font-weight: bold;"/>
-
-            <Label text="Nome *"/>
-            <TextField fx:id="campoNome" promptText="Nome ristorante"/>
-
-            <!-- TODO mettere tutti i campi obbligatori, e gestirli a dovere -->
-
-            <Label text="Nazione"/>
-            <TextField fx:id="campoNazione" promptText="es. Italia"/>
-
-            <Label text="Città"/>
-            <TextField fx:id="campoCitta" promptText="es. Milano"/>
-
-            <Label text="Indirizzo"/>
-            <TextField fx:id="campoIndirizzo" promptText="Via..."/>
-
-            <Label text="Numero di telefono"/>
-            <TextField fx:id="campoTelefono" promptText="es. +39..."/>
-
-            <HBox spacing="10">
-                <VBox spacing="5">
-                    <Label text="Latitudine"/>
-                    <TextField fx:id="campoLatitudine" promptText="45.46"/>
+                <VBox styleClass="field-group">
+                    <Label text="NOME *" styleClass="field-label"/>
+                    <TextField fx:id="campoNome" promptText="Nome ristorante"/>
                 </VBox>
-                <VBox spacing="5">
-                    <Label text="Longitudine"/>
-                    <TextField fx:id="campoLongitudine" promptText="9.18"/>
+
+                <!-- TODO mettere tutti i campi obbligatori, e gestirli a dovere -->
+
+                <Label text="Dove si trova" styleClass="section-title"/>
+
+                <HBox styleClass="card-line">
+                    <VBox styleClass="field-group" HBox.hgrow="ALWAYS">
+                        <Label text="NAZIONE" styleClass="field-label"/>
+                        <TextField fx:id="campoNazione" promptText="es. Italia"/>
+                    </VBox>
+                    <VBox styleClass="field-group" HBox.hgrow="ALWAYS">
+                        <Label text="CITTÀ" styleClass="field-label"/>
+                        <TextField fx:id="campoCitta" promptText="es. Milano"/>
+                    </VBox>
+                </HBox>
+
+                <VBox styleClass="field-group">
+                    <Label text="INDIRIZZO" styleClass="field-label"/>
+                    <TextField fx:id="campoIndirizzo" promptText="Via..."/>
                 </VBox>
-            </HBox>
 
-            <Label text="Prezzo medio (€)"/>
-            <TextField fx:id="campoPrezzo" promptText="es. 60"/>
+                <HBox styleClass="card-line">
+                    <VBox styleClass="field-group" HBox.hgrow="ALWAYS">
+                        <Label text="LATITUDINE" styleClass="field-label"/>
+                        <TextField fx:id="campoLatitudine" promptText="45.46"/>
+                    </VBox>
+                    <VBox styleClass="field-group" HBox.hgrow="ALWAYS">
+                        <Label text="LONGITUDINE" styleClass="field-label"/>
+                        <TextField fx:id="campoLongitudine" promptText="9.18"/>
+                    </VBox>
+                </HBox>
 
-            <Label text="Tipo di cucina"/>
-            <TextField fx:id="campoTipoCucina" promptText="Italian, Gourmet..."/>
+                <Separator/>
 
-            <HBox spacing="10">
-                <CheckBox fx:id="checkConsegna" text="Consegna"/>
-                <CheckBox fx:id="checkPrenotazione" text="Prenotazione online"/>
-            </HBox>
+                <Label text="Dettagli e contatti" styleClass="section-title"/>
 
-            <Label text="Sito web"/>
-            <TextField fx:id="campoSitoWeb" promptText="https://..."/>
+                <VBox styleClass="field-group">
+                    <Label text="NUMERO DI TELEFONO" styleClass="field-label"/>
+                    <TextField fx:id="campoTelefono" promptText="es. +39..."/>
+                </VBox>
 
-            <Label fx:id="etichettaErrore" textFill="red"/>
+                <HBox styleClass="card-line">
+                    <VBox styleClass="field-group" HBox.hgrow="ALWAYS">
+                        <Label text="PREZZO MEDIO (€)" styleClass="field-label"/>
+                        <TextField fx:id="campoPrezzo" promptText="es. 60"/>
+                    </VBox>
+                    <VBox styleClass="field-group" HBox.hgrow="ALWAYS">
+                        <Label text="TIPO DI CUCINA" styleClass="field-label"/>
+                        <TextField fx:id="campoTipoCucina" promptText="Italian, Gourmet..."/>
+                    </VBox>
+                </HBox>
 
-            <HBox spacing="10">
-                <Button text="Salva" onAction="#onSalva"/>
-                <Button text="Annulla" onAction="#onAnnulla"/>
-            </HBox>
-        </VBox>
+                <VBox styleClass="field-group">
+                    <Label text="SITO WEB" styleClass="field-label"/>
+                    <TextField fx:id="campoSitoWeb" promptText="https://..."/>
+                </VBox>
+
+                <VBox styleClass="field-group">
+                    <Label text="SERVIZI OFFERTI" styleClass="field-label"/>
+                    <HBox styleClass="card-tags">
+                        <CheckBox fx:id="checkConsegna" text="Consegna a domicilio"/>
+                        <CheckBox fx:id="checkPrenotazione" text="Prenotazione online"/>
+                    </HBox>
+                </VBox>
+
+                <Label fx:id="etichettaErrore" styleClass="error-label" wrapText="true"/>
+            </VBox>
+        </ScrollPane>
     </center>
+
+    <bottom>
+        <HBox styleClass="dialog-footer">
+            <Button text="Annulla" onAction="#onAnnulla" styleClass="btn-secondary"/>
+            <Button text="Salva ristorante" onAction="#onSalva" styleClass="btn-primary"/>
+        </HBox>
+    </bottom>
 </BorderPane>

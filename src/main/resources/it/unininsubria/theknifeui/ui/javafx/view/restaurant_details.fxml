@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.geometry.Insets?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.web.WebView?>
@@ -11,109 +10,109 @@
       fx:controller="theknife.ui.javafx.RestaurantDetailsController"
       stylesheets="@style.css"
       styleClass="details-root"
-      spacing="12"
-      prefHeight="700">
-    <padding>
-        <Insets top="16" right="16" bottom="16" left="16"/>
-    </padding>
+      prefWidth="760"
+      prefHeight="720">
 
-    <HBox spacing="10" styleClass="details-header">
-        <VBox spacing="4" HBox.hgrow="ALWAYS">
-            <Label fx:id="etichettaNome" styleClass="restaurant-name"/>
+    <!-- INTESTAZIONE: nome, posizione e azioni rapide -->
+    <HBox styleClass="details-header">
+        <VBox HBox.hgrow="ALWAYS">
+            <Label fx:id="etichettaNome" styleClass="details-title" wrapText="true"/>
 
-            <HBox spacing="4" alignment="CENTER_LEFT">
+            <HBox styleClass="card-line">
                 <Label text="📍" styleClass="emoticon"/>
-                <Label fx:id="etichettaIndirizzo" styleClass="details-line"/>
+                <Label fx:id="etichettaIndirizzo" styleClass="details-line" wrapText="true"/>
             </HBox>
 
-            <HBox spacing="4" alignment="CENTER_LEFT">
+            <HBox styleClass="card-line">
                 <Label text="🏙" styleClass="emoticon"/>
                 <Label fx:id="etichettaCitta" styleClass="details-line"/>
             </HBox>
         </VBox>
 
-        <HBox spacing="8" alignment="CENTER_RIGHT">
+        <HBox styleClass="nav-group">
             <Button fx:id="bottoneApriMaps"
                     text="Apri in Maps"
                     onAction="#onApriMaps"
-                    styleClass="details-fav-btn"/>
+                    styleClass="btn-secondary"/>
             <Button fx:id="bottonePreferiti"
                     text="Aggiungi ai preferiti"
                     onAction="#onAggiungiAiPreferiti"
-                    styleClass="details-fav-btn"/>
+                    styleClass="btn-primary"/>
         </HBox>
     </HBox>
 
-    <GridPane hgap="12" vgap="6" styleClass="details-info-panel">
+    <!-- SCHEDA INFORMATIVA -->
+    <GridPane hgap="14" vgap="10" styleClass="details-info-panel">
         <columnConstraints>
-            <ColumnConstraints percentWidth="35"/> <ColumnConstraints percentWidth="65"/>
+            <ColumnConstraints percentWidth="35"/>
+            <ColumnConstraints percentWidth="65"/>
         </columnConstraints>
         <children>
 
             <!-- TODO mettere range da a, conme nel msg sul gruppo-->
 
-            <HBox spacing="5" alignment="CENTER_LEFT" GridPane.rowIndex="0" GridPane.columnIndex="0">
+            <HBox styleClass="card-line" GridPane.rowIndex="0" GridPane.columnIndex="0">
                 <Label text="💰" styleClass="emoticon"/>
-                <Label text="Prezzo medio:" styleClass="details-label"/>
+                <Label text="Prezzo medio" styleClass="details-label"/>
             </HBox>
-
             <Label fx:id="valorePrezzo" GridPane.rowIndex="0" GridPane.columnIndex="1" styleClass="details-value"/>
 
-            <HBox spacing="5" alignment="CENTER_LEFT" GridPane.rowIndex="1" GridPane.columnIndex="0">
+            <HBox styleClass="card-line" GridPane.rowIndex="1" GridPane.columnIndex="0">
                 <Label text="🍽" styleClass="emoticon"/>
-                <Label text="Cucina:" styleClass="details-label"/>
+                <Label text="Cucina" styleClass="details-label"/>
             </HBox>
             <Label fx:id="valoreCucina" GridPane.rowIndex="1" GridPane.columnIndex="1" styleClass="details-value"/>
 
-            <HBox spacing="5" alignment="CENTER_LEFT" GridPane.rowIndex="2" GridPane.columnIndex="0">
+            <HBox styleClass="card-line" GridPane.rowIndex="2" GridPane.columnIndex="0">
                 <Label text="🚚" styleClass="emoticon"/>
-                <Label text="Consegna:" styleClass="details-label"/>
+                <Label text="Consegna" styleClass="details-label"/>
             </HBox>
             <Label fx:id="valoreConsegna" GridPane.rowIndex="2" GridPane.columnIndex="1" styleClass="details-value"/>
 
-            <HBox spacing="5" alignment="CENTER_LEFT" GridPane.rowIndex="3" GridPane.columnIndex="0">
+            <HBox styleClass="card-line" GridPane.rowIndex="3" GridPane.columnIndex="0">
                 <Label text="📅" styleClass="emoticon"/>
-                <Label text="Prenotazione:" styleClass="details-label"/>
+                <Label text="Prenotazione" styleClass="details-label"/>
             </HBox>
             <Label fx:id="valorePrenotazione" GridPane.rowIndex="3" GridPane.columnIndex="1" styleClass="details-value"/>
 
-            <HBox spacing="5" alignment="CENTER_LEFT" GridPane.rowIndex="4" GridPane.columnIndex="0">
+            <HBox styleClass="card-line" GridPane.rowIndex="4" GridPane.columnIndex="0">
                 <Label text="📞" styleClass="emoticon"/>
-                <Label text="Telefono:" styleClass="details-label"/>
+                <Label text="Telefono" styleClass="details-label"/>
             </HBox>
             <Label fx:id="valoreTelefono" GridPane.rowIndex="4" GridPane.columnIndex="1" styleClass="details-value"/>
 
             <!-- TODO aggiungere media recensioni-->
 
-            <HBox spacing="5" alignment="CENTER_LEFT" GridPane.rowIndex="5" GridPane.columnIndex="0">
+            <HBox styleClass="card-line" GridPane.rowIndex="5" GridPane.columnIndex="0">
                 <Label text="⭐" styleClass="emoticon"/>
-                <Label text="Stelle Michelin:" styleClass="details-label"/>
+                <Label text="Stelle Michelin" styleClass="details-label"/>
             </HBox>
-            <Label fx:id="valoreStelle" GridPane.rowIndex="5" GridPane.columnIndex="1" styleClass="details-value"/>
+            <Label fx:id="valoreStelle" GridPane.rowIndex="5" GridPane.columnIndex="1" styleClass="michelin-stars"/>
 
-            <HBox spacing="5" alignment="CENTER_LEFT" GridPane.rowIndex="6" GridPane.columnIndex="0">
+            <HBox styleClass="card-line" GridPane.rowIndex="6" GridPane.columnIndex="0">
                 <Label text="🌐" styleClass="emoticon"/>
-                <Label text="Sito web:" styleClass="details-label"/>
+                <Label text="Sito web" styleClass="details-label"/>
             </HBox>
-            <Hyperlink fx:id="linkSitoWeb" GridPane.rowIndex="6" GridPane.columnIndex="1" styleClass="details-link"/>
+            <Hyperlink fx:id="linkSitoWeb" GridPane.rowIndex="6" GridPane.columnIndex="1"/>
         </children>
     </GridPane>
 
-    <Label text="Sito Web del ristorante" styleClass="details-section-title"/>
+    <Label text="Sito web del ristorante" styleClass="section-title"/>
 
+    <!-- WebView è costruita da un Builder FXML: la styleClass va indicata
+         come elemento annidato, non come attributo. -->
     <WebView fx:id="vistaSito"
              prefWidth="680.0"
-             prefHeight="450.0"
-             minHeight="280.0">
+             prefHeight="420.0"
+             minHeight="260.0"
+             VBox.vgrow="ALWAYS">
         <styleClass>
             <String fx:value="details-map"/>
         </styleClass>
     </WebView>
 
-    <HBox spacing="10">
+    <HBox styleClass="nav-group">
         <Pane HBox.hgrow="ALWAYS"/>
-        <Button text="Chiudi"
-                onAction="#onChiudi"
-                styleClass="footer-button"/>
+        <Button text="Chiudi" onAction="#onChiudi" styleClass="btn-secondary"/>
     </HBox>
 </VBox>

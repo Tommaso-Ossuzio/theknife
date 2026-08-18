@@ -270,9 +270,13 @@ public class RestaurantDetailsController {
      * @author Matteo Franguelli
      */
     private void mostraMediaStelle(double media) {
+        // L'aspetto è definito in style.css: .michelin-stars (normale) e
+        // .michelin-none (variante spenta, applicata quando non ci sono stelle)
+        valoreStelle.getStyleClass().remove("michelin-none");
+
         if (media <= 0) {
             valoreStelle.setText("Nessuna stella Michelin");
-            valoreStelle.setStyle("-fx-text-fill: gray; -fx-font-size: 14px;");
+            valoreStelle.getStyleClass().add("michelin-none");
             return;
         }
         long stellePiene = Math.round(media);
@@ -289,7 +293,6 @@ public class RestaurantDetailsController {
         }
 
         valoreStelle.setText(sb.toString());
-        valoreStelle.setStyle("-fx-text-fill: gold; -fx-font-size: 18px; -fx-font-weight: bold;");
     }
 
     /**

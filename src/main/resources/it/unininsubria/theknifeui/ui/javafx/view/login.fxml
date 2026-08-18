@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.geometry.Insets?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
@@ -8,44 +7,44 @@
             xmlns:fx="http://javafx.com/fxml"
             fx:controller="theknife.ui.javafx.LoginController"
             stylesheets="@style.css"
-            styleClass="app-root"
-            prefWidth="350" prefHeight="280">
+            styleClass="dialog-root"
+            prefWidth="400" prefHeight="360">
+
+    <top>
+        <VBox styleClass="dialog-header">
+            <Label text="Bentornato" styleClass="page-title"/>
+            <Label text="Accedi per salvare i preferiti e scrivere recensioni."
+                   styleClass="subtitle"/>
+        </VBox>
+    </top>
 
     <center>
-        <VBox alignment="TOP_LEFT" spacing="15" style="-fx-background-color: white;">
-            <padding>
-                <Insets top="20" right="20" bottom="20" left="20"/>
-            </padding>
+        <VBox styleClass="form-body">
 
-            <Label text="Accedi" styleClass="section-title"/>
-
-            <Separator />
-
-            <VBox spacing="5">
-                <Label text="Username" style="-fx-font-weight: bold; -fx-text-fill: #555;"/>
+            <VBox styleClass="field-group">
+                <Label text="USERNAME" styleClass="field-label"/>
                 <TextField fx:id="campoUsername" promptText="Inserisci username"/>
             </VBox>
 
-            <VBox spacing="5">
-                <Label text="Password" style="-fx-font-weight: bold; -fx-text-fill: #555;"/>
+            <VBox styleClass="field-group">
+                <Label text="PASSWORD" styleClass="field-label"/>
                 <PasswordField fx:id="campoPassword" promptText="Inserisci password"/>
             </VBox>
 
-            <Label fx:id="etichettaErrore" textFill="red" wrapText="true"/>
+            <Label fx:id="etichettaErrore" styleClass="error-label" wrapText="true"/>
 
-            <Pane VBox.vgrow="ALWAYS" />
-            <Separator />
-
-            <HBox spacing="10" alignment="CENTER_RIGHT">
-                <Button text="Ospite"
-                        onAction="#onGuest"
-                        styleClass="footer-button"
-                        style="-fx-background-color: #95a5a6;"/>
-
-                <Button text="Accedi"
-                        onAction="#onLogin"
-                        styleClass="footer-button"/>
-            </HBox>
+            <Pane VBox.vgrow="ALWAYS"/>
         </VBox>
     </center>
+
+    <bottom>
+        <HBox styleClass="dialog-footer">
+            <Button text="Continua come ospite"
+                    onAction="#onGuest"
+                    styleClass="btn-ghost"/>
+            <Button text="Accedi"
+                    onAction="#onLogin"
+                    styleClass="btn-primary"/>
+        </HBox>
+    </bottom>
 </BorderPane>

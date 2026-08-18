@@ -14,8 +14,11 @@ import java.security.NoSuchAlgorithmException;
 
 /**
  * Controller della finestra di registrazione.
- * Gestisce la creazione di un nuovo utente (cliente e/o ristoratore)
- * e il salvataggio delle credenziali nel file data/users.csv.
+ * Gestisce la creazione di un nuovo utente e il salvataggio
+ * delle credenziali nel file data/users.csv.
+ * <p>
+ * Il ruolo è esclusivo: un account è Cliente oppure Ristoratore.
+ * La doppia appartenenza non è più prevista.
  *
  * @author Matteo Franguelli
  */
@@ -27,8 +30,8 @@ public class RegisterController {
     @FXML private PasswordField campoPassword;
     @FXML private TextField campoCitta;
 
-    @FXML private CheckBox checkCliente;
-    @FXML private CheckBox checkRistoratore;
+    @FXML private RadioButton radioCliente;
+    @FXML private RadioButton radioRistoratore;
 
     @FXML private Label etichettaErrore;
 
@@ -51,10 +54,31 @@ public class RegisterController {
      */
     @FXML
     private void initialize() {
-        if (checkCliente != null) {
-            checkCliente.setSelected(true);
+        if (radioCliente != null) {
+            radioCliente.setSelected(true);
         }
     }
+
+    /**
+     * Rende cliccabile l'intera card del ruolo "Cliente", non solo il pallino.
+     *
+     * @author Matteo Franguelli
+     */
+    @FXML
+    private void onScegliCliente() {
+        radioCliente.setSelected(true);
+    }
+
+    /**
+     * Rende cliccabile l'intera card del ruolo "Ristoratore", non solo il pallino.
+     *
+     * @author Matteo Franguelli
+     */
+    @FXML
+    private void onScegliRistoratore() {
+        radioRistoratore.setSelected(true);
+    }
+
     /**
      * Gestisce il ritorno alla schermata precedente.
      *
@@ -77,17 +101,13 @@ public class RegisterController {
         String password     = campoPassword.getText();
         String citta        = campoCitta.getText();
 
-        boolean isCliente     = checkCliente.isSelected();
-        boolean isRistoratore = checkRistoratore.isSelected();
+        // Il ruolo è esclusivo: uno dei due è sempre e solo vero
+        boolean isRistoratore = radioRistoratore.isSelected();
+        boolean isCliente     = !isRistoratore;
 
         // Cambi obbligatori
         if (username == null || username.isBlank() || password == null || password.isBlank()) {
             etichettaErrore.setText("Username e password sono obbligatori.");
-            return;
-        }
-
-        if (!isCliente && !isRistoratore) {
-            etichettaErrore.setText("Devi selezionare almeno un ruolo.");
             return;
         }
 

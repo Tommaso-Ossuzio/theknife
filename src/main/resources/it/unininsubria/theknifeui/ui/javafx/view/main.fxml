@@ -5,95 +5,155 @@
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.image.Image?>
 
+<!--
+    Schermata principale di TheKnife.
+
+    Ogni aspetto grafico (colori, spaziature, tipografia) è definito in
+    style.css tramite le styleClass: in questo file non deve comparire
+    nessun attributo style="...".
+-->
 <BorderPane xmlns="http://javafx.com/javafx"
             xmlns:fx="http://javafx.com/fxml"
             fx:controller="theknife.ui.javafx.MainController"
             stylesheets="@style.css"
             styleClass="app-root">
 
-    <!-- BARRA IN ALTO -->
+    <!-- ============================================================
+         BARRA SUPERIORE: marchio a sinistra, azioni utente a destra
+         ============================================================ -->
     <top>
-        <VBox alignment="CENTER" spacing="5" styleClass="top-bar">
-            <ImageView fx:id="appLogo"
-                       fitHeight="150"
-                       preserveRatio="true"
-                       smooth="true"
-                       cache="true">
-                <image>
-                    <Image url="@../img/logo_theknife.png"/>
-                </image>
-            </ImageView>
-            <HBox spacing="10" alignment="CENTER">
-                <HBox alignment="CENTER_LEFT">
-                    <Label text="🍴" styleClass="emoticon"/>
-                    <Label text="TheKnife" styleClass="logo-label"/>
+        <VBox styleClass="top-bar">
+            <HBox styleClass="top-bar-row">
+
+                <HBox styleClass="brand">
+                    <ImageView fx:id="appLogo"
+                               fitHeight="36"
+                               preserveRatio="true"
+                               smooth="true"
+                               cache="true">
+                        <image>
+                            <Image url="@../img/logo_theknife.png"/>
+                        </image>
+                    </ImageView>
+                    <Label text="TheKnife" styleClass="brand-name"/>
                 </HBox>
+
                 <Pane HBox.hgrow="ALWAYS"/>
-                <Label fx:id="etichettaRuolo"/>
-                <Button fx:id="bottoneLogin" text="Accedi" onAction="#onShowLogin"/>
-                <Button fx:id="bottoneRegistrati" text="Registrati" onAction="#onShowRegister"/>
+
+                <Label fx:id="etichettaRuolo" styleClass="user-chip"/>
+
                 <Button fx:id="bottoneMieiRistoranti"
                         text="I miei ristoranti"
+                        onAction="#onShowMyRestaurants"
+                        styleClass="btn-ghost"
                         visible="false"
-                        managed="false"
-                        onAction="#onShowMyRestaurants"/>
-                <Button fx:id="bottonePreferiti"
-                        text="I miei preferiti"
-                        visible="false"
-                        managed="false"
-                        onAction="#onShowFavorites"/>
-                <Button fx:id="bottoneMieRecensioni"
-                        text="Le mie recensioni"
-                        visible="false"
-                        managed="false"
-                        onAction="#onShowMyReviews"/>
+                        managed="false"/>
                 <Button fx:id="bottoneRispondiRecensioni"
                         text="Rispondi alle recensioni"
                         onAction="#onReplyReviews"
+                        styleClass="btn-ghost"
                         visible="false"
                         managed="false"/>
-                <Button fx:id="bottoneLogout" text="Logout" onAction="#onLogout" visible="false"/>
+                <Button fx:id="bottonePreferiti"
+                        text="Preferiti"
+                        onAction="#onShowFavorites"
+                        styleClass="btn-ghost"
+                        visible="false"
+                        managed="false"/>
+                <Button fx:id="bottoneMieRecensioni"
+                        text="Le mie recensioni"
+                        onAction="#onShowMyReviews"
+                        styleClass="btn-ghost"
+                        visible="false"
+                        managed="false"/>
+
+                <Button fx:id="bottoneLogin"
+                        text="Accedi"
+                        onAction="#onShowLogin"
+                        styleClass="btn-secondary"/>
+                <Button fx:id="bottoneRegistrati"
+                        text="Registrati"
+                        onAction="#onShowRegister"
+                        styleClass="btn-primary"/>
+                <Button fx:id="bottoneLogout"
+                        text="Esci"
+                        onAction="#onLogout"
+                        styleClass="btn-danger"
+                        visible="false"
+                        managed="false"/>
             </HBox>
         </VBox>
     </top>
 
-    <!-- CONTENUTO CENTRALE -->
+    <!-- ============================================================
+         CONTENUTO: intestazione, barra di ricerca, griglia impaginata
+         ============================================================ -->
     <center>
-        <BorderPane styleClass="content-pane">
-            <top>
-                <Label text="Ristoranti" styleClass="section-title"/>
-            </top>
-            <center>
-                <VBox spacing="10" style="-fx-padding: 10;">
-                    <!-- BARRA FILTRI -->
-                    <HBox spacing="10" alignment="CENTER_LEFT">
-                        <TextField fx:id="campoLuogo" promptText="Città (es. Milano)" HBox.hgrow="ALWAYS"/>
-                        <TextField fx:id="campoCucina" promptText="Cucina (es. Italian)" HBox.hgrow="ALWAYS"/>
-                        <Button text="Filtra" onAction="#onApplyFilters"/>
-                        <Button text="Reset" onAction="#onResetFilters" styleClass="footer-button" style="-fx-background-color: #7f8c8d;"/>
-                        <Button text="Filtro avanzato" onAction="#onShowAdvancedFilter"/>
+        <VBox styleClass="content-pane">
 
-                    </HBox>
+            <HBox styleClass="content-header">
+                <Label text="Ristoranti" styleClass="page-title"/>
+                <Pane HBox.hgrow="ALWAYS"/>
+                <Label fx:id="etichettaRisultati" styleClass="page-status"/>
+            </HBox>
 
-                    <!-- LISTA RISTORANTI -->
-                    <ListView fx:id="listaRistoranti"
-                              styleClass="restaurant-list"
-                              VBox.vgrow="ALWAYS"/>
+            <!-- BARRA DI RICERCA -->
+            <HBox styleClass="search-bar">
+                <TextField fx:id="campoLuogo"
+                           promptText="In quale città vuoi mangiare?"
+                           HBox.hgrow="ALWAYS"/>
+                <TextField fx:id="campoCucina"
+                           promptText="Tipo di cucina (es. Italian)"
+                           HBox.hgrow="ALWAYS"/>
+                <Button text="Cerca"
+                        onAction="#onApplyFilters"
+                        styleClass="btn-primary"/>
+                <Button text="Filtri avanzati"
+                        onAction="#onShowAdvancedFilter"
+                        styleClass="btn-secondary"/>
+                <Button text="Azzera"
+                        onAction="#onResetFilters"
+                        styleClass="btn-ghost"/>
+            </HBox>
+
+            <!-- GRIGLIA DI CARD DIVISA IN PAGINE -->
+            <StackPane VBox.vgrow="ALWAYS">
+                <Pagination fx:id="paginazione"/>
+
+                <!-- Mostrato al posto della griglia quando non ci sono risultati -->
+                <VBox fx:id="statoVuoto" styleClass="empty-state">
+                    <Label text="🍽" styleClass="empty-state-icon"/>
+                    <Label fx:id="etichettaStatoVuoto"
+                           text="Nessun ristorante da mostrare"
+                           styleClass="empty-state-text"/>
+                    <Label text="Prova a cercare un'altra città o ad azzerare i filtri."
+                           styleClass="muted-text"/>
                 </VBox>
-            </center>
-        </BorderPane>
+            </StackPane>
+        </VBox>
     </center>
 
-    <!-- FOOTER -->
+    <!-- ============================================================
+         PIEDE: azioni sul ristorante selezionato
+         ============================================================ -->
     <bottom>
-        <HBox spacing="10" styleClass="footer-bar">
-            <children>
-                <Label text="Lista dei ristoranti" styleClass="footer-text"/>
-                <Pane HBox.hgrow="ALWAYS"/>
-                <Button fx:id="bottoneVisualizzaRecensioni" text="Visualizza recensioni" onAction="#onViewReviews" styleClass="footer-button"/>
-                <Button fx:id="bottoneAggiungiRecensione" text="Aggiungi recensione" onAction="#onAddReview" styleClass="footer-button"/>
-                <Button fx:id="bottoneAggiungiRistorante" text="Aggiungi ristorante" onAction="#onAddRestaurant" styleClass="footer-button"/>
-            </children>
+        <HBox styleClass="footer-bar">
+            <Label fx:id="etichettaSelezione"
+                   text="Seleziona un ristorante per vedere le azioni disponibili"
+                   styleClass="muted-text"/>
+            <Pane HBox.hgrow="ALWAYS"/>
+            <Button fx:id="bottoneVisualizzaRecensioni"
+                    text="Visualizza recensioni"
+                    onAction="#onViewReviews"
+                    styleClass="btn-secondary"/>
+            <Button fx:id="bottoneAggiungiRecensione"
+                    text="Aggiungi recensione"
+                    onAction="#onAddReview"
+                    styleClass="btn-primary"/>
+            <Button fx:id="bottoneAggiungiRistorante"
+                    text="Aggiungi ristorante"
+                    onAction="#onAddRestaurant"
+                    styleClass="btn-accent"/>
         </HBox>
     </bottom>
 

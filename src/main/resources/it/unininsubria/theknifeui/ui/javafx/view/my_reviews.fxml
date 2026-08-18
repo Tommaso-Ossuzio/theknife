@@ -1,31 +1,40 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.geometry.Insets?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
 <BorderPane xmlns="http://javafx.com/javafx"
             xmlns:fx="http://javafx.com/fxml"
-            fx:controller="theknife.ui.javafx.MyReviewsController">
+            fx:controller="theknife.ui.javafx.MyReviewsController"
+            stylesheets="@style.css"
+            styleClass="app-root"
+            prefWidth="720" prefHeight="520">
 
     <top>
-        <Label text="Le mie recensioni"
-               style="-fx-font-size: 18; -fx-font-weight: bold; -fx-padding: 10 10 10 10;"/>
+        <VBox styleClass="dialog-header">
+            <Label text="Le mie recensioni" styleClass="page-title"/>
+            <Label text="Tutti i giudizi che hai lasciato ai ristoranti."
+                   styleClass="subtitle"/>
+        </VBox>
     </top>
 
     <center>
-        <TableView fx:id="tabellaRecensioni">
-            <columns>
-                <TableColumn fx:id="colonnaRistorante" text="Ristorante" prefWidth="180"/>
-                <TableColumn fx:id="colonnaVoto" text="Voto" prefWidth="80"/>
-                <TableColumn fx:id="colonnaTesto" text="Recensione" prefWidth="280"/>
-            </columns>
-        </TableView>
-    </center>
+        <!-- Il controller nasconde la tabella quando è vuota: lo StackPane
+             fa comparire al suo posto il messaggio, centrato nell'area. -->
+        <StackPane styleClass="content-pane">
+            <TableView fx:id="tabellaRecensioni">
+                <columns>
+                    <TableColumn fx:id="colonnaRistorante" text="Ristorante" prefWidth="200"/>
+                    <TableColumn fx:id="colonnaVoto" text="Voto" prefWidth="90"/>
+                    <TableColumn fx:id="colonnaTesto" text="Recensione" prefWidth="380"/>
+                </columns>
+            </TableView>
 
-    <bottom>
-        <Label fx:id="etichettaVuota"
-               text="Non hai ancora scritto recensioni."
-               style="-fx-text-fill: #6b7280; -fx-padding: 8 10 10 10;"/>
-    </bottom>
+            <VBox styleClass="empty-state" mouseTransparent="true">
+                <Label fx:id="etichettaVuota"
+                       text="Non hai ancora scritto recensioni."
+                       styleClass="empty-state-text"/>
+            </VBox>
+        </StackPane>
+    </center>
 </BorderPane>
