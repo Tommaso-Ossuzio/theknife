@@ -1,4 +1,4 @@
-module it.unininsubria.theknifeui {
+module it.uninsubria.theknifeui {
     requires javafx.controls;
     requires javafx.fxml;
     requires java.desktop;
