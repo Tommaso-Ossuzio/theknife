@@ -27,7 +27,7 @@ public class AppServer {
                 DatabaseConfig.getUser(),
                 DatabaseConfig.getPassword())) {
 
-            ImportatoreDati.importa(conn);
+            ImportaDati.importa(conn);
 
         } catch (Exception e) {
             System.err.println("Errore durante l'importazione:");

@@ -435,6 +435,21 @@
         <mxCell id="S65QS8XESEYO1J4oqKJj-115" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;rounded=0;" value="Data_nascita" vertex="1">
           <mxGeometry height="20" width="80" x="985" y="290" as="geometry" />
         </mxCell>
+        <mxCell id="oUWLK3Ck_RkWLzAUlVxm-7" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;rounded=0;" value="Telefono" vertex="1">
+          <mxGeometry height="20" width="40" x="500" y="198" as="geometry" />
+        </mxCell>
+        <mxCell id="oUWLK3Ck_RkWLzAUlVxm-8" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;rounded=0;" value="Website" vertex="1">
+          <mxGeometry height="20" width="40" x="550" y="175" as="geometry" />
+        </mxCell>
+        <mxCell id="oUWLK3Ck_RkWLzAUlVxm-9" edge="1" parent="1" source="oUWLK3Ck_RkWLzAUlVxm-7" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0.096;entryY=0.007;entryDx=0;entryDy=0;entryPerimeter=0;endArrow=none;endFill=0;startArrow=oval;startFill=0;" target="S65QS8XESEYO1J4oqKJj-10">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="oUWLK3Ck_RkWLzAUlVxm-10" edge="1" parent="1" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.762;exitY=1.074;exitDx=0;exitDy=0;endArrow=none;endFill=0;startArrow=oval;startFill=0;entryX=0.212;entryY=0.004;entryDx=0;entryDy=0;entryPerimeter=0;exitPerimeter=0;">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="580.48" y="196.16000000000003" as="sourcePoint" />
+            <mxPoint x="581.1999999999999" y="219.84000000000003" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
       </root>
     </mxGraphModel>
   </diagram>

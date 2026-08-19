@@ -11,15 +11,25 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 
-public class ImportatoreDati {
+public class ImportaDati {
 
     /**
      * Metodo principale per l'importazione.
      */
     public static void importa(Connection conn) {
-        // Usa il path relativo partendo dalla root del progetto IDEA
         String csvPath = "data/michelin_my_maps.csv";
         
+        //DB è già popolato?
+        try (Statement stmt = conn.createStatement();
+             ResultSet rs = stmt.executeQuery("SELECT COUNT(*) FROM RISTORANTE")) {
+            if (rs.next() && rs.getInt(1) > 0) {
+                System.out.println("Il database contiene già " + rs.getInt(1) + " ristoranti. L'importazione CSV verrà saltata per risparmiare tempo.");
+                return;
+            }
+        } catch (SQLException e) {
+            System.err.println("Errore nel controllo del DB: " + e.getMessage());
+        }
+
         System.out.println("\n--- Inizio importazione dati dal CSV Michelin ---");
 
         //verifico l'esistenza dell'utente
@@ -31,15 +41,16 @@ public class ImportatoreDati {
 
         try (CSVReader reader = new CSVReader(new FileReader(csvPath))) {
             String[] header = reader.readNext(); // Salta l'intestazione delle colonne
-            if (header == null) return;
+            if (header == null)
+                return;
 
             String[] line;
             int count = 0;
             
-            // Ciclo riga per riga
-            while ((line = reader.readNext()) != null) { 
+            while ((line = reader.readNext()) != null) {
                 // ignora le colonne che non ci servono
-                if (line.length < 7) continue;
+                if (line.length < 8)
+                    continue;
 
                 String nomeRist = line[0].trim();
                 String via = line[1].trim();
@@ -47,6 +58,15 @@ public class ImportatoreDati {
                 String fasciaPrezzo = line[3].trim();
                 String cucineStr = line[4].trim();
                 
+                String telefono = line[7].trim();
+                String sitoWeb = (line.length > 9) ? line[9].trim() : null;
+                
+                // Pulisci stringhe vuote
+                if (sitoWeb != null && (sitoWeb.isEmpty() || sitoWeb.equalsIgnoreCase("NULL")))
+                    sitoWeb = null;
+                if (telefono != null && (telefono.isEmpty() || telefono.equalsIgnoreCase("NULL")))
+                    telefono = null;
+
                 double lon, lat;
                 try {
                     lon = Double.parseDouble(line[5]);
@@ -56,10 +76,12 @@ public class ImportatoreDati {
                 }
 
                 // Limitiamo la lunghezza dei campi per rispettare i VARCHAR(100) del database
-                if (nomeRist.length() > 100)
-                    nomeRist = nomeRist.substring(0, 100);
-                if (fasciaPrezzo.length() > 50)
-                    fasciaPrezzo = fasciaPrezzo.substring(0, 50);
+                if (nomeRist.length() > 100) nomeRist = nomeRist.substring(0, 100);
+                if (fasciaPrezzo.length() > 50) fasciaPrezzo = fasciaPrezzo.substring(0, 50);
+                if (telefono != null && telefono.length() > 50)
+                    telefono = telefono.substring(0, 50);
+                if (sitoWeb != null && sitoWeb.length() > 255)
+                    sitoWeb = sitoWeb.substring(0, 255);
 
                 // Divide nazione e città
                 String[] locParts = location.split(", ");
@@ -67,7 +89,8 @@ public class ImportatoreDati {
                 if (nomeCitta.length() > 100) nomeCitta = nomeCitta.substring(0, 100);
                 
                 String nomeNazione = locParts.length > 1 ? locParts[1].trim() : "Sconosciuta";
-                if (nomeNazione.length() > 100) nomeNazione = nomeNazione.substring(0, 100);
+                if (nomeNazione.length() > 100)
+                    nomeNazione = nomeNazione.substring(0, 100);
 
                 try {
                     inserisciNazione(conn, nomeNazione);
@@ -75,13 +98,14 @@ public class ImportatoreDati {
                     int idCoord = inserisciCoordinate(conn, lat, lon);
                     int idLuogo = inserisciLuogo(conn, via, idCitta, idCoord);
                     
-                    inserisciRistorante(conn, nomeRist, fasciaPrezzo, idAdmin, idLuogo);
+                    inserisciRistorante(conn, nomeRist, telefono, sitoWeb, fasciaPrezzo, idAdmin, idLuogo);
 
                     String[] cucine = cucineStr.split(", ");
                     for (String c : cucine) {
                         String tipo = c.trim();
                         if (!tipo.isEmpty()) {
-                            if (tipo.length() > 100) tipo = tipo.substring(0, 100);
+                            if (tipo.length() > 100)
+                                tipo = tipo.substring(0, 100);
                             inserisciTipoCucina(conn, tipo);
                             collegaRistoranteCucina(conn, nomeRist, tipo);
                         }
@@ -94,7 +118,6 @@ public class ImportatoreDati {
                     
                 } catch (SQLException e) {
                     // Se una singola riga fallisce (es. duplicato), andiamo avanti con la prossima
-                    // System.err.println("Errore inserimento ristorante: " + nomeRist + " - " + e.getMessage());
                 }
             }
             System.out.println("Importazione completata con successo! Ristoranti totali inseriti: " + count);
@@ -112,7 +135,8 @@ public class ImportatoreDati {
         try (PreparedStatement ps = conn.prepareStatement("SELECT id_utente FROM UTENTE WHERE email = ?")) {
             ps.setString(1, email);
             ResultSet rs = ps.executeQuery();
-            if (rs.next()) return rs.getInt("id_utente");
+            if (rs.next())
+                return rs.getInt("id_utente");
         } catch (SQLException e) { e.printStackTrace(); }
 
         try {
@@ -131,7 +155,8 @@ public class ImportatoreDati {
                 ps.setInt(6, idLuogo);
                 ps.executeUpdate();
                 ResultSet rs = ps.getGeneratedKeys();
-                if (rs.next()) return rs.getInt(1);
+                if (rs.next())
+                    return rs.getInt(1);
             }
         } catch (SQLException e) { e.printStackTrace(); }
         return -1;
@@ -151,7 +176,8 @@ public class ImportatoreDati {
             ps.setString(1, nome);
             ps.setString(2, nazione);
             ResultSet rs = ps.executeQuery();
-            if (rs.next()) return rs.getInt(1);
+            if (rs.next())
+                return rs.getInt(1);
         }
         
         String sql = "INSERT INTO CITTA (nome, nome_nazione) VALUES (?, ?)";
@@ -160,7 +186,8 @@ public class ImportatoreDati {
             ps.setString(2, nazione);
             ps.executeUpdate();
             ResultSet rs = ps.getGeneratedKeys();
-            if (rs.next()) return rs.getInt(1);
+            if (rs.next())
+                return rs.getInt(1);
         }
         throw new SQLException("Errore creazione Citta: " + nome);
     }
@@ -172,7 +199,8 @@ public class ImportatoreDati {
             ps.setDouble(2, lon);
             ps.executeUpdate();
             ResultSet rs = ps.getGeneratedKeys();
-            if (rs.next()) return rs.getInt(1);
+            if (rs.next())
+                return rs.getInt(1);
         }
         throw new SQLException("Errore creazione Coordinate");
     }
@@ -186,20 +214,23 @@ public class ImportatoreDati {
             ps.setInt(3, idCoord);
             ps.executeUpdate();
             ResultSet rs = ps.getGeneratedKeys();
-            if (rs.next()) return rs.getInt(1);
+            if (rs.next())
+                return rs.getInt(1);
         }
         throw new SQLException("Errore creazione Luogo");
     }
 
-    private static void inserisciRistorante(Connection conn, String nome, String prezzo, int idUtente, int idLuogo) throws SQLException {
-        String sql = "INSERT INTO RISTORANTE (nome, delivery, prenotazione_online, fascia_prezzo, id_utente, id_luogo) VALUES (?, ?, ?, ?, ?, ?) ON CONFLICT (nome) DO NOTHING";
+    private static void inserisciRistorante(Connection conn, String nome, String telefono, String sito_web, String prezzo, int idUtente, int idLuogo) throws SQLException {
+        String sql = "INSERT INTO RISTORANTE (nome, telefono, sito_web, delivery, prenotazione_online, fascia_prezzo, id_utente, id_luogo) VALUES (?, ?, ?, ?, ?, ?, ?, ?) ON CONFLICT (nome) DO NOTHING";
         try (PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setString(1, nome);
-            ps.setBoolean(2, false);
-            ps.setBoolean(3, false);
-            ps.setString(4, prezzo);
-            ps.setInt(5, idUtente);
-            ps.setInt(6, idLuogo);
+            ps.setString(2, telefono); // Può essere null, JDBC lo gestisce
+            ps.setString(3, sito_web);
+            ps.setBoolean(4, false);
+            ps.setBoolean(5, false);
+            ps.setString(6, prezzo);
+            ps.setInt(7, idUtente);
+            ps.setInt(8, idLuogo);
             ps.executeUpdate();
         }
     }
