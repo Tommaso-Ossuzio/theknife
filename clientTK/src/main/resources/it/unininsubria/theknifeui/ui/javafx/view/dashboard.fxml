@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.image.Image?>
+
+<!--
+    Dashboard del ristoratore.
+
+    È la schermata principale di chi gestisce ristoranti e prende il posto
+    dell'elenco dei ristoranti, che serve invece a clienti e ospiti: le due
+    figure usano l'applicazione per motivi diversi e non condividono più la
+    stessa schermata.
+
+    Come per ogni altra vista, l'aspetto è tutto in style.css.
+-->
+<BorderPane xmlns="http://javafx.com/javafx"
+            xmlns:fx="http://javafx.com/fxml"
+            fx:controller="theknife.ui.javafx.DashboardController"
+            stylesheets="@style.css"
+            styleClass="app-root">
+
+    <!-- ============================================================
+         BARRA SUPERIORE
+         ============================================================ -->
+    <top>
+        <VBox styleClass="top-bar">
+            <HBox styleClass="top-bar-row">
+
+                <HBox styleClass="brand">
+                    <ImageView fitHeight="36"
+                               preserveRatio="true"
+                               smooth="true"
+                               cache="true">
+                        <image>
+                            <Image url="@../img/logo_theknife.png"/>
+                        </image>
+                    </ImageView>
+                    <Label text="TheKnife" styleClass="brand-name"/>
+                </HBox>
+
+                <Pane HBox.hgrow="ALWAYS"/>
+
+                <Label fx:id="etichettaUtente" styleClass="user-chip"/>
+
+                <Button text="Esplora ristoranti"
+                        onAction="#onEsplora"
+                        styleClass="btn-ghost"/>
+                <Button text="Esci"
+                        onAction="#onLogout"
+                        styleClass="btn-danger"/>
+                <Button fx:id="bottoneTema"
+                        onAction="#onCambiaTema"
+                        styleClass="btn-theme"/>
+            </HBox>
+        </VBox>
+    </top>
+
+    <!-- ============================================================
+         CONTENUTO: numeri in evidenza e propri ristoranti
+         ============================================================ -->
+    <center>
+        <ScrollPane fitToWidth="true">
+            <VBox styleClass="content-pane">
+
+                <HBox styleClass="content-header">
+                    <Label text="La mia attività" styleClass="page-title"/>
+                </HBox>
+
+                <!-- NUMERI IN EVIDENZA -->
+                <HBox styleClass="stat-row">
+
+                    <VBox styleClass="stat-tile" HBox.hgrow="ALWAYS">
+                        <Label fx:id="valoreLocali" text="—" styleClass="stat-value"/>
+                        <Label text="Ristoranti gestiti" styleClass="stat-label"/>
+                    </VBox>
+
+                    <VBox styleClass="stat-tile" HBox.hgrow="ALWAYS">
+                        <Label fx:id="valoreMedia" text="—" styleClass="stat-value"/>
+                        <Label text="Media delle recensioni" styleClass="stat-label"/>
+                    </VBox>
+
+                    <VBox styleClass="stat-tile" HBox.hgrow="ALWAYS">
+                        <Label fx:id="valoreRecensioni" text="—" styleClass="stat-value"/>
+                        <Label text="Recensioni ricevute" styleClass="stat-label"/>
+                    </VBox>
+
+                    <!-- Questo riquadro è cliccabile: porta alle recensioni da evadere -->
+                    <VBox fx:id="tileSenzaRisposta"
+                          styleClass="stat-tile,stat-tile-action"
+                          onMouseClicked="#onRecensioniDaEvadere"
+                          HBox.hgrow="ALWAYS">
+                        <Label fx:id="valoreSenzaRisposta" text="—" styleClass="stat-value"/>
+                        <Label text="Senza risposta" styleClass="stat-label"/>
+                        <Label text="Clicca per rispondere" styleClass="stat-hint"/>
+                    </VBox>
+                </HBox>
+
+                <!-- PROPRI RISTORANTI -->
+                <HBox styleClass="content-header">
+                    <Label text="I miei ristoranti" styleClass="section-title"/>
+                    <Pane HBox.hgrow="ALWAYS"/>
+                    <Button text="+ Aggiungi ristorante"
+                            onAction="#onAggiungiRistorante"
+                            styleClass="btn-primary"/>
+                </HBox>
+
+                <VBox fx:id="contenitoreRistoranti" styleClass="owner-list"/>
+
+                <VBox fx:id="statoVuoto" styleClass="empty-state">
+                    <Label text="🍽" styleClass="empty-state-icon"/>
+                    <Label text="Non gestisci ancora nessun ristorante"
+                           styleClass="empty-state-text"/>
+                    <Label text="Aggiungine uno per vedere qui le sue recensioni e la sua media."
+                           styleClass="muted-text"/>
+                </VBox>
+
+            </VBox>
+        </ScrollPane>
+    </center>
+
+</BorderPane>

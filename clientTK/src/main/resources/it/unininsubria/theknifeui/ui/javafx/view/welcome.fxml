@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.image.Image?>
+
+<!--
+    Schermata di benvenuto: è la prima cosa che si vede all'avvio.
+
+    Presenta le tre strade possibili (accedere, registrarsi, entrare come
+    ospite) prima di mostrare il catalogo dei ristoranti. Chi entra come
+    ospite deve per forza indicare da dove sta cercando, perché senza un
+    luogo la ricerca dei ristoranti non ha un punto di partenza.
+
+    Come per ogni altra vista, qui non compare nessun attributo style="...":
+    l'aspetto è tutto in style.css.
+-->
+<BorderPane xmlns="http://javafx.com/javafx"
+            xmlns:fx="http://javafx.com/fxml"
+            fx:controller="theknife.ui.javafx.WelcomeController"
+            stylesheets="@style.css"
+            styleClass="app-root">
+
+    <!-- ============================================================
+         BARRA SUPERIORE: marchio e cambio tema
+         ============================================================ -->
+    <top>
+        <VBox styleClass="top-bar">
+            <HBox styleClass="top-bar-row">
+
+                <HBox styleClass="brand">
+                    <ImageView fitHeight="36"
+                               preserveRatio="true"
+                               smooth="true"
+                               cache="true">
+                        <image>
+                            <Image url="@../img/logo_theknife.png"/>
+                        </image>
+                    </ImageView>
+                    <Label text="TheKnife" styleClass="brand-name"/>
+                </HBox>
+
+                <Pane HBox.hgrow="ALWAYS"/>
+
+                <Button fx:id="bottoneTema"
+                        onAction="#onCambiaTema"
+                        styleClass="btn-theme"/>
+            </HBox>
+        </VBox>
+    </top>
+
+    <!-- ============================================================
+         CONTENUTO: le tre strade possibili
+         ============================================================ -->
+    <center>
+        <ScrollPane fitToWidth="true">
+            <VBox styleClass="welcome-pane">
+
+                <VBox styleClass="welcome-card">
+
+                    <Label text="Benvenuto in TheKnife" styleClass="page-title"/>
+                    <Label text="Il catalogo dei ristoranti della guida Michelin: cercali, leggi le recensioni e lascia la tua."
+                           styleClass="subtitle"
+                           wrapText="true"/>
+
+                    <VBox styleClass="welcome-actions">
+                        <Button text="Accedi"
+                                onAction="#onAccedi"
+                                styleClass="btn-primary,btn-block"
+                                maxWidth="Infinity"/>
+                        <Button text="Registrati"
+                                onAction="#onRegistrati"
+                                styleClass="btn-secondary,btn-block"
+                                maxWidth="Infinity"/>
+                    </VBox>
+
+                    <!-- Divisore con la parola "oppure" al centro -->
+                    <HBox styleClass="welcome-divider">
+                        <Separator HBox.hgrow="ALWAYS"/>
+                        <Label text="oppure" styleClass="muted-text"/>
+                        <Separator HBox.hgrow="ALWAYS"/>
+                    </HBox>
+
+                    <!-- Ingresso come ospite: il luogo è obbligatorio -->
+                    <VBox styleClass="guest-box">
+
+                        <Label text="Continua come ospite" styleClass="section-title"/>
+                        <Label text="Da ospite puoi cercare i ristoranti e leggere le recensioni, ma non puoi scriverne né salvare preferiti."
+                               styleClass="muted-text"
+                               wrapText="true"/>
+
+                        <VBox styleClass="field-group">
+                            <Label text="Da dove stai cercando? *" styleClass="field-label"/>
+                            <ComboBox fx:id="campoCitta"
+                                      editable="true"
+                                      promptText="Scrivi le prime lettere della città"
+                                      maxWidth="Infinity"/>
+                            <Label fx:id="etichettaStato" styleClass="muted-text"/>
+                            <Label fx:id="etichettaErrore" styleClass="error-label"/>
+                        </VBox>
+
+                        <Button fx:id="bottoneOspite"
+                                text="Entra come ospite"
+                                onAction="#onOspite"
+                                styleClass="btn-accent,btn-block"
+                                maxWidth="Infinity"/>
+                    </VBox>
+                </VBox>
+            </VBox>
+        </ScrollPane>
+    </center>
+
+</BorderPane>

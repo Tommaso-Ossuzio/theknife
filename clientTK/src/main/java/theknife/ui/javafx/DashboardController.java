@@ -1,0 +1,287 @@
+package theknife.ui.javafx;
+
+import javafx.application.Platform;
+import javafx.fxml.FXML;
+import javafx.scene.control.Button;
+import javafx.scene.control.Label;
+import javafx.scene.control.Tooltip;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.Priority;
+import javafx.scene.layout.Region;
+import javafx.scene.layout.VBox;
+import theknife.model.GestioneFile;
+import theknife.model.GestioneRecensioni;
+import theknife.model.GestioneRistoranti;
+import theknife.model.Ristorante;
+
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Locale;
+
+//TODO da rivedere, vengono usati i file
+
+/**
+ * Controller della dashboard del ristoratore.
+ * <p>
+ * Sostituisce, per chi gestisce ristoranti, l'elenco dei ristoranti che vedono
+ * clienti e ospiti: le due figure hanno bisogni opposti, il cliente cerca dove
+ * mangiare mentre il ristoratore controlla come stanno andando i propri locali.
+ * <p>
+ * La schermata riassume in quattro numeri lo stato dell'attività e poi elenca i
+ * ristoranti gestiti, ciascuno con la propria media. Il riquadro delle
+ * recensioni senza risposta è cliccabile perché è l'unico dei quattro che
+ * segnala qualcosa da fare.
+ *
+ * @author Matteo Franguelli
+ */
+public class DashboardController {
+
+    @FXML private Label etichettaUtente;
+    @FXML private Button bottoneTema;
+
+    @FXML private Label valoreLocali;
+    @FXML private Label valoreMedia;
+    @FXML private Label valoreRecensioni;
+    @FXML private Label valoreSenzaRisposta;
+    @FXML private VBox tileSenzaRisposta;
+
+    @FXML private VBox contenitoreRistoranti;
+    @FXML private VBox statoVuoto;
+
+    private final GestioneRistoranti gestioneRistoranti = GestioneRistoranti.getInstance();
+    private final GestioneRecensioni gestioneRecensioni = GestioneRecensioni.getInstance();
+
+    /** Ristoranti di cui l'utente collegato è proprietario. */
+    private List<Ristorante> mieiRistoranti = new LinkedList<>();
+
+    /**
+     * Prepara la dashboard con i dati del ristoratore collegato.
+     * @author Matteo Franguelli
+     */
+    @FXML
+    private void initialize() {
+        aggiornaPulsanteTema();
+
+        Session sessione = Session.getInstance();
+        etichettaUtente.setText("Ristoratore: " + (sessione.getUsername() == null ? "" : sessione.getUsername()));
+
+        // Di norma il catalogo è già stato letto dalla schermata di benvenuto.
+        // Se si è fatto in tempo ad accedere prima che finisse, lo si attende
+        // in un thread separato per non bloccare la grafica.
+        if (gestioneRistoranti.isCaricato()) {
+            aggiornaTutto();
+        } else {
+            new Thread(() -> {
+                gestioneRistoranti.caricaDaCsv();
+                Platform.runLater(this::aggiornaTutto);
+            }).start();
+        }
+    }
+
+    /**
+     * Rilegge i propri ristoranti e ridisegna numeri ed elenco.
+     * Va richiamato dopo ogni operazione che può averli cambiati.
+     *
+     * @author Matteo Franguelli
+     */
+    private void aggiornaTutto() {
+        caricaMieiRistoranti();
+        aggiornaNumeri();
+        costruisciElenco();
+    }
+
+    /**
+     * Recupera dal file degli utenti i ristoranti posseduti.
+     * @author Matteo Franguelli
+     */
+    private void caricaMieiRistoranti() {
+        mieiRistoranti = new LinkedList<>();
+
+        String username = Session.getInstance().getUsername();
+        if (username == null) return;
+
+        for (Integer id : GestioneFile.recuperaIdRistorantiUtente(username)) {
+            Ristorante r = gestioneRistoranti.getRistorante(id);
+            if (r != null) mieiRistoranti.add(r);
+        }
+    }
+
+    /**
+     * Calcola e mostra i quattro numeri in evidenza.
+     * <p>
+     * La media complessiva è pesata sul numero di recensioni e non sulla media
+     * dei singoli locali: un ristorante con quaranta recensioni deve contare
+     * più di uno che ne ha due.
+     *
+     * @author Matteo Franguelli
+     */
+    private void aggiornaNumeri() {
+        int totaleRecensioni = 0;
+        int totaleSenzaRisposta = 0;
+        double sommaVoti = 0;
+
+        for (Ristorante r : mieiRistoranti) {
+            int quante = gestioneRecensioni.getConteggio(r.getId());
+            double media = gestioneRecensioni.getMedia(r.getId());
+
+            totaleRecensioni += quante;
+            totaleSenzaRisposta += gestioneRecensioni.getSenzaRisposta(r.getId());
+
+            if (quante > 0 && media > 0) {
+                sommaVoti += media * quante;
+            }
+        }
+
+        valoreLocali.setText(String.valueOf(mieiRistoranti.size()));
+        valoreRecensioni.setText(String.valueOf(totaleRecensioni));
+        valoreSenzaRisposta.setText(String.valueOf(totaleSenzaRisposta));
+
+        if (totaleRecensioni > 0) {
+            valoreMedia.setText(String.format(Locale.ITALY, "★ %.1f", sommaVoti / totaleRecensioni));
+        } else {
+            valoreMedia.setText("—");
+        }
+
+        // Quando non c'è nulla da evadere il riquadro non invita più a cliccare
+        boolean cSonoRispostePendenti = totaleSenzaRisposta > 0;
+        tileSenzaRisposta.setDisable(!cSonoRispostePendenti);
+    }
+
+    /**
+     * Ricostruisce l'elenco dei propri ristoranti, uno per riga.
+     * @author Matteo Franguelli
+     */
+    private void costruisciElenco() {
+        contenitoreRistoranti.getChildren().clear();
+
+        boolean vuoto = mieiRistoranti.isEmpty();
+        statoVuoto.setVisible(vuoto);
+        statoVuoto.setManaged(vuoto);
+        contenitoreRistoranti.setVisible(!vuoto);
+        contenitoreRistoranti.setManaged(!vuoto);
+
+        for (Ristorante r : mieiRistoranti) {
+            contenitoreRistoranti.getChildren().add(creaRiga(r));
+        }
+    }
+
+    /**
+     * Crea la riga di un ristorante gestito: nome e città a sinistra, media e
+     * riconoscimenti a destra. Cliccandola si aprono le sue recensioni.
+     *
+     * @param r ristorante da rappresentare
+     * @author Matteo Franguelli
+     */
+    private HBox creaRiga(Ristorante r) {
+        Label nome = new Label(r.getNome() == null ? "" : r.getNome());
+        nome.getStyleClass().add("restaurant-name");
+
+        String citta = r.getLuogo() == null ? "" : r.getLuogo().getCitta();
+        Label luogo = new Label(citta == null ? "" : citta);
+        luogo.getStyleClass().add("card-line-text");
+
+        VBox testi = new VBox(nome, luogo);
+        testi.getStyleClass().add("owner-card-text");
+
+        Region spaziatore = new Region();
+        HBox.setHgrow(spaziatore, Priority.ALWAYS);
+
+        HBox badge = new HBox();
+        badge.getStyleClass().add("owner-card-tags");
+        badge.getChildren().add(Etichette.creaBadgeMedia(r));
+
+        Label michelin = Etichette.creaBadgeMichelin(r);
+        if (michelin != null) badge.getChildren().add(michelin);
+
+        int daEvadere = gestioneRecensioni.getSenzaRisposta(r.getId());
+        if (daEvadere > 0) {
+            badge.getChildren().add(Etichette.creaBadge(daEvadere + " da rispondere", "tag-rating-mid"));
+        }
+
+        HBox riga = new HBox(testi, spaziatore, badge);
+        riga.getStyleClass().add("owner-card");
+        riga.setOnMouseClicked(evento -> apriRecensioniDi(r));
+
+        // Nome letto dagli strumenti di accessibilità al posto della sola riga grafica
+        riga.setAccessibleText("Ristorante " + r.getNome() + ", apri le recensioni");
+
+        return riga;
+    }
+
+    /**
+     * Apre le recensioni di un singolo ristorante gestito.
+     * @author Matteo Franguelli
+     */
+    private void apriRecensioniDi(Ristorante r) {
+        Finestre.apriModale("view_reviews.fxml", "Recensioni di " + r.getNome(),
+                (ViewReviewsController ctrl) -> ctrl.setRestaurant(r));
+        aggiornaTutto();
+    }
+
+    /**
+     * Apre la finestra per rispondere alle recensioni ancora senza risposta.
+     * @author Matteo Franguelli
+     */
+    @FXML
+    private void onRecensioniDaEvadere() {
+        Finestre.apriModale("reply_review.fxml", "Recensioni a cui rispondere");
+        aggiornaTutto();
+    }
+
+    /**
+     * Apre la finestra per aggiungere un nuovo ristorante.
+     * @author Matteo Franguelli
+     */
+    @FXML
+    private void onAggiungiRistorante() {
+        Finestre.apriModale("add_restaurant.fxml", "Nuovo ristorante");
+        aggiornaTutto();
+    }
+
+    /**
+     * Passa all'elenco dei ristoranti, la schermata di clienti e ospiti.
+     * Serve al ristoratore che voglia guardare il catalogo come lo vedono i
+     * suoi clienti, o che abbia anche i permessi da cliente.
+     *
+     * @author Matteo Franguelli
+     */
+    @FXML
+    private void onEsplora() {
+        Object controller = Finestre.cambiaVista(etichettaUtente.getScene(), "main.fxml");
+
+        String citta = Session.getInstance().getCitta();
+        if (controller instanceof MainController principale) {
+            principale.impostaLuogoIniziale(citta);
+        }
+    }
+
+    /**
+     * Disconnette l'utente e torna alla schermata di benvenuto.
+     * @author Matteo Franguelli
+     */
+    @FXML
+    private void onLogout() {
+        Session.getInstance().logout();
+        Finestre.cambiaVista(etichettaUtente.getScene(), "welcome.fxml");
+    }
+
+    /**
+     * Cambia il tema di tutta l'applicazione.
+     * @author Matteo Franguelli
+     */
+    @FXML
+    private void onCambiaTema() {
+        Temi.alterna();
+        aggiornaPulsanteTema();
+    }
+
+    /**
+     * Allinea simbolo e descrizione del pulsante al tema in uso.
+     * @author Matteo Franguelli
+     */
+    private void aggiornaPulsanteTema() {
+        bottoneTema.setText(Temi.simboloPulsante());
+        bottoneTema.setTooltip(new Tooltip(Temi.descrizionePulsante()));
+        bottoneTema.setAccessibleText(Temi.descrizionePulsante());
+    }
+}
