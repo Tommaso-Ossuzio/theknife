@@ -22,7 +22,16 @@ public class AppServer {
             System.err.println("Errore durante la configurazione del Database:");
             e.printStackTrace();
         }
+        try (java.sql.Connection conn = java.sql.DriverManager.getConnection(
+                DatabaseConfig.getTargetUrl(),
+                DatabaseConfig.getUser(),
+                DatabaseConfig.getPassword())) {
 
-        // Qui sotto il codice per avviare il Server Socket
+            ImportaDati.importa(conn);
+
+        } catch (Exception e) {
+            System.err.println("Errore durante l'importazione:");
+            e.printStackTrace();
+        }
     }
 }

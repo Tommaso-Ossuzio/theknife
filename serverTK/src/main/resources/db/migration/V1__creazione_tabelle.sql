@@ -52,6 +52,8 @@ CREATE TABLE UTENTE (
 
 CREATE TABLE RISTORANTE (
     nome VARCHAR(100) NOT NULL,
+    telefono VARCHAR(50),
+    sito_web VARCHAR(255),
     delivery BOOLEAN NOT NULL,
     prenotazione_online BOOLEAN NOT NULL,
     fascia_prezzo VARCHAR(50) NOT NULL,
