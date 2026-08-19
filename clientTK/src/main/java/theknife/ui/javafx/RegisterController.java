@@ -35,7 +35,7 @@ public class RegisterController {
 
     @FXML private Label etichettaErrore;
 
-    private MainController controllerPrincipale;
+    private ControllerAutenticazione controllerPrincipale;
 
     private static final String NOME_CARTELLA = "data";
     private static final String NOME_FILE = "users.csv";
@@ -44,7 +44,7 @@ public class RegisterController {
      *
      * @author Matteo Franguelli
      */
-    public void setParentController(MainController parentController) {
+    public void setParentController(ControllerAutenticazione parentController) {
         this.controllerPrincipale = parentController;
     }
     /**

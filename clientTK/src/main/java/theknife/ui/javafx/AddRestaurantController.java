@@ -146,7 +146,11 @@ public class AddRestaurantController {
         a.setContentText("Ristorante salvato correttamente.");
         a.showAndWait();
 
-        controllerPrincipale.onResetFilters();
+        // Quando la finestra è aperta dalla dashboard del ristoratore non c'è
+        // nessun elenco di ristoranti da riallineare alle spalle
+        if (controllerPrincipale != null) {
+            controllerPrincipale.onResetFilters();
+        }
         chiudiFinestra();
     }
 

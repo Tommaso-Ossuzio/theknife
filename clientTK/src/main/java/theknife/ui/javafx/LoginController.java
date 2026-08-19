@@ -25,7 +25,7 @@ public class LoginController {
     @FXML private PasswordField campoPassword;
     @FXML private Label etichettaErrore;
 
-    private MainController controllerPrincipale;
+    private ControllerAutenticazione controllerPrincipale;
 
     private static final String NOME_CARTELLA = "data";
     private static final String NOME_FILE = "users.csv";
@@ -36,7 +36,7 @@ public class LoginController {
      * @param parentController
      * @author Matteo Franguelli
      */
-    public void setParentController(MainController parentController) {
+    public void setParentController(ControllerAutenticazione parentController) {
         this.controllerPrincipale = parentController;
     }
 

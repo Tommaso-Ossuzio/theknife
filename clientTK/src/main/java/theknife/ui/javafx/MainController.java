@@ -4,23 +4,17 @@ import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
-import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.TilePane;
 import javafx.scene.layout.VBox;
-import javafx.stage.Modality;
-import javafx.stage.Stage;
 import theknife.model.GestioneFile;
 import theknife.model.GestioneRistoranti;
 import theknife.model.Ristorante;
-import theknife.model.Luogo;
 
-import java.io.*;
-import java.nio.charset.StandardCharsets;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -39,7 +33,7 @@ import java.util.List;
  * @author Tommaso Ossuzio
  * @version 2
  */
-public class MainController {
+public class MainController implements ControllerAutenticazione {
 
     // I ristoranti sono mostrati come card distribuite su più pagine
     @FXML private Pagination paginazione;
@@ -54,19 +48,15 @@ public class MainController {
     @FXML private Label etichettaRuolo;
     @FXML private Button bottonePreferiti;
     @FXML private Button bottoneMieRecensioni;
-    @FXML private Button bottoneMieiRistoranti;
-    @FXML private Button bottoneRispondiRecensioni;
 
     @FXML private Button bottoneAggiungiRecensione;
-    @FXML private Button bottoneAggiungiRistorante;
+    @FXML private Button bottoneTema;
 
     @FXML private TextField campoLuogo;
     @FXML private TextField campoCucina;
 
     // Lista dei ristoranti usata dal codice (dati) collegata alla ListView
     private final ObservableList<Ristorante> ristoranti = FXCollections.observableArrayList();
-    private static final String NOME_CARTELLA = "data";
-    private static final String NOME_FILE_DATI = "michelin_my_maps.csv";
     GestioneRistoranti gr = GestioneRistoranti.getInstance();
 
     /** Quante card mostrare in ogni pagina della griglia. */
@@ -93,145 +83,74 @@ public class MainController {
         // la griglia viene ricalcolata e ridivisa in pagine.
         ristoranti.addListener((javafx.collections.ListChangeListener<Ristorante>) c -> aggiornaPaginazione());
 
-        caricaRistorantiDaCsv();
+        caricaCatalogo();
         aggiornaPaginazione();
         aggiornaInterfaccia();
+        aggiornaPulsanteTema();
 
     }
 
     /**
-     * Crea un thread dove crea una lista temporanea dove vengono inseriti tutti i ristoranti,
-     * una volta finito vengono caricati nella grafica
+     * Imposta la città da cui parte la ricerca e applica subito il filtro.
+     * Viene chiamato dalla schermata di benvenuto con il luogo indicato
+     * dall'ospite o con la città dell'utente appena entrato.
+     *
+     * @param citta città con cui pre-compilare la ricerca
+     * @author Matteo Franguelli
+     */
+    public void impostaLuogoIniziale(String citta) {
+        if (citta == null || citta.isBlank() || campoLuogo == null) return;
+
+        campoLuogo.setText(citta);
+        onApplyFilters();
+    }
+
+    /**
+     * Cambia il tema di tutta l'applicazione.
+     * @author Matteo Franguelli
+     */
+    @FXML
+    private void onCambiaTema() {
+        Temi.alterna();
+        aggiornaPulsanteTema();
+    }
+
+    /**
+     * Allinea simbolo e descrizione del pulsante al tema in uso.
+     * @author Matteo Franguelli
+     */
+    private void aggiornaPulsanteTema() {
+        if (bottoneTema == null) return;
+
+        bottoneTema.setText(Temi.simboloPulsante());
+        bottoneTema.setTooltip(new Tooltip(Temi.descrizionePulsante()));
+        // Nome letto dagli strumenti di accessibilità, che sul solo simbolo
+        // non saprebbero dire a cosa serve il pulsante
+        bottoneTema.setAccessibleText(Temi.descrizionePulsante());
+    }
+
+    /**
+     * Mostra il catalogo dei ristoranti.
+     * <p>
+     * Di norma il catalogo è già stato letto dalla schermata di benvenuto,
+     * che ne ha bisogno per proporre l'elenco delle città: in quel caso qui
+     * basta mostrarlo. Se invece non fosse ancora disponibile, viene letto
+     * ora in un thread separato per non bloccare la grafica, e la lista viene
+     * riempita al termine sul thread applicativo.
+     *
      * @author Matteo Franguelli
      * @author Celestino Resteghini
      */
-    private void caricaRistorantiDaCsv() {
-        // Avviamo il thread
+    private void caricaCatalogo() {
+        if (gr.isCaricato()) {
+            mostraRistoranti(gr.listaRistoranti);
+            return;
+        }
+
         new Thread(() -> {
-            // Creiamo una lista temporanea per non bloccare la grafica
-            List<Ristorante> bufferTemporaneo = new LinkedList<>();
-            InputStream is = null;
-
-            try {
-                File fileEsterno = new File(NOME_CARTELLA, NOME_FILE_DATI);
-
-                if (fileEsterno.exists()) {
-                    System.out.println("Caricamento dati da: " + fileEsterno.getAbsolutePath());
-                    is = new FileInputStream(fileEsterno);
-                }
-
-                if (is == null) {
-                    System.err.println("ERRORE: " + NOME_FILE_DATI + " non trovato.");
-                    return;
-                }
-
-                try (BufferedReader br = new BufferedReader(new InputStreamReader(is, StandardCharsets.UTF_8))) {
-                    String linea = br.readLine();
-                    if (linea != null && linea.toLowerCase().contains("name")) {
-                        linea = br.readLine();
-                    }
-
-                    while (linea != null) {
-                        // Passiamo la lista temporanea al metodo
-                        aggiungiDaRigaCsv(linea, bufferTemporaneo);
-                        linea = br.readLine();
-                    }
-                }
-                is.close();
-
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-
-            // Finito il caricamento viene aggiorata la lista Observable
-            Platform.runLater(() -> {
-                ristoranti.addAll(bufferTemporaneo);
-                gr.listaRistoranti.addAll(bufferTemporaneo);
-            });
-
+            gr.caricaDaCsv();
+            Platform.runLater(() -> mostraRistoranti(gr.listaRistoranti));
         }).start();
-    }
-
-
-    /**
-     * Converte una singola riga CSV in un oggetto Restaurant
-     * e lo aggiunge alla lista dei ristoranti.
-     * @author Celestino Resteghini
-     */
-    private void aggiungiDaRigaCsv(String linea, List<Ristorante> destinazione) {
-        if (linea == null || linea.isBlank()) return;
-
-        String[] parti = dividiCsv(linea);
-
-        String nome = pulisci(parti[0]);
-
-        String[] s = parti[1].split(",");
-        String indirizzo = pulisci(s[0]);;
-
-        s = parti[2].split(",");
-
-        String citta   = s.length > 0 ? pulisci(s[0]) : null;
-        String nazione = s.length > 1 ? pulisci(s[1]) : null;
-
-
-        double prezzo = pulisci(parti[3]).length() * 20; //ogni simbolo = 20€
-
-        LinkedList<String> tipoCucina= new LinkedList<>();
-        s = parti[4].split(",");
-
-        // Aggiungi ogni elemento alla LinkedList
-        for (String e : s) {
-            tipoCucina.add(pulisci(e));
-        }
-
-        // Coordinate (attenzione agli errori di formato)
-        double latitudine=0;
-        double longitudine=0;
-
-        try { longitudine = Double.parseDouble(pulisci(parti[5])); } catch (NumberFormatException ignored) {}
-
-        try { latitudine = Double.parseDouble(pulisci(parti[6])); } catch (NumberFormatException ignored) {}
-
-        String num_tel = pulisci(parti[7]);
-
-        // Link e info aggiuntive
-        String link = pulisci(parti[8]);
-
-        String website = pulisci(parti[9]);
-
-        s = parti[10].split(" ");
-
-        double award = -1;
-        if(s.length > 1) {
-            String a = s[1].substring(0, 4);
-
-            if (parti[10] != null && a.equals("Star")) {
-                award = Double.parseDouble(pulisci(s[0]));
-            } else {
-                award = -1;
-            }
-        }
-        // Se nel CSV non c’è un link, generiamo un link a Google Maps
-        if (link == null || link.isBlank()) {
-            String maps = "https://www.google.com/maps?q="
-                    + inUrl(nome) + "+" + inUrl(indirizzo) + "+" + inUrl(citta);
-            link = maps;
-        }
-
-        boolean delivery = false;
-        boolean booking = false;
-
-        if(parti.length > 14 && "true".equalsIgnoreCase(parti[14]))
-            delivery = true;
-
-        if(parti.length > 15 && "true".equalsIgnoreCase(parti[15]))
-            booking = true;
-
-        Ristorante r = new Ristorante(nome, num_tel, delivery, booking, prezzo, tipoCucina, new Luogo(nazione, indirizzo, citta, latitudine, longitudine), website, link, award);
-
-        //gr.add(r);
-
-        destinazione.add(r);
     }
 
     /* =========================================================
@@ -348,21 +267,28 @@ public class MainController {
         VBox.setVgrow(spaziatore, javafx.scene.layout.Priority.ALWAYS);
         card.getChildren().add(spaziatore);
 
-        HBox badge = new HBox();
+        // I badge vanno a capo da soli: in una sola riga i testi più lunghi
+        // (media, cucina, Michelin) verrebbero troncati dalla larghezza della card
+        FlowPane badge = new FlowPane();
         badge.getStyleClass().add("card-tags");
+
+        // La media delle recensioni è l'informazione più cercata: apre la riga dei badge
+        badge.getChildren().add(Etichette.creaBadgeMedia(r));
 
         String cucina = String.join(", ", r.getCucina());
         if (cucina != null && !cucina.isBlank()) {
-            badge.getChildren().add(creaBadge(cucina, "tag"));
+            badge.getChildren().add(Etichette.creaBadge(cucina, "tag"));
         }
-        if (r.getAward() > 0) {
-            badge.getChildren().add(creaBadge("★ " + (int) r.getAward() + " Michelin", "tag-michelin"));
+
+        Label michelin = Etichette.creaBadgeMichelin(r);
+        if (michelin != null) {
+            badge.getChildren().add(michelin);
         }
         if (r.isDelivery()) {
-            badge.getChildren().add(creaBadge("Consegna", "tag-accent"));
+            badge.getChildren().add(Etichette.creaBadge("Consegna", "tag-accent"));
         }
         if (r.isBooking()) {
-            badge.getChildren().add(creaBadge("Prenotabile", "tag-accent"));
+            badge.getChildren().add(Etichette.creaBadge("Prenotabile", "tag-accent"));
         }
         if (!badge.getChildren().isEmpty()) {
             card.getChildren().add(badge);
@@ -393,19 +319,6 @@ public class MainController {
         HBox riga = new HBox(etichettaIcona, etichettaTesto);
         riga.getStyleClass().add("card-line");
         return riga;
-    }
-
-    /**
-     * Crea un badge colorato (tipo di cucina, stelle Michelin, servizi).
-     * @author Matteo Franguelli
-     */
-    private Label creaBadge(String testo, String classeAggiuntiva) {
-        Label etichetta = new Label(testo);
-        etichetta.getStyleClass().add("tag");
-        if (!"tag".equals(classeAggiuntiva)) {
-            etichetta.getStyleClass().add(classeAggiuntiva);
-        }
-        return etichetta;
     }
 
     /**
@@ -459,45 +372,34 @@ public class MainController {
      * @author Celestino Resteghini
      */
     private void apriDettagliRistorante(Ristorante rd) {
-        try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource(
-                    "/it/unininsubria/theknifeui/ui/javafx/view/restaurant_details.fxml"));
-            // Il foglio di stile è già dichiarato dentro restaurant_details.fxml
-            Scene scene = new Scene(loader.load());
-
-            Stage stage = new Stage();
-            stage.setScene(scene);
-            stage.initModality(Modality.APPLICATION_MODAL);
-            stage.setTitle(valoreNonNullo(rd.getNome()));
-
-            RestaurantDetailsController ctrl = loader.getController();
-            ctrl.setRestaurantData(
-                    rd.getNome(),
-                    rd.getLuogo().getNazione(),
-                    rd.getLuogo().getCitta(),
-                    rd.getLuogo().getIndirizzo(),
-                    rd.getLuogo().getLatitudine(),
-                    rd.getLuogo().getLongitudine(),
-                    String.valueOf(rd.getPrezzo()),
-                    rd.getN_tel(),
-                    rd.isDelivery(),
-                    rd.isBooking(),
-                    String.join(", ", rd.getCucina()),
-                    rd.getWebsite(),
-                    rd.getAward()
-            );
-            stage.showAndWait();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        // Il foglio di stile è già dichiarato dentro restaurant_details.fxml
+        Finestre.apriModale("restaurant_details.fxml", valoreNonNullo(rd.getNome()),
+                (RestaurantDetailsController ctrl) -> ctrl.setRestaurantData(
+                        rd.getNome(),
+                        rd.getLuogo().getNazione(),
+                        rd.getLuogo().getCitta(),
+                        rd.getLuogo().getIndirizzo(),
+                        rd.getLuogo().getLatitudine(),
+                        rd.getLuogo().getLongitudine(),
+                        String.valueOf(rd.getPrezzo()),
+                        rd.getN_tel(),
+                        rd.isDelivery(),
+                        rd.isBooking(),
+                        String.join(", ", rd.getCucina()),
+                        rd.getWebsite(),
+                        rd.getAward()
+                ));
     }
 
 
     /**
-     * Aggiorna la visibilità dei pulsanti in base al ruolo dell’utente:
-     * - ospite
-     * - cliente
-     * - ristoratore
+     * Aggiorna la visibilità dei pulsanti in base al ruolo dell'utente.
+     * <p>
+     * Questa schermata è quella di ospiti e clienti: le funzioni da
+     * ristoratore non compaiono più qui nemmeno nascoste, perché il
+     * ristoratore ha una schermata tutta sua (la dashboard). Restano quindi
+     * solo due casi da distinguere, ospite e cliente.
+     *
      * @author Matteo Franguelli
      */
     private void aggiornaInterfaccia() {
@@ -506,7 +408,6 @@ public class MainController {
         // Recuperiamo i permessi esatti
         boolean isGuest = s.isGuest();
         boolean puoRecensire = s.isCliente();
-        boolean puoAggiungereRisto = s.isRistoratore();
         boolean isLogged = !isGuest;
 
         // Login / Logout / Registrati
@@ -516,9 +417,7 @@ public class MainController {
 
         // Etichetta Ruolo in alto
         if (etichettaRuolo != null) {
-            if (isGuest) etichettaRuolo.setText("Ospite");
-            else if (puoRecensire && puoAggiungereRisto) etichettaRuolo.setText("Cliente e Ristoratore: " + valoreNonNullo(s.getUsername()));
-            else if (puoAggiungereRisto) etichettaRuolo.setText("Ristoratore: " + valoreNonNullo(s.getUsername()));
+            if (isGuest) etichettaRuolo.setText("Ospite" + luogoCorrente(s));
             else etichettaRuolo.setText("Cliente: " + valoreNonNullo(s.getUsername()));
         }
 
@@ -532,22 +431,20 @@ public class MainController {
             bottoneMieRecensioni.setManaged(puoRecensire);
         }
 
-        if (bottoneMieiRistoranti != null) {
-            bottoneMieiRistoranti.setVisible(puoAggiungereRisto);
-            bottoneMieiRistoranti.setManaged(puoAggiungereRisto);
-        }
-
-        if (bottoneRispondiRecensioni != null) {
-            bottoneRispondiRecensioni.setVisible(puoAggiungereRisto);
-            bottoneRispondiRecensioni.setManaged(puoAggiungereRisto);
-        }
-
         if (bottoneAggiungiRecensione != null) {
             bottoneAggiungiRecensione.setDisable(!puoRecensire);
         }
-        if (bottoneAggiungiRistorante != null) {
-            bottoneAggiungiRistorante.setDisable(!puoAggiungereRisto);
-        }
+    }
+
+    /**
+     * Restituisce il luogo scelto dall'ospite all'ingresso, da mostrare
+     * accanto alla dicitura "Ospite", oppure una stringa vuota se non c'è.
+     *
+     * @author Matteo Franguelli
+     */
+    private String luogoCorrente(Session s) {
+        String citta = s.getCitta();
+        return (citta == null || citta.isBlank()) ? "" : " · " + citta;
     }
 
     /**
@@ -555,9 +452,18 @@ public class MainController {
      * basandosi sulla Session
      * @author Matteo Franguelli
      */
+    @Override
     public void onLoginSuccess() {
-        aggiornaInterfaccia();
         Session session = Session.getInstance();
+
+        // Il ristoratore non lavora sull'elenco dei ristoranti ma sulla propria
+        // dashboard: appena accede, la finestra passa a quella schermata.
+        if (session.isRistoratore()) {
+            Finestre.cambiaVista(paginazione.getScene(), "dashboard.fxml");
+            return;
+        }
+
+        aggiornaInterfaccia();
         if (session.isAuthenticated()) {
 
             String cittaUtente = GestioneFile.recuperaCittaUtente(session.getUsername());
@@ -579,21 +485,8 @@ public class MainController {
      */
     @FXML
     private void onShowLogin() {
-        try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource(
-                    "/it/unininsubria/theknifeui/ui/javafx/view/login.fxml"));
-            Stage stage = new Stage();
-            stage.setScene(new Scene(loader.load()));
-            stage.initModality(Modality.APPLICATION_MODAL);
-            stage.setTitle("Login");
-
-            LoginController ctrl = loader.getController();
-            ctrl.setParentController(this);
-
-            stage.showAndWait();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        Finestre.apriModale("login.fxml", "Login",
+                (LoginController ctrl) -> ctrl.setParentController(this));
     }
     /**
      * Si occupa di mostrare la finestra di registrazione.
@@ -601,21 +494,8 @@ public class MainController {
      */
     @FXML
     private void onShowRegister() {
-        try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource(
-                    "/it/unininsubria/theknifeui/ui/javafx/view/register.fxml"));
-            Stage stage = new Stage();
-            stage.setScene(new Scene(loader.load()));
-            stage.initModality(Modality.APPLICATION_MODAL);
-            stage.setTitle("Registrati");
-
-            RegisterController ctrl = loader.getController();
-            ctrl.setParentController(this);
-
-            stage.showAndWait();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        Finestre.apriModale("register.fxml", "Registrati",
+                (RegisterController ctrl) -> ctrl.setParentController(this));
     }
     /**
      * Si occupa di disconnettere l'utente nel caso di click
@@ -625,7 +505,6 @@ public class MainController {
     @FXML
     private void onLogout() {
         Session.getInstance().logout();
-        aggiornaInterfaccia();
 
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
         alert.setTitle("Logout");
@@ -633,43 +512,11 @@ public class MainController {
         alert.setContentText("Logout effettuato.");
         alert.showAndWait();
 
-        onResetFilters();
-
+        // Si torna al benvenuto: uscendo si perde anche il luogo di ricerca,
+        // che va richiesto di nuovo prima di rientrare nel catalogo
+        Finestre.cambiaVista(paginazione.getScene(), "welcome.fxml");
     }
 
-    /**
-     * Si occupa di aprire, se permesso, la finestra per aggiungere un ristorante.
-     * @author Matteo Franguelli
-     */
-    @FXML
-    private void onAddRestaurant() {
-        Session s = Session.getInstance();
-
-        if (!s.isRistoratore()) {
-            Alert a = new Alert(Alert.AlertType.WARNING);
-            a.setTitle("Permesso negato");
-            a.setHeaderText(null);
-            a.setContentText("Solo i ristoratori possono aggiungere ristoranti.");
-            a.showAndWait();
-            return;
-        }
-
-        try {
-            FXMLLoader loader = new FXMLLoader(
-                    getClass().getResource("/it/unininsubria/theknifeui/ui/javafx/view/add_restaurant.fxml"));
-            Stage st = new Stage();
-            st.setScene(new Scene(loader.load()));
-            st.setTitle("Nuovo ristorante");
-            st.initModality(Modality.APPLICATION_MODAL);
-
-            try {
-                AddRestaurantController ctrl = loader.getController();
-                ctrl.setControllerPrincipale(this);
-            } catch (Exception ignored) {}
-
-            st.showAndWait();
-        } catch (IOException e) { e.printStackTrace(); }
-    }
     /**
      * Si occupa di aprire, se permesso, la finestra per aggiungere una recensione.
      * @author Matteo Franguelli
@@ -704,20 +551,14 @@ public class MainController {
             return;
         }
 
-        try {
-            FXMLLoader loader = new FXMLLoader(
-                    getClass().getResource("/it/unininsubria/theknifeui/ui/javafx/view/add_review.fxml"));
-            Stage st = new Stage();
-            st.setScene(new Scene(loader.load()));
-            st.setTitle("Nuova recensione");
-            st.initModality(Modality.APPLICATION_MODAL);
+        Finestre.apriModale("add_review.fxml", "Nuova recensione",
+                (AddReviewController ctrl) -> {
+                    ctrl.setRestaurant(selezionato);
+                    ctrl.setRestaurantName(selezionato.getNome());
+                });
 
-            AddReviewController ctrl = loader.getController();
-            ctrl.setRestaurant(selezionato);
-            ctrl.setRestaurantName(selezionato.getNome());
-
-            st.showAndWait();
-        } catch (IOException e) { e.printStackTrace(); }
+        // La nuova recensione cambia la media mostrata sulle card
+        aggiornaPaginazione();
     }
 
     /**
@@ -760,42 +601,12 @@ public class MainController {
     }
 
     /**
-     * Quando viene premuto il pulsante "I miei ristoranti" mostra i propri ristoranti.
-     * @author Matteo Franguelli
-     */
-    @FXML
-    private void onShowMyRestaurants() {
-        try {
-            FXMLLoader loader = new FXMLLoader(
-                    getClass().getResource("/it/unininsubria/theknifeui/ui/javafx/view/my_restaurants.fxml"));
-            Stage st = new Stage();
-            st.setScene(new Scene(loader.load()));
-            st.setTitle("I miei ristoranti");
-            st.initModality(Modality.APPLICATION_MODAL);
-            st.showAndWait();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-    /**
      * Quando viene premuto il pulsante Preferiti mostra i ristoranti inseriti nei preferiti.
      * @author Matteo Franguelli
      */
     @FXML
     private void onShowFavorites() {
-        try {
-            FXMLLoader loader = new FXMLLoader(
-                    getClass().getResource("/it/unininsubria/theknifeui/ui/javafx/view/favorites.fxml"));
-            Scene scene = new Scene(loader.load());
-            Stage st = new Stage();
-            st.setScene(scene);
-            st.setTitle("I miei preferiti");
-            st.initModality(Modality.APPLICATION_MODAL);
-            st.showAndWait();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        Finestre.apriModale("favorites.fxml", "I miei preferiti");
     }
 
     /**
@@ -804,21 +615,8 @@ public class MainController {
      */
     @FXML
     private void onShowAdvancedFilter() {
-        try {
-            FXMLLoader loader = new FXMLLoader(
-                    getClass().getResource("/it/unininsubria/theknifeui/ui/javafx/view/advanced_filter.fxml"));
-            Stage st = new Stage();
-            st.setScene(new Scene(loader.load()));
-            st.setTitle("Filtro avanzato");
-            st.initModality(Modality.APPLICATION_MODAL);
-
-            AdvancedFilterController ctrl = loader.getController();
-            ctrl.setParent(this);
-
-            st.showAndWait();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        Finestre.apriModale("advanced_filter.fxml", "Filtro avanzato",
+                (AdvancedFilterController ctrl) -> ctrl.setParent(this));
     }
 
     /**
@@ -827,40 +625,12 @@ public class MainController {
      */
     @FXML
     private void onShowMyReviews() {
-        try {
-            FXMLLoader loader = new FXMLLoader(
-                    getClass().getResource("/it/unininsubria/theknifeui/ui/javafx/view/my_reviews.fxml"));
-            Scene scene = new Scene(loader.load());
-            Stage st = new Stage();
-            st.setScene(scene);
-            st.setTitle("Le mie recensioni");
-            st.initModality(Modality.APPLICATION_MODAL);
-            st.showAndWait();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        Finestre.apriModale("my_reviews.fxml", "Le mie recensioni");
+
+        // Recensioni modificate o eliminate cambiano la media sulle card
+        aggiornaPaginazione();
     }
 
-    /**
-     * Quando viene premuto apre la finestra che permette ai ristoratori di rispondere alle recensioni
-     * fatte al proprio ristorante
-     * @author Matteo Franguelli
-     */
-    @FXML
-    public void onReplyReviews() {
-        try {
-            FXMLLoader loader = new FXMLLoader(
-                    getClass().getResource("/it/unininsubria/theknifeui/ui/javafx/view/reply_review.fxml"));
-            javafx.scene.Scene scene = new javafx.scene.Scene(loader.load());
-            Stage st = new Stage();
-            st.setScene(scene);
-            st.setTitle("Rispondi alle recensioni");
-            st.initModality(Modality.APPLICATION_MODAL);
-            st.showAndWait();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
 
 
     /**
@@ -881,19 +651,8 @@ public class MainController {
             return;
         }
 
-        try {
-            FXMLLoader loader = new FXMLLoader(
-                    getClass().getResource("/it/unininsubria/theknifeui/ui/javafx/view/view_reviews.fxml")); // Controlla che il path sia giusto
-            Stage st = new Stage();
-            st.setScene(new Scene(loader.load()));
-            st.setTitle("Recensioni");
-            st.initModality(Modality.APPLICATION_MODAL);
-
-            ViewReviewsController ctrl = loader.getController();
-            ctrl.setRestaurant(selezionato);
-
-            st.showAndWait();
-        } catch (IOException e) { e.printStackTrace(); }
+        Finestre.apriModale("view_reviews.fxml", "Recensioni",
+                (ViewReviewsController ctrl) -> ctrl.setRestaurant(selezionato));
     }
 
 
@@ -911,38 +670,12 @@ public class MainController {
         alert.showAndWait();
     }
     /**
-     * Rimuove eventuali doppi apici e spazi inutili.
-     * @author Matteo Franguelli
-     */
-    private String pulisci(String s) {
-        if (s == null) return "";
-        return s.replace("\"", "").trim();
-    }
-
-    /**
      * Restituisce la stringa se non è null, altrimenti stringa vuota.
      * Utile per evitare NullPointerException nelle concatenazioni.
      * @author Matteo Franguelli
      */
     private String valoreNonNullo(String s) {
         return s == null ? "" : s;
-    }
-
-    /**
-     * Converte uno spazio in '+' per poter usare la stringa in una URL.
-     * @author Matteo Franguelli
-     */
-    private String inUrl(String s) {
-        return s == null ? "" : s.trim().replace(" ", "+");
-    }
-
-    /**
-     * Divide una riga CSV in campi, gestendo i campi tra doppi apici.
-     * @author Matteo Franguelli
-     */
-    private String[] dividiCsv(String line) {
-        // split che gestisce anche i campi tra doppi apici
-        return line.split(",(?=(?:[^\"]*\"[^\"]*\")*[^\"]*$)", -1);
     }
 
     /**

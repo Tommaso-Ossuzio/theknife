@@ -42,18 +42,6 @@
 
                 <Label fx:id="etichettaRuolo" styleClass="user-chip"/>
 
-                <Button fx:id="bottoneMieiRistoranti"
-                        text="I miei ristoranti"
-                        onAction="#onShowMyRestaurants"
-                        styleClass="btn-ghost"
-                        visible="false"
-                        managed="false"/>
-                <Button fx:id="bottoneRispondiRecensioni"
-                        text="Rispondi alle recensioni"
-                        onAction="#onReplyReviews"
-                        styleClass="btn-ghost"
-                        visible="false"
-                        managed="false"/>
                 <Button fx:id="bottonePreferiti"
                         text="Preferiti"
                         onAction="#onShowFavorites"
@@ -81,6 +69,9 @@
                         styleClass="btn-danger"
                         visible="false"
                         managed="false"/>
+                <Button fx:id="bottoneTema"
+                        onAction="#onCambiaTema"
+                        styleClass="btn-theme"/>
             </HBox>
         </VBox>
     </top>
@@ -150,10 +141,6 @@
                     text="Aggiungi recensione"
                     onAction="#onAddReview"
                     styleClass="btn-primary"/>
-            <Button fx:id="bottoneAggiungiRistorante"
-                    text="Aggiungi ristorante"
-                    onAction="#onAddRestaurant"
-                    styleClass="btn-accent"/>
         </HBox>
     </bottom>
 

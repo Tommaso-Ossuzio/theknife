@@ -180,6 +180,9 @@ public class AddReviewController {
             return;
         }
 
+        // Il file è cambiato: media e conteggi mostrati nelle card vanno ricalcolati
+        gestRest.ricaricaIndice();
+
         chiudiFinestra();
     }
 
@@ -247,6 +250,9 @@ public class AddReviewController {
                 bw.newLine();
             }
         } catch (IOException e) {}
+
+        // Il file è cambiato: media e conteggi mostrati nelle card vanno ricalcolati
+        GestioneRecensioni.getInstance().ricaricaIndice();
 
         chiudiFinestra();
     }

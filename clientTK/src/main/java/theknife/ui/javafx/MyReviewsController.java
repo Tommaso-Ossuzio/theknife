@@ -101,26 +101,17 @@ public class MyReviewsController {
      * @author Matteo Franguelli
      */
     private void apriModificaRecensione(ReviewRow riga) {
-        try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/it/unininsubria/theknifeui/ui/javafx/view/add_review.fxml"));
-            Stage stage = new Stage();
-            stage.setScene(new Scene(loader.load()));
-            stage.setTitle("Modifica Recensione");
-            stage.initModality(Modality.APPLICATION_MODAL);
+        GestioneRistoranti gr = GestioneRistoranti.getInstance();
+        Ristorante r = gr.getRistorante(riga.getRawRestaurantId());
 
-            AddReviewController ctrl = loader.getController();
-            GestioneRistoranti gr = GestioneRistoranti.getInstance();
-            Ristorante r = gr.getRistorante(riga.getRawRestaurantId());
+        Finestre.apriModale("add_review.fxml", "Modifica Recensione",
+                (AddReviewController ctrl) -> {
+                    ctrl.setRestaurant(r);
+                    if (r != null) ctrl.setRestaurantName(r.getNome());
+                    ctrl.setDatiPerModifica(riga);
+                });
 
-            ctrl.setRestaurant(r);
-            if (r != null) ctrl.setRestaurantName(r.getNome());
-            ctrl.setDatiPerModifica(riga);
-            stage.showAndWait();
-            caricaLeMieRecensioni();
-
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        caricaLeMieRecensioni();
     }
     /**
      * Chiede conferma ed elimina la recensione selezionata

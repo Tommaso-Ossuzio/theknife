@@ -23,6 +23,11 @@
     11. TABELLE
     12. LISTE E SCROLLBAR
     13. DIALOG DI SISTEMA (Alert)
+    14. SCHERMATA DI BENVENUTO
+    15. DASHBOARD DEL RISTORATORE
+
+   Il tema scuro non vive qui: sta in theme-dark.css, che ridefinisce i soli
+   valori della PALETTE e viene aggiunto sopra questo foglio quando serve.
    ========================================================================= */
 
 
@@ -47,7 +52,7 @@
     -color-accent-fg:       #14211E;
 
     /* --- Superfici --- */
-    -color-bg:              #F6F7F5;
+    -color-bg:              #F4F6F5;
     -color-surface:         #FFFFFF;
     -color-surface-alt:     #F0F2EF;
 
@@ -55,19 +60,32 @@
     -color-border:          #E1E5E1;
     -color-border-strong:   #C9D0CB;
 
-    /* --- Testo --- */
-    -color-text:            #14211E;
-    -color-text-muted:      #6B7B76;
+    /* --- Testo ---
+       -color-heading è riservato ai titoli: dà loro una gerarchia di colore
+       e non solo di dimensione. */
+    -color-text:            #0E1A17;
+    -color-heading:         #08463C;
+    -color-text-muted:      #4F5F5A;
     -color-text-invert:     #FFFFFF;
 
     /* --- Stati --- */
-    -color-danger:          #D64545;
-    -color-danger-hover:    #B93636;
+    -color-danger:          #B02B2B;
+    -color-danger-hover:    #8E2020;
     -color-danger-soft:     #FBEAEA;
 
     /* --- Valutazioni a stelle --- */
-    -color-star-on:         #F5A623;
-    -color-star-off:        #D8DEDA;
+    -color-star-on:         #B26A00;
+    -color-star-off:        #C9D0CB;
+
+    /* --- Colori informativi dei badge delle card ---
+       Ogni badge accosta al colore anche un testo esplicito: il colore
+       accompagna l'informazione, non la sostituisce mai. */
+    -color-rating-high:     #1B7F4B;
+    -color-rating-mid:      #8A5200;
+    -color-rating-low:      #A33A3A;
+    -color-michelin:        #A31621;
+    -color-service:         #1B5E9E;
+    -color-badge-fg:        #FFFFFF;
 
     /* --- Ombre --- */
     -color-shadow:          rgba(20, 33, 30, 0.10);
@@ -115,14 +133,14 @@
 .page-title {
     -fx-font-size: 24px;
     -fx-font-weight: bold;
-    -fx-text-fill: -color-text;
+    -fx-text-fill: -color-heading;
 }
 
 /* Titolo di sezione dentro una schermata */
 .section-title {
     -fx-font-size: 18px;
     -fx-font-weight: bold;
-    -fx-text-fill: -color-text;
+    -fx-text-fill: -color-heading;
 }
 
 /* Sottotitolo esplicativo sotto un titolo */
@@ -391,6 +409,31 @@
     -fx-padding: 6 14 6 14;
 }
 
+/* --- Bottone a larghezza piena, usato nelle scelte della schermata di benvenuto --- */
+.btn-block {
+    -fx-font-size: 14px;
+    -fx-padding: 12 18 12 18;
+}
+
+/* --- Cambio tema chiaro/scuro: sola icona, presente in ogni intestazione ---
+   La misura minima tiene il bersaglio del click abbastanza grande da
+   essere colpito senza precisione. */
+.btn-theme {
+    -fx-background-color: -color-surface-alt;
+    -fx-text-fill: -color-text;
+    -fx-font-size: 15px;
+    -fx-min-width: 40;
+    -fx-min-height: 36;
+    -fx-background-radius: 10;
+    -fx-border-color: -color-border;
+    -fx-border-radius: 10;
+}
+.btn-theme:hover {
+    -fx-background-color: -color-primary-soft;
+    -fx-text-fill: -color-primary;
+    -fx-border-color: -color-primary;
+}
+
 
 /* =========================================================================
    5. CAMPI DI INPUT
@@ -483,6 +526,58 @@
     -fx-background-color: -color-primary-soft;
 }
 
+/* --- ComboBox (scelta della città nella schermata di benvenuto) --- */
+.combo-box {
+    -fx-background-color: -color-surface;
+    -fx-border-color: -color-border-strong;
+    -fx-border-width: 1;
+    -fx-border-radius: 10;
+    -fx-background-radius: 10;
+    -fx-padding: 2;
+    -fx-cursor: hand;
+}
+.combo-box:focused {
+    -fx-border-color: -color-primary;
+    -fx-border-width: 1.5;
+}
+
+/* Parte scrivibile della tendina */
+.combo-box .text-field {
+    -fx-background-color: transparent;
+    -fx-border-color: transparent;
+    -fx-text-fill: -color-text;
+    -fx-prompt-text-fill: -color-text-muted;
+    -fx-font-size: 13px;
+}
+
+.combo-box .arrow-button {
+    -fx-background-color: transparent;
+}
+.combo-box .arrow {
+    -fx-background-color: -color-text-muted;
+}
+
+/* Elenco a comparsa */
+.combo-box-popup .list-view {
+    -fx-background-color: -color-surface;
+    -fx-border-color: -color-border;
+    -fx-border-radius: 10;
+    -fx-background-radius: 10;
+    -fx-effect: dropshadow(gaussian, -color-shadow-strong, 14, 0.0, 0, 4);
+}
+.combo-box-popup .list-view .list-cell {
+    -fx-background-color: transparent;
+    -fx-text-fill: -color-text;
+    -fx-font-size: 13px;
+    -fx-padding: 8 12 8 12;
+}
+.combo-box-popup .list-view .list-cell:filled:hover,
+.combo-box-popup .list-view .list-cell:filled:selected {
+    -fx-background-color: -color-primary-soft;
+    -fx-text-fill: -color-primary;
+}
+
+
 /* --- Hyperlink --- */
 .hyperlink {
     -fx-text-fill: -color-primary;
@@ -554,7 +649,7 @@
 .restaurant-name {
     -fx-font-size: 17px;
     -fx-font-weight: bold;
-    -fx-text-fill: -color-text;
+    -fx-text-fill: -color-heading;
 }
 
 /* Riga con icona + testo dentro la card (indirizzo, prezzo...) */
@@ -568,10 +663,19 @@
     -fx-text-fill: -color-text-muted;
 }
 
-/* Riga finale della card con i badge */
+/* Riga finale della card con i badge.
+   È un FlowPane: quando i badge non ci stanno in larghezza vanno a capo
+   invece di essere troncati con i puntini. */
 .card-tags {
-    -fx-spacing: 6;
+    -fx-hgap: 6;
+    -fx-vgap: 6;
     -fx-alignment: center-left;
+}
+
+/* Stessi badge, ma nella riga larga della dashboard: qui stanno in fila */
+.owner-card-tags {
+    -fx-spacing: 6;
+    -fx-alignment: center-right;
 }
 
 /* Badge del tipo di cucina */
@@ -584,16 +688,52 @@
     -fx-padding: 3 10 3 10;
 }
 
-/* Badge verde per le informazioni positive (delivery, prenotazione) */
+/* Badge dei servizi offerti (consegna, prenotazione) */
 .tag-accent {
-    -fx-background-color: -color-primary-soft;
-    -fx-text-fill: -color-primary;
+    -fx-background-color: -color-service;
+    -fx-text-fill: -color-badge-fg;
 }
 
 /* Badge delle stelle Michelin */
 .tag-michelin {
-    -fx-background-color: -color-danger-soft;
-    -fx-text-fill: -color-danger;
+    -fx-background-color: -color-michelin;
+    -fx-text-fill: -color-badge-fg;
+}
+
+/* --- Badge della media delle recensioni ---
+   Il colore cambia con il voto, ma il badge riporta sempre anche il
+   valore numerico, il simbolo ★ e il numero di recensioni: chi non
+   distingue i colori legge comunque la stessa informazione. */
+.tag-rating {
+    -fx-background-color: -color-text-muted;
+    -fx-text-fill: -color-badge-fg;
+}
+
+/* Media alta (da 4 stelle in su) */
+.tag-rating-high {
+    -fx-background-color: -color-rating-high;
+    -fx-text-fill: -color-badge-fg;
+}
+
+/* Media intermedia (da 3 a 3,9 stelle) */
+.tag-rating-mid {
+    -fx-background-color: -color-rating-mid;
+    -fx-text-fill: -color-badge-fg;
+}
+
+/* Media bassa (sotto le 3 stelle) */
+.tag-rating-low {
+    -fx-background-color: -color-rating-low;
+    -fx-text-fill: -color-badge-fg;
+}
+
+/* Ristorante senza recensioni: nessun colore, solo contorno */
+.tag-rating-none {
+    -fx-background-color: transparent;
+    -fx-text-fill: -color-text-muted;
+    -fx-border-color: -color-border-strong;
+    -fx-border-width: 1;
+    -fx-border-radius: 999;
 }
 
 /* Link al sito dentro la card */
@@ -695,7 +835,7 @@
 .details-title {
     -fx-font-size: 26px;
     -fx-font-weight: bold;
-    -fx-text-fill: -color-text;
+    -fx-text-fill: -color-heading;
 }
 
 /* Riga di testo sotto il nome (indirizzo, città) */
@@ -1007,4 +1147,142 @@
 }
 .dialog-pane .button-bar .button:hover {
     -fx-background-color: -color-primary-hover;
+}
+
+
+/* =========================================================================
+   14. SCHERMATA DI BENVENUTO
+   -------------------------------------------------------------------------
+   Prima schermata dell'applicazione: presenta le tre strade possibili
+   (accedere, registrarsi, entrare come ospite) su una sola colonna stretta,
+   perché una colonna sola non lascia dubbi su in che ordine si legge.
+   ========================================================================= */
+
+/* Area che centra la colonna nella finestra */
+.welcome-pane {
+    -fx-alignment: top-center;
+    -fx-padding: 40 20 40 20;
+}
+
+/* Colonna con le scelte */
+.welcome-card {
+    -fx-background-color: -color-surface;
+    -fx-background-radius: 18;
+    -fx-border-color: -color-border;
+    -fx-border-radius: 18;
+    -fx-padding: 32;
+    -fx-spacing: 14;
+    -fx-max-width: 460;
+    -fx-effect: dropshadow(gaussian, -color-shadow, 18, 0.0, 0, 6);
+}
+
+/* Blocco dei due bottoni principali */
+.welcome-actions {
+    -fx-spacing: 10;
+    -fx-padding: 8 0 0 0;
+}
+
+/* Riga con la parola "oppure" fra due linee */
+.welcome-divider {
+    -fx-alignment: center;
+    -fx-spacing: 12;
+    -fx-padding: 6 0 6 0;
+}
+
+/* Riquadro dell'ingresso come ospite */
+.guest-box {
+    -fx-background-color: -color-surface-alt;
+    -fx-background-radius: 14;
+    -fx-border-color: -color-border;
+    -fx-border-radius: 14;
+    -fx-padding: 18;
+    -fx-spacing: 10;
+}
+
+
+/* =========================================================================
+   15. DASHBOARD DEL RISTORATORE
+   -------------------------------------------------------------------------
+   Quattro numeri in evidenza e l'elenco dei propri locali. È la schermata
+   principale di chi gestisce ristoranti e sostituisce, per lui, la griglia
+   di card che vedono clienti e ospiti.
+   ========================================================================= */
+
+/* Riga dei quattro riquadri */
+.stat-row {
+    -fx-spacing: 14;
+    -fx-padding: 0 0 22 0;
+}
+
+/* Singolo riquadro con un numero */
+.stat-tile {
+    -fx-background-color: -color-surface;
+    -fx-background-radius: 14;
+    -fx-border-color: -color-border;
+    -fx-border-radius: 14;
+    -fx-padding: 18;
+    -fx-spacing: 4;
+    -fx-effect: dropshadow(gaussian, -color-shadow, 8, 0.0, 0, 2);
+}
+
+/* Riquadro che si può cliccare (recensioni ancora da evadere) */
+.stat-tile-action {
+    -fx-cursor: hand;
+    -fx-border-color: -color-primary;
+}
+.stat-tile-action:hover {
+    -fx-background-color: -color-primary-soft;
+    -fx-effect: dropshadow(gaussian, -color-shadow-strong, 14, 0.0, 0, 4);
+}
+.stat-tile-action:disabled {
+    -fx-cursor: default;
+    -fx-border-color: -color-border;
+    -fx-opacity: 0.6;
+}
+
+/* Il numero grande */
+.stat-value {
+    -fx-font-size: 30px;
+    -fx-font-weight: bold;
+    -fx-text-fill: -color-heading;
+}
+
+/* La didascalia sotto al numero */
+.stat-label {
+    -fx-font-size: 12px;
+    -fx-font-weight: bold;
+    -fx-text-fill: -color-text-muted;
+}
+
+/* Invito all'azione dentro il riquadro cliccabile */
+.stat-hint {
+    -fx-font-size: 11px;
+    -fx-text-fill: -color-primary;
+}
+
+/* Elenco dei propri ristoranti */
+.owner-list {
+    -fx-spacing: 10;
+}
+
+/* Riga di un ristorante gestito */
+.owner-card {
+    -fx-background-color: -color-surface;
+    -fx-background-radius: 14;
+    -fx-border-color: -color-border;
+    -fx-border-radius: 14;
+    -fx-padding: 16 18 16 18;
+    -fx-spacing: 14;
+    -fx-alignment: center-left;
+    -fx-cursor: hand;
+    -fx-effect: dropshadow(gaussian, -color-shadow, 6, 0.0, 0, 1);
+}
+.owner-card:hover {
+    -fx-border-color: -color-primary;
+    -fx-effect: dropshadow(gaussian, -color-shadow-strong, 12, 0.0, 0, 3);
+}
+
+/* Blocco nome + città dentro la riga */
+.owner-card-text {
+    -fx-spacing: 3;
 }

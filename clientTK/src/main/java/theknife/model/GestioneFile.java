@@ -53,6 +53,47 @@ public class GestioneFile {
     }
 
     /**
+     * Restituisce gli id dei ristoranti di cui l'utente indicato è proprietario.
+     * <p>
+     * Nel file degli utenti i ristoranti posseduti stanno tutti nell'ultima
+     * colonna, separati da un trattino; qui vengono riportati a numeri.
+     *
+     * @param usernameTarget username del ristoratore
+     * @return la lista degli id, vuota se l'utente non possiede ristoranti
+     * @author Matteo Franguelli
+     */
+    public static LinkedList<Integer> recuperaIdRistorantiUtente(String usernameTarget) {
+        LinkedList<Integer> identificativi = new LinkedList<>();
+
+        File file = new File("data", "users.csv");
+        if (!file.exists() || usernameTarget == null) return identificativi;
+
+        try (BufferedReader br = new BufferedReader(new FileReader(file, StandardCharsets.UTF_8))) {
+            String linea = br.readLine(); // Salta header
+            while ((linea = br.readLine()) != null) {
+                if (linea.isBlank()) continue;
+
+                String[] parti = linea.contains(";") ? linea.split(";") : linea.split(",");
+                if (parti.length == 0 || !pulisci(parti[0]).equalsIgnoreCase(usernameTarget)) continue;
+
+                if (parti.length > 9 && !parti[9].isBlank()) {
+                    for (String pezzo : parti[9].split("-")) {
+                        try {
+                            identificativi.add(Integer.valueOf(pulisci(pezzo)));
+                        } catch (NumberFormatException ignorato) {
+                            // Voce non numerica: viene saltata
+                        }
+                    }
+                }
+                break;
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return identificativi;
+    }
+
+    /**
      * Metodo di utilità per pulire le stringhe lette da CSV.
      * Rimuove spazi iniziali/finali, doppi apici e punto e virgola.
      * @author Matteo Franguelli
@@ -192,6 +233,9 @@ public class GestioneFile {
             } catch (IOException e) {
                 e.printStackTrace();
             }
+
+            // Il file è cambiato: media e conteggi mostrati nelle card vanno ricalcolati
+            GestioneRecensioni.getInstance().ricaricaIndice();
         }
     }
 

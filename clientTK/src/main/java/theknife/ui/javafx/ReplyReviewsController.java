@@ -271,6 +271,10 @@ public class ReplyReviewsController {
         } catch (IOException e) {
             e.printStackTrace();
         }
+
+        // Il file è cambiato: il conteggio delle recensioni ancora senza
+        // risposta mostrato nella dashboard va ricalcolato
+        GestioneRecensioni.getInstance().ricaricaIndice();
     }
 }
 

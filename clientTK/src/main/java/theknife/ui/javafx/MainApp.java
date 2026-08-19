@@ -35,14 +35,20 @@ public class MainApp extends Application {
     public void start(Stage finestra) throws Exception {
         // Utente impostato come "ospite" di default
         Session.getInstance().login(null, Session.Role.GUEST);
+
+        // L'applicazione si apre sulla schermata di benvenuto: il catalogo dei
+        // ristoranti compare solo dopo che l'utente ha scelto come entrare
         URL urlFxml = MainApp.class.getResource(
-                "/it/unininsubria/theknifeui/ui/javafx/view/main.fxml");
+                "/it/unininsubria/theknifeui/ui/javafx/view/welcome.fxml");
         if (urlFxml == null) {
-            throw new IllegalStateException("main.fxml non trovato nel classpath!");
+            throw new IllegalStateException("welcome.fxml non trovato nel classpath!");
         }
 
         FXMLLoader caricatore = new FXMLLoader(urlFxml);
         Scene scena = new Scene(caricatore.load(),1200, 768);
+
+        // Registrare la scena permette al cambio di tema di raggiungerla
+        Temi.registra(scena);
 
         finestra.setTitle("TheKnife");
 
