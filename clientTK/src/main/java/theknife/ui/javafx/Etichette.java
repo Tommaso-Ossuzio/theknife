@@ -40,7 +40,8 @@ public final class Etichette {
     /**
      * Crea il badge con la media delle recensioni di un ristorante.
      * <p>
-     * Il colore cambia in base al voto, ma il badge riporta sempre anche il
+     * Il colore cambia in base al voto — verde dalle 4 stelle in su, giallo
+     * fra le 2 e le 4, rosso sotto le 2 — ma il badge riporta sempre anche il
      * valore numerico e il numero di recensioni: l'informazione resta leggibile
      * anche a chi non distingue i colori.
      *
@@ -58,10 +59,12 @@ public final class Etichette {
         String testo = String.format(Locale.ITALY, "★ %.1f  ·  %d %s",
                 media, recensioni, recensioni == 1 ? "recensione" : "recensioni");
 
+        // Le stesse tre soglie del riquadro della media nella dashboard:
+        // un voto deve avere lo stesso colore ovunque compaia.
         String classe;
-        if (media >= 4) classe = "tag-rating-high";
-        else if (media >= 3) classe = "tag-rating-mid";
-        else classe = "tag-rating-low";
+        if (media >= 4)      classe = "tag-rating-high";
+        else if (media >= 2) classe = "tag-rating-mid";
+        else                 classe = "tag-rating-low";
 
         return creaBadge(testo, classe);
     }

@@ -43,6 +43,7 @@ public class DashboardController {
     @FXML private Label valoreMedia;
     @FXML private Label valoreRecensioni;
     @FXML private Label valoreSenzaRisposta;
+    @FXML private VBox tileMedia;
     @FXML private VBox tileSenzaRisposta;
 
     @FXML private VBox contenitoreRistoranti;
@@ -53,6 +54,17 @@ public class DashboardController {
 
     /** Ristoranti di cui l'utente collegato è proprietario. */
     private List<Ristorante> mieiRistoranti = new LinkedList<>();
+
+    /**
+     * Le classi che colorano il riquadro della media, tenute qui per poterle
+     * togliere tutte prima di rimettere quella giusta: senza, a ogni
+     * aggiornamento il riquadro accumulerebbe i colori dei voti precedenti.
+     */
+    private static final String[] CLASSI_MEDIA = {
+            "stat-tile-rating-high",
+            "stat-tile-rating-mid",
+            "stat-tile-rating-low"
+    };
 
     /**
      * Prepara la dashboard con i dati del ristoratore collegato.
@@ -137,14 +149,44 @@ public class DashboardController {
         valoreSenzaRisposta.setText(String.valueOf(totaleSenzaRisposta));
 
         if (totaleRecensioni > 0) {
-            valoreMedia.setText(String.format(Locale.ITALY, "★ %.1f", sommaVoti / totaleRecensioni));
+            double media = sommaVoti / totaleRecensioni;
+            valoreMedia.setText(String.format(Locale.ITALY, "★ %.1f", media));
+            coloraRiquadroMedia(media);
         } else {
             valoreMedia.setText("—");
+            coloraRiquadroMedia(-1);
         }
 
         // Quando non c'è nulla da evadere il riquadro non invita più a cliccare
         boolean cSonoRispostePendenti = totaleSenzaRisposta > 0;
         tileSenzaRisposta.setDisable(!cSonoRispostePendenti);
+
+        // Il riquadro non dice più a parole che si può cliccare: chi usa uno
+        // screen reader lo scopre da qui, visto che il cursore a mano non
+        // gli arriva.
+        tileSenzaRisposta.setAccessibleText(cSonoRispostePendenti
+                ? totaleSenzaRisposta + " recensioni senza risposta, apri l'elenco per rispondere"
+                : "Nessuna recensione senza risposta");
+    }
+
+    /**
+     * Tinge il riquadro della media con il colore che spetta al voto:
+     * verde dalle 4 stelle in su, giallo fra le 2 e le 4, rosso sotto le 2.
+     * Con un voto negativo (nessuna recensione) il riquadro resta neutro,
+     * perché non c'è nessun giudizio da rappresentare.
+     *
+     * @param media media delle recensioni, oppure un valore negativo se non
+     *              ci sono ancora recensioni
+     * @author Matteo Franguelli
+     */
+    private void coloraRiquadroMedia(double media) {
+        tileMedia.getStyleClass().removeAll(CLASSI_MEDIA);
+
+        if (media < 0) return;
+
+        if (media >= 4)      tileMedia.getStyleClass().add("stat-tile-rating-high");
+        else if (media >= 2) tileMedia.getStyleClass().add("stat-tile-rating-mid");
+        else                 tileMedia.getStyleClass().add("stat-tile-rating-low");
     }
 
     /**
@@ -195,7 +237,7 @@ public class DashboardController {
 
         int daEvadere = gestioneRecensioni.getSenzaRisposta(r.getId());
         if (daEvadere > 0) {
-            badge.getChildren().add(Etichette.creaBadge(daEvadere + " da rispondere", "tag-rating-mid"));
+            badge.getChildren().add(Etichette.creaBadge(daEvadere + " da rispondere", "tag-todo"));
         }
 
         HBox riga = new HBox(testi, spaziatore, badge);
@@ -236,23 +278,6 @@ public class DashboardController {
     private void onAggiungiRistorante() {
         Finestre.apriModale("add_restaurant.fxml", "Nuovo ristorante");
         aggiornaTutto();
-    }
-
-    /**
-     * Passa all'elenco dei ristoranti, la schermata di clienti e ospiti.
-     * Serve al ristoratore che voglia guardare il catalogo come lo vedono i
-     * suoi clienti, o che abbia anche i permessi da cliente.
-     *
-     * @author Matteo Franguelli
-     */
-    @FXML
-    private void onEsplora() {
-        Object controller = Finestre.cambiaVista(etichettaUtente.getScene(), "main.fxml");
-
-        String citta = Session.getInstance().getCitta();
-        if (controller instanceof MainController principale) {
-            principale.impostaLuogoIniziale(citta);
-        }
     }
 
     /**

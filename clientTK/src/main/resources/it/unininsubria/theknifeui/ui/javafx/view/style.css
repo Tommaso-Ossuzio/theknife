@@ -46,11 +46,6 @@
     -color-primary-press:   #063D35;
     -color-primary-soft:    #E3F1EC;
 
-    /* --- Accento lime (evidenziazioni, badge, chiamate all'azione) --- */
-    -color-accent:          #C6E84B;
-    -color-accent-hover:    #B4D93A;
-    -color-accent-fg:       #14211E;
-
     /* --- Superfici --- */
     -color-bg:              #F4F6F5;
     -color-surface:         #FFFFFF;
@@ -78,14 +73,33 @@
     -color-star-off:        #C9D0CB;
 
     /* --- Colori informativi dei badge delle card ---
+       I badge sono in tinta pastello: uno sfondo tenue con sopra il testo
+       nella stessa tinta, ma scuro. Una tinta piena e satura su ogni badge
+       trasformava le card in una scacchiera di colori accesi che si
+       contendevano l'attenzione; con il pastello il primo elemento che si
+       legge in una card torna a essere il nome del ristorante.
+
+       Ogni coppia sfondo/testo è verificata sulle WCAG: i rapporti di
+       contrasto vanno da 6,8:1 a 7,9:1, ben oltre il 4,5:1 richiesto per il
+       testo. Cambiando uno di questi valori il rapporto va ricalcolato.
+
        Ogni badge accosta al colore anche un testo esplicito: il colore
        accompagna l'informazione, non la sostituisce mai. */
-    -color-rating-high:     #1B7F4B;
-    -color-rating-mid:      #8A5200;
-    -color-rating-low:      #A33A3A;
-    -color-michelin:        #A31621;
-    -color-service:         #1B5E9E;
-    -color-badge-fg:        #FFFFFF;
+    -color-rating-high-bg:  #D8F0E2;
+    -color-rating-high-fg:  #0F5132;
+    -color-rating-mid-bg:   #FBEFC8;
+    -color-rating-mid-fg:   #6B4A00;
+    -color-rating-low-bg:   #FBDDDD;
+    -color-rating-low-fg:   #8E1F1F;
+    -color-michelin-bg:     #F9DFE3;
+    -color-michelin-fg:     #8C1D2C;
+    -color-service-bg:      #DAE8F7;
+    -color-service-fg:      #17466F;
+
+    /* --- Sfondo dei riquadri della dashboard ---
+       Una tinta appena percettibile invece del bianco: stacca i quattro
+       numeri dal resto della pagina senza aggiungere un altro bordo. */
+    -color-tile-bg:         #EDF3F0;
 
     /* --- Ombre --- */
     -color-shadow:          rgba(20, 33, 30, 0.10);
@@ -301,7 +315,7 @@
    -------------------------------------------------------------------------
    .button        stile di base condiviso (si applica a ogni Button)
    .btn-primary   azione principale, verde pieno
-   .btn-accent    azione di richiamo, lime
+   .btn-primary-soft  stessa azione, ma in secondo piano: verde slavato
    .btn-secondary azione neutra, contorno grigio
    .btn-ghost     azione terziaria, senza sfondo
    .btn-danger    azione distruttiva o di uscita (logout)
@@ -338,12 +352,26 @@
 .btn-primary:pressed { -fx-background-color: -color-primary-press; }
 
 /* --- Accento lime --- */
-.btn-accent {
-    -fx-background-color: -color-accent;
-    -fx-text-fill: -color-accent-fg;
+/* Variante slavata del bottone principale.
+   La usa "Entra come ospite": è la stessa azione di "Accedi" ma di ripiego,
+   e deve leggersi come tale. Stessa forma e stesso verde, solo scaricati di
+   intensita': fondo verde chiarissimo e testo verde pieno, invece del verde
+   pieno con testo bianco. Il contrasto testo/fondo resta 5,1:1. */
+.btn-primary-soft {
+    -fx-background-color: -color-primary-soft;
+    -fx-text-fill: -color-primary;
+    -fx-border-color: -color-primary;
+    -fx-border-width: 1;
+    -fx-border-radius: 10;
 }
-.btn-accent:hover   { -fx-background-color: -color-accent-hover; }
-.btn-accent:pressed { -fx-background-color: -color-accent-hover; }
+.btn-primary-soft:hover {
+    -fx-background-color: -color-surface-alt;
+    -fx-border-color: -color-primary-hover;
+}
+.btn-primary-soft:pressed {
+    -fx-background-color: -color-primary-soft;
+    -fx-border-color: -color-primary-press;
+}
 
 /* --- Secondario: contorno, sfondo chiaro --- */
 .btn-secondary {
@@ -690,14 +718,14 @@
 
 /* Badge dei servizi offerti (consegna, prenotazione) */
 .tag-accent {
-    -fx-background-color: -color-service;
-    -fx-text-fill: -color-badge-fg;
+    -fx-background-color: -color-service-bg;
+    -fx-text-fill: -color-service-fg;
 }
 
 /* Badge delle stelle Michelin */
 .tag-michelin {
-    -fx-background-color: -color-michelin;
-    -fx-text-fill: -color-badge-fg;
+    -fx-background-color: -color-michelin-bg;
+    -fx-text-fill: -color-michelin-fg;
 }
 
 /* --- Badge della media delle recensioni ---
@@ -705,26 +733,34 @@
    valore numerico, il simbolo ★ e il numero di recensioni: chi non
    distingue i colori legge comunque la stessa informazione. */
 .tag-rating {
-    -fx-background-color: -color-text-muted;
-    -fx-text-fill: -color-badge-fg;
+    -fx-background-color: -color-surface-alt;
+    -fx-text-fill: -color-text-muted;
 }
 
 /* Media alta (da 4 stelle in su) */
 .tag-rating-high {
-    -fx-background-color: -color-rating-high;
-    -fx-text-fill: -color-badge-fg;
+    -fx-background-color: -color-rating-high-bg;
+    -fx-text-fill: -color-rating-high-fg;
 }
 
-/* Media intermedia (da 3 a 3,9 stelle) */
+/* Media intermedia (da 2 a 3,9 stelle) */
 .tag-rating-mid {
-    -fx-background-color: -color-rating-mid;
-    -fx-text-fill: -color-badge-fg;
+    -fx-background-color: -color-rating-mid-bg;
+    -fx-text-fill: -color-rating-mid-fg;
 }
 
-/* Media bassa (sotto le 3 stelle) */
+/* Media bassa (sotto le 2 stelle) */
 .tag-rating-low {
-    -fx-background-color: -color-rating-low;
-    -fx-text-fill: -color-badge-fg;
+    -fx-background-color: -color-rating-low-bg;
+    -fx-text-fill: -color-rating-low-fg;
+}
+
+/* Badge delle recensioni ancora da evadere, nell'elenco della dashboard.
+   Riusa il giallo della fascia intermedia: segnala qualcosa da fare senza
+   suonare come un allarme, che il rosso invece darebbe. */
+.tag-todo {
+    -fx-background-color: -color-rating-mid-bg;
+    -fx-text-fill: -color-rating-mid-fg;
 }
 
 /* Ristorante senza recensioni: nessun colore, solo contorno */
@@ -742,7 +778,10 @@
     -fx-text-fill: -color-primary;
 }
 
-/* Messaggio mostrato quando la ricerca non produce risultati */
+/* Messaggio mostrato quando la ricerca non produce risultati.
+   Centrato in entrambe le direzioni: occupa lo spazio che avanza sotto ai
+   contenuti, quindi senza centratura resterebbe appoggiato in alto a
+   sinistra di un'area grande e vuota. */
 .empty-state {
     -fx-alignment: center;
     -fx-spacing: 8;
@@ -1208,22 +1247,65 @@
    di card che vedono clienti e ospiti.
    ========================================================================= */
 
-/* Riga dei quattro riquadri */
+/* Riga dei quattro riquadri.
+   Centrata perché i riquadri hanno una misura fissa e non riempiono per
+   forza tutta la larghezza della finestra. */
 .stat-row {
-    -fx-spacing: 14;
+    -fx-spacing: 16;
     -fx-padding: 0 0 22 0;
+    -fx-alignment: center;
 }
 
-/* Singolo riquadro con un numero */
+/* Singolo riquadro con un numero.
+
+   Larghezza e altezza sono fissate allo stesso valore: i riquadri sono
+   quadrati e restano tali a qualunque larghezza della finestra. Lasciati
+   liberi di crescere si dividevano la riga in parti uguali e si
+   schiacciavano in quattro strisce basse, di forma diversa a ogni
+   ridimensionamento. Il numero e la sua didascalia sono centrati, così il
+   quadrato resta equilibrato comunque vada a finire il testo. */
 .stat-tile {
-    -fx-background-color: -color-surface;
-    -fx-background-radius: 14;
+    -fx-background-color: -color-tile-bg;
+    -fx-background-radius: 16;
     -fx-border-color: -color-border;
-    -fx-border-radius: 14;
-    -fx-padding: 18;
-    -fx-spacing: 4;
+    -fx-border-radius: 16;
+    -fx-padding: 20;
+    -fx-spacing: 8;
+    -fx-min-width: 210;
+    -fx-pref-width: 210;
+    -fx-max-width: 210;
+    -fx-min-height: 210;
+    -fx-pref-height: 210;
+    -fx-max-height: 210;
+    -fx-alignment: center;
     -fx-effect: dropshadow(gaussian, -color-shadow, 8, 0.0, 0, 2);
 }
+
+/* --- Il riquadro della media si colora con il voto ---
+   Verde dalle 4 stelle in su, giallo fra le 2 e le 4, rosso sotto le 2.
+   Sono le stesse tinte pastello dei badge, così un voto ha lo stesso
+   colore ovunque compaia nell'applicazione. Il riquadro mostra sempre
+   anche il valore numerico: il colore non è mai l'unica informazione. */
+.stat-tile-rating-high {
+    -fx-background-color: -color-rating-high-bg;
+    -fx-border-color: -color-rating-high-fg;
+}
+.stat-tile-rating-high .stat-value { -fx-text-fill: -color-rating-high-fg; }
+.stat-tile-rating-high .stat-label { -fx-text-fill: -color-rating-high-fg; }
+
+.stat-tile-rating-mid {
+    -fx-background-color: -color-rating-mid-bg;
+    -fx-border-color: -color-rating-mid-fg;
+}
+.stat-tile-rating-mid .stat-value { -fx-text-fill: -color-rating-mid-fg; }
+.stat-tile-rating-mid .stat-label { -fx-text-fill: -color-rating-mid-fg; }
+
+.stat-tile-rating-low {
+    -fx-background-color: -color-rating-low-bg;
+    -fx-border-color: -color-rating-low-fg;
+}
+.stat-tile-rating-low .stat-value { -fx-text-fill: -color-rating-low-fg; }
+.stat-tile-rating-low .stat-label { -fx-text-fill: -color-rating-low-fg; }
 
 /* Riquadro che si può cliccare (recensioni ancora da evadere) */
 .stat-tile-action {
@@ -1242,22 +1324,29 @@
 
 /* Il numero grande */
 .stat-value {
-    -fx-font-size: 30px;
+    -fx-font-size: 46px;
     -fx-font-weight: bold;
     -fx-text-fill: -color-heading;
 }
 
-/* La didascalia sotto al numero */
+/* La didascalia sotto al numero.
+   Su più righe quando non ci sta ("Media delle recensioni"), centrata
+   per restare in asse con il numero. */
 .stat-label {
-    -fx-font-size: 12px;
+    -fx-font-size: 15px;
     -fx-font-weight: bold;
     -fx-text-fill: -color-text-muted;
+    -fx-text-alignment: center;
+    -fx-wrap-text: true;
 }
 
-/* Invito all'azione dentro il riquadro cliccabile */
-.stat-hint {
-    -fx-font-size: 11px;
-    -fx-text-fill: -color-primary;
+/* Blocco "I miei ristoranti": titolo più elenco.
+   Occupa tutto lo spazio che avanza sotto ai quattro riquadri e vi si centra
+   verticalmente, così con uno o due locali non resta appeso in cima a una
+   pagina quasi vuota. */
+.owner-section {
+    -fx-alignment: center;
+    -fx-spacing: 4;
 }
 
 /* Elenco dei propri ristoranti */
@@ -1282,7 +1371,10 @@
     -fx-effect: dropshadow(gaussian, -color-shadow-strong, 12, 0.0, 0, 3);
 }
 
-/* Blocco nome + città dentro la riga */
+/* Blocco nome + città dentro la riga.
+   Centrato verticalmente: il nome e la città restano in asse con i badge
+   che stanno dall'altro capo della riga, invece di appoggiarsi in alto. */
 .owner-card-text {
     -fx-spacing: 3;
+    -fx-alignment: center-left;
 }

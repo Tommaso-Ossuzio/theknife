@@ -20,11 +20,6 @@
     -color-primary-press:   #26907A;
     -color-primary-soft:    #17332C;
 
-    /* --- Accento lime: invariato, funziona su entrambi i temi --- */
-    -color-accent:          #C6E84B;
-    -color-accent-hover:    #B4D93A;
-    -color-accent-fg:       #14211E;
-
     /* --- Superfici --- */
     -color-bg:              #101715;
     -color-surface:         #18211E;
@@ -37,7 +32,7 @@
     -color-border-strong:   #617370;
 
     /* --- Testo ---
-       text-invert è il testo che sta SOPRA il verde e sopra i badge colorati:
+       text-invert è il testo che sta SOPRA il verde pieno:
        nel tema scuro diventa quasi nero. */
     -color-text:            #ECF1EF;
     -color-heading:         #7FD9C3;
@@ -53,13 +48,24 @@
     -color-star-on:         #F5B942;
     -color-star-off:        #4A5B56;
 
-    /* --- Colori informativi dei badge delle card --- */
-    -color-rating-high:     #4FBF84;
-    -color-rating-mid:      #E0A33C;
-    -color-rating-low:      #E27C7C;
-    -color-michelin:        #E86A78;
-    -color-service:         #6FB3E8;
-    -color-badge-fg:        #08110F;
+    /* --- Colori informativi dei badge delle card ---
+       Il pastello del tema chiaro qui si rovescia: lo sfondo diventa la
+       tinta scura e il testo la tinta chiara. Il badge resta tenue rispetto
+       alla pagina in entrambi i temi, che è il punto di usare il pastello.
+       Anche queste coppie superano il 4,5:1 richiesto dalle WCAG. */
+    -color-rating-high-bg:  #1C3A2C;
+    -color-rating-high-fg:  #8FE0B4;
+    -color-rating-mid-bg:   #3C3320;
+    -color-rating-mid-fg:   #EBC77A;
+    -color-rating-low-bg:   #3D2626;
+    -color-rating-low-fg:   #F0A9A9;
+    -color-michelin-bg:     #3F252B;
+    -color-michelin-fg:     #F0A8B2;
+    -color-service-bg:      #1E3245;
+    -color-service-fg:      #A8CDEF;
+
+    /* --- Sfondo dei riquadri della dashboard --- */
+    -color-tile-bg:         #1C2724;
 
     /* --- Ombre: sul fondo scuro devono essere più profonde per vedersi --- */
     -color-shadow:          rgba(0, 0, 0, 0.45);

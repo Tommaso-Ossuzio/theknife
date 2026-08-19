@@ -44,9 +44,6 @@
 
                 <Label fx:id="etichettaUtente" styleClass="user-chip"/>
 
-                <Button text="Esplora ristoranti"
-                        onAction="#onEsplora"
-                        styleClass="btn-ghost"/>
                 <Button text="Esci"
                         onAction="#onLogout"
                         styleClass="btn-danger"/>
@@ -61,7 +58,10 @@
          CONTENUTO: numeri in evidenza e propri ristoranti
          ============================================================ -->
     <center>
-        <ScrollPane fitToWidth="true">
+        <!-- fitToHeight: senza, il VBox prende solo l'altezza del suo
+             contenuto e l'elenco dei ristoranti resterebbe appeso in cima
+             a una pagina mezza vuota invece di stare al centro -->
+        <ScrollPane fitToWidth="true" fitToHeight="true">
             <VBox styleClass="content-pane">
 
                 <HBox styleClass="content-header">
@@ -76,7 +76,9 @@
                         <Label text="Ristoranti gestiti" styleClass="stat-label"/>
                     </VBox>
 
-                    <VBox styleClass="stat-tile" HBox.hgrow="ALWAYS">
+                    <!-- Lo sfondo di questo riquadro cambia con il voto:
+                         la classe del colore la mette il controller -->
+                    <VBox fx:id="tileMedia" styleClass="stat-tile" HBox.hgrow="ALWAYS">
                         <Label fx:id="valoreMedia" text="—" styleClass="stat-value"/>
                         <Label text="Media delle recensioni" styleClass="stat-label"/>
                     </VBox>
@@ -93,27 +95,34 @@
                           HBox.hgrow="ALWAYS">
                         <Label fx:id="valoreSenzaRisposta" text="—" styleClass="stat-value"/>
                         <Label text="Senza risposta" styleClass="stat-label"/>
-                        <Label text="Clicca per rispondere" styleClass="stat-hint"/>
                     </VBox>
                 </HBox>
 
-                <!-- PROPRI RISTORANTI -->
-                <HBox styleClass="content-header">
-                    <Label text="I miei ristoranti" styleClass="section-title"/>
-                    <Pane HBox.hgrow="ALWAYS"/>
-                    <Button text="+ Aggiungi ristorante"
-                            onAction="#onAggiungiRistorante"
-                            styleClass="btn-primary"/>
-                </HBox>
+                <!-- PROPRI RISTORANTI
+                     Titolo ed elenco stanno in un blocco solo, che si prende
+                     tutto lo spazio rimasto sotto ai quattro riquadri e ci si
+                     centra dentro. Centrando il solo elenco, il titolo sarebbe
+                     rimasto in alto separato dalle sue righe da un vuoto. -->
+                <VBox styleClass="owner-section" VBox.vgrow="ALWAYS">
 
-                <VBox fx:id="contenitoreRistoranti" styleClass="owner-list"/>
+                    <HBox styleClass="content-header">
+                        <Label text="I miei ristoranti" styleClass="section-title"/>
+                        <Pane HBox.hgrow="ALWAYS"/>
+                        <Button text="+ Aggiungi ristorante"
+                                onAction="#onAggiungiRistorante"
+                                styleClass="btn-primary"/>
+                    </HBox>
 
-                <VBox fx:id="statoVuoto" styleClass="empty-state">
-                    <Label text="🍽" styleClass="empty-state-icon"/>
-                    <Label text="Non gestisci ancora nessun ristorante"
-                           styleClass="empty-state-text"/>
-                    <Label text="Aggiungine uno per vedere qui le sue recensioni e la sua media."
-                           styleClass="muted-text"/>
+                    <VBox fx:id="contenitoreRistoranti" styleClass="owner-list"/>
+
+                    <VBox fx:id="statoVuoto" styleClass="empty-state">
+                        <Label text="🍽" styleClass="empty-state-icon"/>
+                        <Label text="Non gestisci ancora nessun ristorante"
+                               styleClass="empty-state-text"/>
+                        <Label text="Aggiungine uno per vedere qui le sue recensioni e la sua media."
+                               styleClass="muted-text"/>
+                    </VBox>
+
                 </VBox>
 
             </VBox>

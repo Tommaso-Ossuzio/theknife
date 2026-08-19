@@ -10,8 +10,8 @@
 
     Presenta le tre strade possibili (accedere, registrarsi, entrare come
     ospite) prima di mostrare il catalogo dei ristoranti. Chi entra come
-    ospite deve per forza indicare da dove sta cercando, perché senza un
-    luogo la ricerca dei ristoranti non ha un punto di partenza.
+    ospite deve per forza indicare dove si trova, perché senza un luogo la
+    ricerca dei ristoranti non ha un punto di partenza.
 
     Come per ogni altra vista, qui non compare nessun attributo style="...":
     l'aspetto è tutto in style.css.
@@ -86,12 +86,9 @@
                     <VBox styleClass="guest-box">
 
                         <Label text="Continua come ospite" styleClass="section-title"/>
-                        <Label text="Da ospite puoi cercare i ristoranti e leggere le recensioni, ma non puoi scriverne né salvare preferiti."
-                               styleClass="muted-text"
-                               wrapText="true"/>
 
                         <VBox styleClass="field-group">
-                            <Label text="Da dove stai cercando? *" styleClass="field-label"/>
+                            <Label text="Dove ti trovi? *" styleClass="field-label"/>
                             <ComboBox fx:id="campoCitta"
                                       editable="true"
                                       promptText="Scrivi le prime lettere della città"
@@ -103,7 +100,7 @@
                         <Button fx:id="bottoneOspite"
                                 text="Entra come ospite"
                                 onAction="#onOspite"
-                                styleClass="btn-accent,btn-block"
+                                styleClass="btn-primary-soft,btn-block"
                                 maxWidth="Infinity"/>
                     </VBox>
                 </VBox>
