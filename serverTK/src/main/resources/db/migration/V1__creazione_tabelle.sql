@@ -51,7 +51,8 @@ CREATE TABLE UTENTE (
 );
 
 CREATE TABLE RISTORANTE (
-    nome VARCHAR(100) NOT NULL,
+    id_ristorante SERIAL NOT NULL,
+    nome VARCHAR(100) NOT NULL UNIQUE,
     telefono VARCHAR(50),
     sito_web VARCHAR(255),
     delivery BOOLEAN NOT NULL,
@@ -63,7 +64,7 @@ CREATE TABLE RISTORANTE (
     id_luogo INT NOT NULL UNIQUE REFERENCES LUOGO(id)
                                  ON UPDATE CASCADE
                                  ON DELETE CASCADE,
-    PRIMARY KEY (nome)
+    PRIMARY KEY (id_ristorante)
 );
 
 CREATE TABLE RECENSIONE (
@@ -74,7 +75,7 @@ CREATE TABLE RECENSIONE (
     id_utente INT NOT NULL REFERENCES UTENTE(id_utente)
                            ON UPDATE CASCADE
                            ON DELETE CASCADE,
-    nome_ristorante VARCHAR(100) NOT NULL REFERENCES RISTORANTE(nome)
+    id_ristorante INT NOT NULL REFERENCES RISTORANTE(id_ristorante)
                                           ON UPDATE CASCADE
                                           ON DELETE CASCADE,
     PRIMARY KEY (id)
@@ -95,18 +96,18 @@ CREATE TABLE PREFERITO (
     id_utente INT NOT NULL REFERENCES UTENTE(id_utente)
                            ON UPDATE CASCADE
                            ON DELETE CASCADE,
-    nome_ristorante VARCHAR(100) NOT NULL REFERENCES RISTORANTE(nome)
+    id_ristorante INT NOT NULL REFERENCES RISTORANTE(id_ristorante) 
                                           ON UPDATE CASCADE
                                           ON DELETE CASCADE,
-    PRIMARY KEY (id_utente, nome_ristorante)
+    PRIMARY KEY (id_utente, id_ristorante)
 );
 
 CREATE TABLE RISTORANTE_TIPO_CUCINA (
-    nome_ristorante VARCHAR(100) NOT NULL REFERENCES RISTORANTE(nome)
+    id_ristorante INT NOT NULL REFERENCES RISTORANTE(id_ristorante) 
                                           ON UPDATE CASCADE
                                           ON DELETE CASCADE,
     nome_tipo_cucina VARCHAR(100) NOT NULL REFERENCES TIPO_CUCINA(nome)
                                            ON UPDATE CASCADE
                                            ON DELETE CASCADE,
-    PRIMARY KEY (nome_ristorante, nome_tipo_cucina)
+    PRIMARY KEY (id_ristorante, nome_tipo_cucina)
 );
