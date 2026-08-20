@@ -1,4 +1,0 @@
-# Rinomina questo file in db.properties e inserisci i tuoi dati
-db.url=jdbc:postgresql://localhost:5432/postgres
-db.user=postgres
-db.password=inserisci_qui_la_tua_password
