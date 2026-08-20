@@ -3,7 +3,8 @@ package it.uninsubria;
 import com.opencsv.CSVReader;
 import com.opencsv.exceptions.CsvValidationException;
 
-import java.io.FileReader;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -11,20 +12,26 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 
+
 public class ImportaDati {
 
     /**
      * Metodo principale per l'importazione.
      */
     public static void importa(Connection conn) {
-        String csvPath = "data/michelin_my_maps.csv";
+        // Legge il CSV dalle risorse (funziona sia su IntelliJ che dentro il .jar!)
+        InputStream is = ImportaDati.class.getResourceAsStream("/db/migration/michelin_my_maps.csv");
+        if (is == null) {
+            System.err.println("File CSV non trovato in resources/db/migration/michelin_my_maps.csv!");
+            return;
+        }
         
-        //DB è già popolato?
+        // --- CONTROLLO: Il DB è già popolato? ---
         try (Statement stmt = conn.createStatement();
              ResultSet rs = stmt.executeQuery("SELECT COUNT(*) FROM RISTORANTE")) {
             if (rs.next() && rs.getInt(1) > 0) {
                 System.out.println("Il database contiene già " + rs.getInt(1) + " ristoranti. L'importazione CSV verrà saltata per risparmiare tempo.");
-                return;
+                return; // Esce dal metodo senza fare nulla
             }
         } catch (SQLException e) {
             System.err.println("Errore nel controllo del DB: " + e.getMessage());
@@ -39,16 +46,18 @@ public class ImportaDati {
             return;
         }
 
-        try (CSVReader reader = new CSVReader(new FileReader(csvPath))) {
+        try (CSVReader reader = new CSVReader(new InputStreamReader(is, java.nio.charset.StandardCharsets.UTF_8))) {
             String[] header = reader.readNext(); // Salta l'intestazione delle colonne
             if (header == null)
                 return;
 
             String[] line;
             int count = 0;
+            Utility utility = new Utility(); // Istanza per le conversioni
             
-            while ((line = reader.readNext()) != null) {
-                // ignora le colonne che non ci servono
+            // Ciclo riga per riga
+            while ((line = reader.readNext()) != null) { 
+                // ignora le colonne che non ci servono (ci servono almeno 10 colonne per WebsiteUrl)
                 if (line.length < 8)
                     continue;
 
@@ -58,6 +67,10 @@ public class ImportaDati {
                 String fasciaPrezzo = line[3].trim();
                 String cucineStr = line[4].trim();
                 
+                // Conversione simboli prezzo (es. €€ -> "tra 35 € e 60 €")
+                fasciaPrezzo = utility.ConvertiStringaPrezzo(fasciaPrezzo);
+                fasciaPrezzo= (fasciaPrezzo);
+
                 String telefono = line[7].trim();
                 String sitoWeb = (line.length > 9) ? line[9].trim() : null;
                 
@@ -97,8 +110,7 @@ public class ImportaDati {
                     int idCitta = inserisciCitta(conn, nomeCitta, nomeNazione);
                     int idCoord = inserisciCoordinate(conn, lat, lon);
                     int idLuogo = inserisciLuogo(conn, via, idCitta, idCoord);
-                    
-                    inserisciRistorante(conn, nomeRist, telefono, sitoWeb, fasciaPrezzo, idAdmin, idLuogo);
+                                    int idRistorante = inserisciRistorante(conn, nomeRist, telefono, sitoWeb, fasciaPrezzo, idAdmin, idLuogo);
 
                     String[] cucine = cucineStr.split(", ");
                     for (String c : cucine) {
@@ -107,7 +119,7 @@ public class ImportaDati {
                             if (tipo.length() > 100)
                                 tipo = tipo.substring(0, 100);
                             inserisciTipoCucina(conn, tipo);
-                            collegaRistoranteCucina(conn, nomeRist, tipo);
+                            collegaRistoranteCucina(conn, idRistorante, tipo);
                         }
                     }
                     
@@ -117,7 +129,7 @@ public class ImportaDati {
                     }
                     
                 } catch (SQLException e) {
-                    // Se una singola riga fallisce (es. duplicato), andiamo avanti con la prossima
+                    // Ignora in caso di duplicati o errori minori
                 }
             }
             System.out.println("Importazione completata con successo! Ristoranti totali inseriti: " + count);
@@ -220,19 +232,23 @@ public class ImportaDati {
         throw new SQLException("Errore creazione Luogo");
     }
 
-    private static void inserisciRistorante(Connection conn, String nome, String telefono, String sito_web, String prezzo, int idUtente, int idLuogo) throws SQLException {
+    private static int inserisciRistorante(Connection conn, String nome, String telefono, String sitoWeb, String prezzo, int idUtente, int idLuogo) throws SQLException {
         String sql = "INSERT INTO RISTORANTE (nome, telefono, sito_web, delivery, prenotazione_online, fascia_prezzo, id_utente, id_luogo) VALUES (?, ?, ?, ?, ?, ?, ?, ?) ON CONFLICT (nome) DO NOTHING";
-        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+        try (PreparedStatement ps = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
             ps.setString(1, nome);
-            ps.setString(2, telefono); // Può essere null, JDBC lo gestisce
-            ps.setString(3, sito_web);
+            ps.setString(2, telefono);
+            ps.setString(3, sitoWeb);
             ps.setBoolean(4, false);
             ps.setBoolean(5, false);
             ps.setString(6, prezzo);
             ps.setInt(7, idUtente);
             ps.setInt(8, idLuogo);
             ps.executeUpdate();
+            ResultSet rs = ps.getGeneratedKeys();
+            if (rs.next())
+                return rs.getInt(1);
         }
+        throw new SQLException("Errore creazione Ristorante");
     }
 
     private static void inserisciTipoCucina(Connection conn, String nome) throws SQLException {
@@ -243,12 +259,14 @@ public class ImportaDati {
         }
     }
 
-    private static void collegaRistoranteCucina(Connection conn, String nomeRist, String nomeCucina) throws SQLException {
-        String sql = "INSERT INTO RISTORANTE_TIPO_CUCINA (nome_ristorante, nome_tipo_cucina) VALUES (?, ?) ON CONFLICT DO NOTHING";
+    private static void collegaRistoranteCucina(Connection conn, int idRistorante, String nomeCucina) throws SQLException {
+        String sql = "INSERT INTO RISTORANTE_TIPO_CUCINA (id_ristorante, nome_tipo_cucina) VALUES (?, ?) ON CONFLICT DO NOTHING";
         try (PreparedStatement ps = conn.prepareStatement(sql)) {
-            ps.setString(1, nomeRist);
+            ps.setInt(1, idRistorante);
             ps.setString(2, nomeCucina);
             ps.executeUpdate();
         }
     }
 }
+
+

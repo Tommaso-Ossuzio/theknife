@@ -8,7 +8,7 @@ import java.util.Properties;
 
 public class DatabaseConfig {
     private static final Properties props = new Properties();
-    public static final String DB_NAME = "theknife_db"; // corretto il nome (mancava la n)
+    public static final String DB_NAME = "theknife_db";
 
 
     static {
