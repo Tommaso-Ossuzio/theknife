@@ -9,7 +9,8 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map;
 
-//TODO da rivedere
+//TODO Questa classe non ha info utili.. accede al file recensioni e calcola informazioni relative a quel file..
+//da cancellare e creare query adatte per ottenere le informazioni necessarie + gestione aggiunta nuova recensione
 
 /**
  * @author Elia Toschi
@@ -39,6 +40,7 @@ public class GestioneRecensioni {
     /** Diventa vero dopo la prima lettura del file. */
     private boolean indiceCaricato = false;
 
+    //costanti relative alle colonne del file recensioni
     /** Posizioni dei tre valori dentro il vettore dell'indice. */
     private static final int SOMMA = 0;
     private static final int CONTEGGIO = 1;
@@ -89,8 +91,8 @@ public class GestioneRecensioni {
     /* =========================================================
        INDICE DELLE RECENSIONI PER RISTORANTE
        Il file recensioni.csv viene letto una volta sola e
-       aggregato in memoria: senza questo, mostrare la media
-       nelle card significherebbe rileggere il file una volta
+       aggrvoltaegato in memoria: senza questo, mostrare la media
+       nelle card significherebbe rileggere il file una
        per ogni ristorante mostrato.
        ========================================================= */
 

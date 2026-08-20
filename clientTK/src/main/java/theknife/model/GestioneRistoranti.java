@@ -13,7 +13,7 @@ import java.util.Optional;
 import java.util.TreeMap;
 import java.util.stream.Collectors;
 
-//TODO da rivedere
+//TODO da cancellare le informazioni estrapolate dal file e modificata aggiunta ristorante
 
 /**
  * @author Celestino Resteghini
@@ -70,17 +70,6 @@ public class GestioneRistoranti {
                 return r;
         }
         return null;
-    }
-
-    public Ristorante getRistoranteDaNome(String nome)
-    {
-        for (Ristorante r : listaRistoranti) {
-            if (nome.equalsIgnoreCase(r.getNome())) {
-                return r;
-            }
-        }
-        return null;
-
     }
 
     /**
