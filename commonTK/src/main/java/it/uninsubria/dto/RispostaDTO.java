@@ -1,0 +1,39 @@
+package it.uninsubria.dto;
+
+import java.io.Serializable;
+
+public class RispostaDTO implements Serializable {
+    private static final long serialVersionUID = 1L;
+
+    private String testo;
+    private RistoratoreDTO ristoratore;
+
+    public RispostaDTO(String testo, RistoratoreDTO ristoratore) {
+        this.testo = testo;
+        this.ristoratore = ristoratore;
+    }
+
+    public String getTesto() {
+        return testo;
+    }
+
+    public void setTesto(String testo) {
+        this.testo = testo;
+    }
+
+    public RistoratoreDTO getRistoratore() {
+        return ristoratore;
+    }
+
+    public void setRistoratore(RistoratoreDTO ristoratore) {
+        this.ristoratore = ristoratore;
+    }
+
+    @Override
+    public String toString() {
+        return "RispostaDTO{" +
+                "testo='" + testo + '\'' +
+                ", ristoratore=" + ristoratore +
+                '}';
+    }
+}
