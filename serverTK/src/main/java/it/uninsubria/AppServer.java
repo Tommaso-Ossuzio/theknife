@@ -2,9 +2,11 @@ package it.uninsubria;
 
 import org.flywaydb.core.Flyway;
 import org.flywaydb.core.api.FlywayException;
+import java.io.*;
+import java.net.*;
 
 public class AppServer {
-    public static void main(String[] args) {
+    public static void main(String[] args) throws IOException {
         System.out.println("Avvio del Server TheKnife...");
 
         DatabaseConfig.createDatabaseIfMissing();
@@ -32,6 +34,26 @@ public class AppServer {
         } catch (Exception e) {
             System.err.println("Errore durante l'importazione:");
             e.printStackTrace();
+        }
+
+        exec();
+
+    }
+
+    /**
+     * Metodo per la gestione di richieste al server
+     * @author Celestino Resteghini
+     * @throws IOException
+     */
+    public static void exec() throws IOException {
+        ServerSocket s = new ServerSocket(8999);
+        try {
+            while (true) {
+                Socket socket = s.accept();
+                new SlaveThread(socket).start();
+            }
+        } finally {
+            s.close();
         }
     }
 }
