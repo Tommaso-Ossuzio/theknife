@@ -29,6 +29,7 @@ public class RegisterController {
     @FXML private TextField campoUsername;
     @FXML private PasswordField campoPassword;
     @FXML private TextField campoCitta;
+    @FXML private DatePicker campoDataNascita;
 
     @FXML private RadioButton radioCliente;
     @FXML private RadioButton radioRistoratore;
@@ -100,6 +101,7 @@ public class RegisterController {
         String username     = campoUsername.getText();
         String password     = campoPassword.getText();
         String citta        = campoCitta.getText();
+        //TODO implementare inserimento nel DB per data di nascita
 
         // Il ruolo è esclusivo: uno dei due è sempre e solo vero
         boolean isRistoratore = radioRistoratore.isSelected();

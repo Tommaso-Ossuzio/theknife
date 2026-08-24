@@ -554,6 +554,14 @@
     -fx-background-color: -color-primary-soft;
 }
 
+/* Le due card affiancate, metà larghezza ciascuna. */
+.role-row {
+    -fx-spacing: 12;
+}
+.role-row > .role-option {
+    -fx-max-width: infinity;
+}
+
 /* --- ComboBox (scelta della città nella schermata di benvenuto) --- */
 .combo-box {
     -fx-background-color: -color-surface;
