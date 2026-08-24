@@ -3,20 +3,14 @@ package theknife.ui.javafx;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
-import javafx.stage.Modality;
-import javafx.stage.Stage;
 import theknife.model.GestioneFile;
 import theknife.model.GestioneRistoranti;
 import theknife.model.Recensione;
 import theknife.model.Ristorante;
+import theknife.utilities.Finestre;
 
-import java.io.*;
-import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
 import java.util.List;
 
 //TODO da rivedere

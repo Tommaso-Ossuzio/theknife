@@ -14,6 +14,9 @@ import javafx.scene.layout.VBox;
 import theknife.model.GestioneFile;
 import theknife.model.GestioneRistoranti;
 import theknife.model.Ristorante;
+import theknife.utilities.Etichette;
+import theknife.utilities.Finestre;
+import theknife.utilities.Temi;
 
 import java.util.LinkedList;
 import java.util.List;

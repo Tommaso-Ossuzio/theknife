@@ -1,4 +1,4 @@
-package theknife.ui.javafx;
+package theknife.utilities;
 
 import javafx.scene.control.Label;
 import theknife.model.Ristorante;

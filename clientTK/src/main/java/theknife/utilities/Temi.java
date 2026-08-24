@@ -1,4 +1,4 @@
-package theknife.ui.javafx;
+package theknife.utilities;
 
 import javafx.scene.Parent;
 import javafx.scene.Scene;

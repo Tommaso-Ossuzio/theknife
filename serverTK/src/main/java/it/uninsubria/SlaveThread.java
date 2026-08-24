@@ -45,10 +45,10 @@ public class SlaveThread extends Thread {
                     UtenteDTO nuovoUtente = (UtenteDTO) in.readObject();
                     //TODO controllare nel db che l'utente non sia già presente e nel caswo registrarlo
                     if(true) { //se è avvenuta la registrazione
-                        out.writeObject("OK");
+                        out.writeObject(true);
                         out.flush();
                     } else {
-                        out.writeObject("Utente già presente"); //Da capire se gestioma già gli errore con la grafica oppure se vanno gestiti lato server
+                        out.writeObject(false); //se esiste già
                         out.flush();
                     }
                 }
@@ -59,7 +59,7 @@ public class SlaveThread extends Thread {
                     out.writeObject(ristoranti);
                     out.flush();
                 }
-                if(comando.equals("FILTRO")) {
+                if(comando.equals("RECENSIONI")) {
                     String idRistorante = (String) in.readObject();
                     //TODO prendere dal db tutte le recensioni relative all'id del ristorante passato dal client
                     LinkedList<RecensioneDTO> recensioni = new LinkedList<>(); //TODO sostituire la lista vuota con la lista dei ristoranti richiesti

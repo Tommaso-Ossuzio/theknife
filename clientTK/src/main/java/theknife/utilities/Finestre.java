@@ -1,4 +1,4 @@
-package theknife.ui.javafx;
+package theknife.utilities;
 
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
