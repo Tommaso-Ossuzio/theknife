@@ -1,5 +1,8 @@
 package theknife.model;
 
+import it.uninsubria.dto.FiltroRistoranteDTO;
+import it.uninsubria.dto.RistoranteDTO;
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
@@ -8,6 +11,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.TreeMap;
@@ -84,6 +88,45 @@ public class GestioneRistoranti {
             if(r.getId() == id)
                 return r;
         return null;
+    }
+
+    /**
+     * Invia al server i criteri del nuovo flusso FILTRO e restituisce i
+     * ristoranti ricevuti come DTO.
+     *
+     * <p>Il metodo è bloccante perché attende la risposta della socket; il
+     * controller dovrà richiamarlo da un thread separato per non bloccare la
+     * UI JavaFX.</p>
+     *
+     * @param filtro criteri della ricerca
+     * @return ristoranti filtrati, oppure una lista vuota se la risposta non
+     *         è disponibile o la connessione al server fallisce
+     */
+    public LinkedList<RistoranteDTO> filtraRistoranti(FiltroRistoranteDTO filtro)
+    {
+        if (filtro == null) {
+            throw new IllegalArgumentException("Il filtro dei ristoranti non può essere null");
+        }
+
+        try {
+            Object risposta = GestioneRichieste.getInstance()
+                    .inviaEAttendi("FILTRO", filtro);
+
+            if (risposta instanceof List<?>) {
+                LinkedList<RistoranteDTO> risultato = new LinkedList<>();
+
+                for (Object elemento : (List<?>) risposta) {
+                    if (elemento instanceof RistoranteDTO) {
+                        risultato.add((RistoranteDTO) elemento);
+                    }
+                }
+                return risultato;
+            }
+        } catch (java.io.IOException e) {
+            e.printStackTrace();
+        }
+
+        return new LinkedList<>();
     }
 
     /**
