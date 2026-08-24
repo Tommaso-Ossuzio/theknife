@@ -88,9 +88,6 @@ public class SlaveThread extends Thread {
                 if(comando.equals("ELIM-REC")) {
                     RecensioneDTO recensione = (RecensioneDTO) in.readObject();
                     //TODO eliminare nel db la recensione con i dati forniti dal client
-                    LinkedList<RecensioneDTO> recensioni = new LinkedList<>(); //TODO sostituire la lista vuota con la lista delle recensioni richieste
-                    out.writeObject(recensioni);
-                    out.flush();
                 }
                 if(comando.equals("VIS-PREF")) {
                     int idUtente = (int) in.readObject();
@@ -111,9 +108,6 @@ public class SlaveThread extends Thread {
                     int idUtente = id.get("idUtente");
                     int idRistorante = id.get("idRistorante");
                     //TODO eliminare il ristorante dai preferiti
-                    LinkedList<RistoranteDTO> ristoranti = new LinkedList<>(); //TODO sostituire la lista vuota con la lista dei ristoranti richiesti
-                    out.writeObject(ristoranti);
-                    out.flush();
                 }
                 if(comando.equals("AGG-PREF")) {
                     HashMap<String, Integer> id = (HashMap<String, Integer>) in.readObject();
@@ -152,9 +146,6 @@ public class SlaveThread extends Thread {
                 if(comando.equals("RISP-REC")) {
                     RecensioneDTO recensione = (RecensioneDTO) in.readObject();
                     //TODO aggiungere nel db la risposta alla recensione
-                    LinkedList<RecensioneDTO> recensioni = new LinkedList<>(); //TODO sostituire la lista vuota con la lista delle recensioni richieste
-                    out.writeObject(recensioni);
-                    out.flush();
                 }
             }
         } catch (IOException | ClassNotFoundException e) {

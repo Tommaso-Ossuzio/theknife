@@ -116,7 +116,7 @@ public class MyReviewsController {
         Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
         alert.setTitle("Elimina Recensione");
         alert.setHeaderText("Sei sicuro di voler eliminare questa recensione?");
-        alert.setContentText("L'operazione e' reversibile.");
+        alert.setContentText("L'operazione e' irreversibile.");
 
         if (alert.showAndWait().orElse(ButtonType.CANCEL) == ButtonType.OK) {
             dati.remove(riga);  //rimozione grafica
