@@ -18,9 +18,16 @@ public class RistoranteDTO implements Serializable {
     private List<String> cucine;
     private LuogoDTO luogo;
     private RistoratoreDTO ristoratore;
+    private Double mediaStelle;
+    private Integer numeroRecensioni;
+    private Integer numeroRecensioniSenzaRisposta;
 
 
-    public RistoranteDTO(int idRistorante, String nome, String telefono, String sitoWeb, boolean delivery, boolean prenotazioneOnline, String fasciaPrezzo, List<String> cucine, LuogoDTO luogo, RistoratoreDTO ristoratore) {
+    public RistoranteDTO(int idRistorante, String nome, String telefono, String sitoWeb,
+                         boolean delivery, boolean prenotazioneOnline, String fasciaPrezzo,
+                         List<String> cucine, LuogoDTO luogo, RistoratoreDTO ristoratore,
+                         Double mediaStelle, Integer numeroRecensioni,
+                         Integer numeroRecensioniSenzaRisposta) {
         this.idRistorante = idRistorante;
         this.nome = nome;
         this.telefono = telefono;
@@ -31,6 +38,9 @@ public class RistoranteDTO implements Serializable {
         this.cucine = cucine;
         this.luogo = luogo;
         this.ristoratore = ristoratore;
+        this.mediaStelle = mediaStelle;
+        this.numeroRecensioni = numeroRecensioni;
+        this.numeroRecensioniSenzaRisposta = numeroRecensioniSenzaRisposta;
     }
 
     public int getIdRistorante() {
@@ -113,6 +123,30 @@ public class RistoranteDTO implements Serializable {
         this.ristoratore = ristoratore;
     }
 
+    public Double getMediaStelle() {
+        return mediaStelle;
+    }
+
+    public void setMediaStelle(Double mediaStelle) {
+        this.mediaStelle = mediaStelle;
+    }
+
+    public Integer getNumeroRecensioni() {
+        return numeroRecensioni;
+    }
+
+    public void setNumeroRecensioni(Integer numeroRecensioni) {
+        this.numeroRecensioni = numeroRecensioni;
+    }
+
+    public Integer getNumeroRecensioniSenzaRisposta() {
+        return numeroRecensioniSenzaRisposta;
+    }
+
+    public void setNumeroRecensioniSenzaRisposta(Integer numeroRecensioniSenzaRisposta) {
+        this.numeroRecensioniSenzaRisposta = numeroRecensioniSenzaRisposta;
+    }
+
     @Override
     public String toString() {
         return "RistoranteDTO{" +
@@ -126,6 +160,9 @@ public class RistoranteDTO implements Serializable {
                 ", cucine=" + cucine +
                 ", luogo=" + luogo +
                 ", ristoratore=" + ristoratore +
+                ", mediaStelle=" + mediaStelle +
+                ", numeroRecensioni=" + numeroRecensioni +
+                ", numeroRecensioniSenzaRisposta=" + numeroRecensioniSenzaRisposta +
                 '}';
     }
 }

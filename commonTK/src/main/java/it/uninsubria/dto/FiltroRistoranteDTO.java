@@ -5,8 +5,9 @@ import java.io.Serializable;
 /**
  * Parametri della richiesta di ricerca dei ristoranti ({@code FILTRO}).
  *
- * <p>I campi opzionali possono essere {@code null}: in quel caso il server
- * non applica il relativo criterio di ricerca.<p>
+ * <p>{@code luogo} è il solo criterio obbligatorio. Gli altri campi possono
+ * essere {@code null}: in quel caso il server non applica il relativo
+ * criterio di ricerca.</p>
  *
  * @author Michele Viselli
  */
