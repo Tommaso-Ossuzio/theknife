@@ -37,9 +37,9 @@
 
     <bottom>
         <HBox styleClass="dialog-footer">
-            <Button text="Continua come ospite"
-                    onAction="#onGuest"
-                    styleClass="btn-ghost"/>
+            <Button text="Annulla"
+                    onAction="#onBack"
+                    styleClass="btn-secondary"/>
             <Button text="Accedi"
                     onAction="#onLogin"
                     styleClass="btn-primary"/>

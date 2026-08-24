@@ -66,19 +66,12 @@ public class LoginController {
     }
 
     /**
-     * Si occupa di escludere i permessi al utente non registrato.
+     * Chiude la finestra senza accedere.
      * @param event
      * @author Matteo Franguelli
      */
     @FXML
-    private void onGuest(ActionEvent event) {
-        Session.getInstance().login(null, Session.Role.GUEST);
-        // L'ospite non ha nessun permesso
-        Session.getInstance().setPermessi(false, false);
-
-        if (controllerPrincipale != null) {
-            controllerPrincipale.onLoginSuccess();
-        }
+    private void onBack(ActionEvent event) {
         chiudiFinestra();
     }
 
