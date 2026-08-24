@@ -102,6 +102,7 @@ public class RistoranteDAO {
         UtenteDAO utenteDAO = new UtenteDAO();
         RistoratoreDTO proprietario = (RistoratoreDTO) utenteDAO.getUtente(conn, idUtente);
 
-        return new RistoranteDTO(id, nome, telefono, sitoWeb, delivery, prenotazioneOnline, fasciaPrezzo, lista, luogo, proprietario);
+        return new RistoranteDTO(id, nome, telefono, sitoWeb, delivery, prenotazioneOnline,
+                fasciaPrezzo, lista, luogo, proprietario, null, null, null);
     }
 }
