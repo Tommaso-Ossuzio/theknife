@@ -41,8 +41,8 @@
                 </VBox>
 
                 <VBox styleClass="field-group">
-                    <Label text="USERNAME *" styleClass="field-label"/>
-                    <TextField fx:id="campoUsername" promptText="Scegli uno username"/>
+                    <Label text="EMAIL *" styleClass="field-label"/>
+                    <TextField fx:id="campoUsername" promptText="Es. mario.rossi@email.it"/>
                 </VBox>
 
                 <VBox styleClass="field-group">

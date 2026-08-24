@@ -51,7 +51,7 @@ public class LoginController {
         String password   = campoPassword.getText();
 
         if (nomeUtente == null || nomeUtente.isBlank() || password == null || password.isBlank()) {
-            etichettaErrore.setText("Compila username e password.");
+            etichettaErrore.setText("Compila email e password.");
             return;
         }
 

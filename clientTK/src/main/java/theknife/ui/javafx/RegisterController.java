@@ -115,9 +115,11 @@ public class RegisterController {
             return;
         }
 
+        //TODO implementare controllo indirizzo mail
+
         // Controllo se username gia' presente
         if (usernameEsiste(username)) {
-            etichettaErrore.setText("Username già in uso. Scegline un altro.");
+            etichettaErrore.setText("Email già in uso. Usane un'altra.");
             return;
         }
 

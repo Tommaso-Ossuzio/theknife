@@ -60,9 +60,6 @@
                 <VBox styleClass="welcome-card">
 
                     <Label text="Benvenuto in TheKnife" styleClass="page-title"/>
-                    <Label text="Il catalogo dei ristoranti della guida Michelin: cercali, leggi le recensioni e lascia la tua."
-                           styleClass="subtitle"
-                           wrapText="true"/>
 
                     <VBox styleClass="welcome-actions">
                         <Button text="Accedi"

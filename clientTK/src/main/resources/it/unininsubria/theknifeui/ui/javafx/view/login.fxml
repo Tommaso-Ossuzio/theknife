@@ -13,8 +13,6 @@
     <top>
         <VBox styleClass="dialog-header">
             <Label text="Bentornato" styleClass="page-title"/>
-            <Label text="Accedi per salvare i preferiti e scrivere recensioni."
-                   styleClass="subtitle"/>
         </VBox>
     </top>
 
@@ -22,8 +20,8 @@
         <VBox styleClass="form-body">
 
             <VBox styleClass="field-group">
-                <Label text="USERNAME" styleClass="field-label"/>
-                <TextField fx:id="campoUsername" promptText="Inserisci username"/>
+                <Label text="EMAIL" styleClass="field-label"/>
+                <TextField fx:id="campoUsername" promptText="Inserisci email"/>
             </VBox>
 
             <VBox styleClass="field-group">
