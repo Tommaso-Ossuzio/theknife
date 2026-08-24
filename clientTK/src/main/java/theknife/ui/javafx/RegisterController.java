@@ -29,6 +29,7 @@ public class RegisterController {
     @FXML private TextField campoUsername;
     @FXML private PasswordField campoPassword;
     @FXML private TextField campoCitta;
+    @FXML private DatePicker campoDataNascita;
 
     @FXML private RadioButton radioCliente;
     @FXML private RadioButton radioRistoratore;
@@ -100,20 +101,25 @@ public class RegisterController {
         String username     = campoUsername.getText();
         String password     = campoPassword.getText();
         String citta        = campoCitta.getText();
+        //TODO implementare inserimento nel DB per data di nascita
 
         // Il ruolo è esclusivo: uno dei due è sempre e solo vero
         boolean isRistoratore = radioRistoratore.isSelected();
         boolean isCliente     = !isRistoratore;
 
         // Cambi obbligatori
-        if (username == null || username.isBlank() || password == null || password.isBlank()) {
-            etichettaErrore.setText("Username e password sono obbligatori.");
+        if (username == null || username.isBlank() || password == null || password.isBlank()
+                || nome == null || nome.isBlank() || cognome == null || cognome.isBlank()
+                || citta == null || citta.isBlank()) {
+            etichettaErrore.setText("Tutti i campi sono obbligatori.");
             return;
         }
 
+        //TODO implementare controllo indirizzo mail
+
         // Controllo se username gia' presente
         if (usernameEsiste(username)) {
-            etichettaErrore.setText("Username già in uso. Scegline un altro.");
+            etichettaErrore.setText("Email già in uso. Usane un'altra.");
             return;
         }
 

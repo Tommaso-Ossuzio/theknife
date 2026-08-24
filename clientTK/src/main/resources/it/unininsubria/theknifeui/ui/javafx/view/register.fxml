@@ -23,8 +23,6 @@
     <top>
         <VBox styleClass="dialog-header">
             <Label text="Crea il tuo account" styleClass="page-title"/>
-            <Label text="Bastano pochi secondi per iniziare a usare TheKnife."
-                   styleClass="subtitle"/>
         </VBox>
     </top>
 
@@ -33,18 +31,18 @@
             <VBox styleClass="form-body">
 
                 <VBox styleClass="field-group">
-                    <Label text="NOME" styleClass="field-label"/>
+                    <Label text="NOME *" styleClass="field-label"/>
                     <TextField fx:id="campoNome" promptText="Il tuo nome"/>
                 </VBox>
 
                 <VBox styleClass="field-group">
-                    <Label text="COGNOME" styleClass="field-label"/>
+                    <Label text="COGNOME *" styleClass="field-label"/>
                     <TextField fx:id="campoCognome" promptText="Il tuo cognome"/>
                 </VBox>
 
                 <VBox styleClass="field-group">
-                    <Label text="USERNAME *" styleClass="field-label"/>
-                    <TextField fx:id="campoUsername" promptText="Scegli uno username"/>
+                    <Label text="EMAIL *" styleClass="field-label"/>
+                    <TextField fx:id="campoUsername" promptText="Es. mario.rossi@email.it"/>
                 </VBox>
 
                 <VBox styleClass="field-group">
@@ -53,8 +51,13 @@
                 </VBox>
 
                 <VBox styleClass="field-group">
-                    <Label text="CITTÀ / DOMICILIO" styleClass="field-label"/>
+                    <Label text="CITTÀ / DOMICILIO *" styleClass="field-label"/>
                     <TextField fx:id="campoCitta" promptText="Es. Varese"/>
+                </VBox>
+
+                <VBox styleClass="field-group">
+                    <Label text="DATA DI NASCITA" styleClass="field-label"/>
+                    <DatePicker fx:id="campoDataNascita" promptText="Facoltativo"/>
                 </VBox>
 
                 <Separator/>
@@ -63,24 +66,20 @@
                 <VBox styleClass="field-group">
                     <Label text="COME VUOI USARE THEKNIFE?" styleClass="field-label"/>
 
-                    <VBox styleClass="role-option" onMouseClicked="#onScegliCliente">
-                        <RadioButton fx:id="radioCliente"
-                                     text="Cliente"
-                                     toggleGroup="$gruppoRuolo"
-                                     selected="true"/>
-                        <Label text="Cerchi ristoranti, salvi i preferiti e scrivi recensioni."
-                               styleClass="muted-text"
-                               wrapText="true"/>
-                    </VBox>
+                    <HBox styleClass="role-row">
+                        <VBox styleClass="role-option" onMouseClicked="#onScegliCliente" HBox.hgrow="ALWAYS">
+                            <RadioButton fx:id="radioCliente"
+                                         text="Cliente"
+                                         toggleGroup="$gruppoRuolo"
+                                         selected="true"/>
+                        </VBox>
 
-                    <VBox styleClass="role-option" onMouseClicked="#onScegliRistoratore">
-                        <RadioButton fx:id="radioRistoratore"
-                                     text="Ristoratore"
-                                     toggleGroup="$gruppoRuolo"/>
-                        <Label text="Pubblichi i tuoi ristoranti e rispondi alle recensioni ricevute."
-                               styleClass="muted-text"
-                               wrapText="true"/>
-                    </VBox>
+                        <VBox styleClass="role-option" onMouseClicked="#onScegliRistoratore" HBox.hgrow="ALWAYS">
+                            <RadioButton fx:id="radioRistoratore"
+                                         text="Ristoratore"
+                                         toggleGroup="$gruppoRuolo"/>
+                        </VBox>
+                    </HBox>
                 </VBox>
 
                 <Label fx:id="etichettaErrore" styleClass="error-label" wrapText="true"/>

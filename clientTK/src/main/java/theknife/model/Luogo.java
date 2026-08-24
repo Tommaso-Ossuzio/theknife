@@ -10,8 +10,8 @@ import static java.lang.Math.*;
  */
 public class Luogo {
 
-    private final double RAGGIOTERRESTRE_KM= 6371;
 
+    private final double RAGGIOTERRESTRE_KM= 6371;
 
     private String nazione;
     private String indirizzo;
@@ -57,6 +57,7 @@ public class Luogo {
     {
         return "Luogo: "+nazione+" "+indirizzo+" "+citta+" "+latitudine+" "+longitudine+"\n";
     }
+
     /**
      * Verifica se un luogo è vicino entro 10 kilometri
      *
@@ -66,7 +67,7 @@ public class Luogo {
      * @author Celestino Resteghini
      * @author Elia Toschi
      */
-    public boolean checkDistance10KM(double lat2, double longi2)
+    public boolean checkDistance10KM( double lat2, double longi2)
     {
         double lat1Rad = toRadians(latitudine);
         double long1Rad= toRadians(longitudine);

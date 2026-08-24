@@ -42,10 +42,9 @@ public class RecensioneDAO {
                 String data = ldt.format(formattatoreData);
                 String ora = ldt.format(formattatoreOra);
 
-                UtenteDTO autore = utenteDAO.getUtente(conn, idAutore);
                 RispostaDTO risposta = getRispostaPerRecensione(conn, idRecensione);
 
-                RecensioneDTO recensione = new RecensioneDTO(idRecensione, testo, numeroStelle, data, ora, autore, risposta);
+                RecensioneDTO recensione = new RecensioneDTO( testo, numeroStelle, data, ora, idAutore, risposta);
                 listaRecensioni.add(recensione);
             }
 
