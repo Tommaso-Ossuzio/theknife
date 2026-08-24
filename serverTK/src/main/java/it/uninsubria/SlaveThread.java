@@ -4,6 +4,7 @@ import it.uninsubria.dto.UtenteDTO;
 
 import java.io.*;
 import java.net.*;
+import java.util.HashMap;
 import java.util.LinkedList;
 
 /**
@@ -53,20 +54,84 @@ public class SlaveThread extends Thread {
                     }
                 }
                 if(comando.equals("FILTRO")) {
-                    String specificheFilto = (String) in.readObject(); //Forse va fatta una classe DTO ad hoc per questa ???
+                    FiltroRistoranteDTO specificheFilto = (FiltroRistoranteDTO) in.readObject();
                     //TODO prendere dal db tutti i ristoranti che rientrano nelle specifiche fornite dal client
                     LinkedList<RistoranteDTO> ristoranti = new LinkedList<>(); //TODO sostituire la lista vuota con la lista dei ristoranti richiesti
                     out.writeObject(ristoranti);
                     out.flush();
                 }
                 if(comando.equals("RECENSIONI")) {
-                    String idRistorante = (String) in.readObject();
+                    int idRistorante = (int) in.readObject();
                     //TODO prendere dal db tutte le recensioni relative all'id del ristorante passato dal client
-                    LinkedList<RecensioneDTO> recensioni = new LinkedList<>(); //TODO sostituire la lista vuota con la lista dei ristoranti richiesti
+                    LinkedList<RecensioneDTO> recensioni = new LinkedList<>(); //TODO sostituire la lista vuota con la lista delle recensioni richieste
                     out.writeObject(recensioni);
                     out.flush();
                 }
-
+                if(comando.equals("AGG-REC")) {
+                    RecensioneDTO recensione = (RecensioneDTO) in.readObject();
+                    //TODO aggiungere recensione nel db
+                }
+                if(comando.equals("VIS-REC")) {
+                    int idUtente = (int) in.readObject();
+                    //TODO prendere dal db tutte le recensioni relative all'id dell'utente passato dal client
+                    LinkedList<RecensioneDTO> recensioni = new LinkedList<>(); //TODO sostituire la lista vuota con la lista delle recensioni richieste
+                    out.writeObject(recensioni);
+                    out.flush();
+                }
+                if(comando.equals("MOD-REC")) {
+                    RecensioneDTO recensione = (RecensioneDTO) in.readObject();
+                    //TODO modificare nel db la recensione con i dati forniti dal client
+                    LinkedList<RecensioneDTO> recensioni = new LinkedList<>(); //TODO sostituire la lista vuota con la lista delle recensioni richieste
+                    out.writeObject(recensioni);
+                    out.flush();
+                }
+                if(comando.equals("ELIM-REC")) {
+                    RecensioneDTO recensione = (RecensioneDTO) in.readObject();
+                    //TODO eliminare nel db la recensione con i dati forniti dal client
+                    LinkedList<RecensioneDTO> recensioni = new LinkedList<>(); //TODO sostituire la lista vuota con la lista delle recensioni richieste
+                    out.writeObject(recensioni);
+                    out.flush();
+                }
+                if(comando.equals("VIS-PREF")) {
+                    int idUtente = (int) in.readObject();
+                    //TODO prendere dal db tutti i ristoranti preferiti del client
+                    LinkedList<RistoranteDTO> ristoranti = new LinkedList<>(); //TODO sostituire la lista vuota con la lista dei ristoranti richiesti
+                    out.writeObject(ristoranti);
+                    out.flush();
+                }
+                if(comando.equals("ELIM-PREF")) {
+                    /*
+                    * Lato client scrivere:
+                    * HashMap<String, Integer> id = new HashMap<>();
+                    * id.put("idUtente", idUtente);
+                    * id.put("idRistorante", idRistorante)
+                    * LinkedList<RistoranteDTO> ristoranti = (LinkedList<RistoranteDTO>) GestioneRichieste.getInstance().inviaEAttendi("ELIM-PREF", id);
+                    * */
+                    //TODO vogliamo mettre sta roba?
+                    @SuppressWarnings("unchecked")
+                    HashMap<String, Integer> id = (HashMap<String, Integer>) in.readObject();
+                    int idUtente = id.get("idUtente");
+                    int idRistorante = id.get("idRistorante");
+                    //TODO eliminare il ristorante dai preferiti
+                    LinkedList<RistoranteDTO> ristoranti = new LinkedList<>(); //TODO sostituire la lista vuota con la lista dei ristoranti richiesti
+                    out.writeObject(ristoranti);
+                    out.flush();
+                }
+                if(comando.equals("AGG-PREF")) {
+                    //TODO vogliamo mettre sta roba?
+                    @SuppressWarnings("unchecked")
+                    HashMap<String, Integer> id = (HashMap<String, Integer>) in.readObject();
+                    int idUtente = id.get("idUtente");
+                    int idRistorante = id.get("idRistorante");
+                    //TODO aggiungere il ristorante ai preferiti
+                }
+                if(comando.equals("MAPS")) {
+                    int idRistorante = (int) in.readObject();
+                    //TODO cercare coordinate del ristorante passato dal client
+                    CoordinateDTO coordinate= new CoordinateDTO(1, 1,1); //TODO sostituire le coordinate con quelle prese dal db
+                    out.writeObject(coordinate);
+                    out.flush();
+                }
                 //TODO completare protocollo
             }
         } catch (IOException | ClassNotFoundException e) {
