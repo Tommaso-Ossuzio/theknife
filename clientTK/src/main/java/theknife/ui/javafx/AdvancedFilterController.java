@@ -20,8 +20,7 @@ public class AdvancedFilterController {
 
     @FXML private TextField campoLuogo;
     @FXML private TextField campoCucina;
-    @FXML private TextField campoPrezzoMin;
-    @FXML private TextField campoPrezzoMax;
+    @FXML private ComboBox<String> menuPrezzo;
 
     @FXML private Button star1, star2, star3, star4, star5;
 
@@ -29,12 +28,32 @@ public class AdvancedFilterController {
     @FXML private CheckBox checkBooking;
 
     private int stelleSelezionate = 0;
+
+    // Fasce di prezzo della guida Michelin, con i limiti in euro di ciascuna
+    private static final String[] FASCE_PREZZO = {
+            "Meno di 35 €",
+            "Tra 35 € e 60 €",
+            "Tra 60 € e 100 €",
+            "Oltre 100 €"
+    };
+    private static final double[] PREZZO_MIN = { -1, 35, 60, 100 };
+    private static final double[] PREZZO_MAX = { 35, 60, 100, -1 };
+
     private MainController controllerPrincipale;
 
     public void setParent(MainController parent) {
         this.controllerPrincipale = parent;
     }
 
+
+    /**
+     * Riempie il menu con le quattro fasce di prezzo della guida Michelin.
+     * @author Celestino Resteghini
+     */
+    @FXML
+    private void initialize() {
+        menuPrezzo.getItems().setAll(FASCE_PREZZO);
+    }
 
     /**
      * Si occupa di aggiornare le stelle in base a quante sono cliccate.
@@ -85,8 +104,6 @@ public class AdvancedFilterController {
     private void onApply() {
         String luogo = campoLuogo.getText();
         String cucina = campoCucina.getText();
-        String pMinStr = campoPrezzoMin.getText();
-        String pMaxStr = campoPrezzoMax.getText();
         boolean delivery = checkDelivery.isSelected();
         boolean booking = checkBooking.isSelected();
 
@@ -96,35 +113,14 @@ public class AdvancedFilterController {
             return;
         }
 
-        Double prezzoMin = null;
-        Double prezzoMax = null;
-
-        try {
-            if (pMinStr != null && !pMinStr.isBlank()) {
-                prezzoMin = Double.parseDouble(pMinStr.replace(",", "."));
-            }
-        } catch (NumberFormatException e) {
-            mostraErrore("Prezzo Minimo non valido", "Inserisci un numero valido");
-            return;
-        }
-
-        try {
-            if (pMaxStr != null && !pMaxStr.isBlank()) {
-                prezzoMax = Double.parseDouble(pMaxStr.replace(",", "."));
-            }
-        } catch (NumberFormatException e) {
-            mostraErrore("Prezzo Massimo non valido", "Inserisci un numero valido (es. 50)");
-            return;
-        }
-
-        if (prezzoMin != null && prezzoMax != null && prezzoMin > prezzoMax) {
-            mostraErrore("Intervallo non valido", "Il prezzo minimo non può essere maggiore del massimo.");
-            return;
-        }
+        // Nessuna fascia scelta: -1 vale come "senza limite" per Filtro
+        int fascia = menuPrezzo.getSelectionModel().getSelectedIndex();
+        double prezzoMin = fascia < 0 ? -1 : PREZZO_MIN[fascia];
+        double prezzoMax = fascia < 0 ? -1 : PREZZO_MAX[fascia];
 
         if (controllerPrincipale != null) {
             GestioneRistoranti gr = GestioneRistoranti.getInstance();
-            LinkedList<Ristorante> rist = gr.Filtro(luogo, cucina, (prezzoMin != null ? prezzoMin : -1), (prezzoMax != null ? prezzoMax : -1), delivery, booking, stelleSelezionate);
+            LinkedList<Ristorante> rist = gr.Filtro(luogo, cucina, prezzoMin, prezzoMax, delivery, booking, stelleSelezionate);
 
             controllerPrincipale.mostraRistoranti(rist);
         }

@@ -13,8 +13,6 @@
     <top>
         <VBox styleClass="dialog-header">
             <Label text="Filtri avanzati" styleClass="page-title"/>
-            <Label text="Restringi la ricerca per trovare esattamente quello che cerchi."
-                   styleClass="subtitle"/>
         </VBox>
     </top>
 
@@ -32,12 +30,10 @@
             </VBox>
 
             <VBox styleClass="field-group">
-                <Label text="FASCIA DI PREZZO (€)" styleClass="field-label"/>
-                <HBox styleClass="card-line">
-                    <TextField fx:id="campoPrezzoMin" promptText="Min" HBox.hgrow="ALWAYS"/>
-                    <Label text="—" styleClass="muted-text"/>
-                    <TextField fx:id="campoPrezzoMax" promptText="Max" HBox.hgrow="ALWAYS"/>
-                </HBox>
+                <Label text="FASCIA DI PREZZO" styleClass="field-label"/>
+                <ComboBox fx:id="menuPrezzo"
+                          promptText="Qualsiasi prezzo"
+                          maxWidth="Infinity"/>
             </VBox>
 
             <VBox styleClass="field-group">
@@ -61,10 +57,8 @@
 
             <VBox styleClass="field-group">
                 <Label text="SERVIZI EXTRA" styleClass="field-label"/>
-                <HBox styleClass="card-tags">
-                    <CheckBox fx:id="checkDelivery" text="Consegna a domicilio"/>
-                    <CheckBox fx:id="checkBooking" text="Prenotazione online"/>
-                </HBox>
+                <CheckBox fx:id="checkDelivery" text="Consegna a domicilio"/>
+                <CheckBox fx:id="checkBooking" text="Prenotazione online"/>
             </VBox>
 
             <Pane VBox.vgrow="ALWAYS"/>
