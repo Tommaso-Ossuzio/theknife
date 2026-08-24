@@ -80,6 +80,15 @@ public class RistoranteDAO {
         }
         return null;
     }
+
+    /**
+     * Funzione ricerca filtro ristoranti
+     * @param conn
+     * @param filtro
+     * @return
+     *
+     * @author Elia Toschi, Michele Viselli
+     */
     public List<RistoranteDTO> filtraRistoranti(Connection conn, FiltroRistoranteDTO filtro) {
         if (filtro == null) {
             throw new IllegalArgumentException("Il filtro dei ristoranti non può essere null");
