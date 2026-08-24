@@ -1,4 +1,5 @@
 package it.uninsubria;
+import it.uninsubria.dao.PreferitiDAO;
 import it.uninsubria.dao.RistoranteDAO;
 import it.uninsubria.dto.*;
 import it.uninsubria.dto.UtenteDTO;
@@ -127,6 +128,7 @@ public class SlaveThread extends Thread {
                     int idUtente = id.get("idUtente");
                     int idRistorante = id.get("idRistorante");
                     //TODO eliminare il ristorante dai preferiti
+
                 }
                 if(comando.equals("AGG-PREF")) {
                     HashMap<String, Integer> id = (HashMap<String, Integer>) in.readObject();

@@ -11,6 +11,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class PreferitiDAO {
+    /**
+     * Aggiunge un ristorante preferito
+     * @param conn
+     * @param idUtente
+     * @param idRistorante
+     * @author Elia Toschi
+     */
     public void aggiungiPreferito(Connection conn, int idUtente, int idRistorante)
     {
         String sql="INSERT INTO PREFERITO (id_utente, id_ristorante) VALUES (?,?)";
@@ -26,6 +33,13 @@ public class PreferitiDAO {
         }
     }
 
+    /**
+     * Rimuove un ristorante preferito
+     * @param conn
+     * @param idUtente
+     * @param idRistorante
+     * @author Elia Toschi
+     */
     public void rimuoviPreferito(Connection conn, int idUtente, int idRistorante) {
         String sql = "DELETE FROM PREFERITO P WHERE P.id_utente= ? AND P.id_ristorante=? ";
         try (PreparedStatement ps = conn.prepareStatement(sql)) {

@@ -6,10 +6,7 @@ import it.uninsubria.dto.LuogoDTO;
 import it.uninsubria.dto.RistoranteDTO;
 import it.uninsubria.dto.RistoratoreDTO;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -286,5 +283,77 @@ public class RistoranteDAO {
         }
 
         return risultati;
+    }
+
+    /**
+     * Estrae tutti i ristoranti di proprietà di un determinato ristoratore.
+     * @param conn
+     * @param idRistoratore
+     * @return Lista di RistoranteDTO
+     */
+    public List<RistoranteDTO> getRistorantiDelRistoratore(Connection conn, int idRistoratore) {
+        String sql = "SELECT * FROM RISTORANTE WHERE id_utente = ?";
+        ArrayList<RistoranteDTO> lista = new ArrayList<>();
+
+        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, idRistoratore);
+            ResultSet rs = ps.executeQuery();
+
+            while (rs.next()) {
+                lista.add(costruisciRistoranteDaResultSet(conn, rs));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return lista;
+    }
+
+    /**
+     * Inserisce un nuovo ristorante nel database (inclusi il luogo e i tipi di cucina).
+     * @param conn
+     * @param ristorante
+     * @return L'ID del ristorante creato, oppure -1 in caso di errore
+     * @author Elia Toschi
+     */
+    public int inserisciRistorante(Connection conn, RistoranteDTO ristorante) {
+        LuogoDAO luogoDAO = new LuogoDAO();
+        int idLuogo = luogoDAO.inserisciLuogoCompleto(conn, ristorante.getLuogo());
+
+        if (idLuogo == -1) return -1;
+        String sql = "INSERT INTO RISTORANTE (nome, telefono, sito_web, delivery, prenotazione_online, fascia_prezzo, id_utente, id_luogo) " +
+                "VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+
+        try (PreparedStatement ps = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+            ps.setString(1, ristorante.getNome());
+            ps.setString(2, ristorante.getTelefono());
+            ps.setString(3, ristorante.getSitoWeb());
+            ps.setBoolean(4, ristorante.isDelivery());
+            ps.setBoolean(5, ristorante.isPrenotazioneOnline());
+            ps.setString(6, ristorante.getFasciaPrezzo());
+
+            ps.setInt(7, ristorante.getRistoratore().getIdUtente());
+            ps.setInt(8, idLuogo);
+
+            ps.executeUpdate();
+
+            ResultSet rs = ps.getGeneratedKeys();
+            if (rs.next()) {
+                int idNuovoRistorante = rs.getInt(1);
+
+                String sqlCucina = "INSERT INTO RISTORANTE_TIPO_CUCINA (id_ristorante, nome_tipo_cucina) VALUES (?, ?)";
+                try (PreparedStatement psCucina = conn.prepareStatement(sqlCucina)) {
+                    for (String cucina : ristorante.getCucine()) {
+                        psCucina.setInt(1, idNuovoRistorante);
+                        psCucina.setString(2, cucina);
+                        psCucina.executeUpdate();
+                    }
+                }
+                return idNuovoRistorante;
+            }
+        } catch (SQLException e) {
+            System.err.println("Errore: Ristorante con questo nome probabilmente già esistente.");
+            e.printStackTrace();
+        }
+        return -1;
     }
 }
