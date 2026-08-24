@@ -106,8 +106,10 @@ public class RegisterController {
         boolean isCliente     = !isRistoratore;
 
         // Cambi obbligatori
-        if (username == null || username.isBlank() || password == null || password.isBlank()) {
-            etichettaErrore.setText("Username e password sono obbligatori.");
+        if (username == null || username.isBlank() || password == null || password.isBlank()
+                || nome == null || nome.isBlank() || cognome == null || cognome.isBlank()
+                || citta == null || citta.isBlank()) {
+            etichettaErrore.setText("Tutti i campi sono obbligatori.");
             return;
         }
 

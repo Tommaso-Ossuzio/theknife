@@ -33,12 +33,12 @@
             <VBox styleClass="form-body">
 
                 <VBox styleClass="field-group">
-                    <Label text="NOME" styleClass="field-label"/>
+                    <Label text="NOME *" styleClass="field-label"/>
                     <TextField fx:id="campoNome" promptText="Il tuo nome"/>
                 </VBox>
 
                 <VBox styleClass="field-group">
-                    <Label text="COGNOME" styleClass="field-label"/>
+                    <Label text="COGNOME *" styleClass="field-label"/>
                     <TextField fx:id="campoCognome" promptText="Il tuo cognome"/>
                 </VBox>
 
@@ -53,7 +53,7 @@
                 </VBox>
 
                 <VBox styleClass="field-group">
-                    <Label text="CITTÀ / DOMICILIO" styleClass="field-label"/>
+                    <Label text="CITTÀ / DOMICILIO *" styleClass="field-label"/>
                     <TextField fx:id="campoCitta" promptText="Es. Varese"/>
                 </VBox>
 
