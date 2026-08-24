@@ -6,32 +6,32 @@ import java.sql.Timestamp;
 public class RecensioneDTO implements Serializable {
     private static final long serialVersionUID = 1L;
 
-    private int idRecensione;
+    private int idRistorante;
     private String testo;
     private int numeroStelle;
     private String  data;
     private String ora;
 
 
-    private UtenteDTO utente;
+    private int idUtente;
     private RispostaDTO risposta;
 
-    public RecensioneDTO(int idRecensione, String testo, int numeroStelle, String data, String ora, UtenteDTO utente, RispostaDTO risposta) {
-        this.idRecensione = idRecensione;
+    public RecensioneDTO( String testo, int numeroStelle, String data, String ora, int idUtente, RispostaDTO risposta) {
+        this.idRistorante = idRistorante;
         this.testo = testo;
         this.numeroStelle = numeroStelle;
         this.data = data;
         this.ora = ora;
-        this.utente = utente;
+        this.idUtente = idUtente;
         this.risposta = risposta;
     }
 
-    public int getIdRecensione() {
-        return idRecensione;
+    public int getIdRistorante() {
+        return idRistorante;
     }
 
-    public void setIdRecensione(int idRecensione) {
-        this.idRecensione = idRecensione;
+    public void setIdRistorante(int idRecensione) {
+        this.idRistorante = idRistorante;
     }
 
     public String getTesto() {
@@ -66,12 +66,12 @@ public class RecensioneDTO implements Serializable {
         this.data = data;
     }
 
-    public UtenteDTO getUtente() {
-        return utente;
+    public int getIdUtente() {
+        return idUtente;
     }
 
-    public void setUtente(UtenteDTO utente) {
-        this.utente = utente;
+    public void setIdUtente(UtenteDTO utente) {
+        this.idUtente = idUtente;
     }
 
     public RispostaDTO getRisposta() {
@@ -85,12 +85,12 @@ public class RecensioneDTO implements Serializable {
     @Override
     public String toString() {
         return "RecensioneDTO{" +
-                "idRecensione=" + idRecensione +
+                "idRistorante=" + idRistorante +
                 ", testo='" + testo + '\'' +
                 ", numeroStelle=" + numeroStelle +
                 ", data='" + data + '\'' +
                 ", ora='" + ora + '\'' +
-                ", utente=" + utente +
+                ", utente=" + idUtente +
                 ", risposta=" + risposta +
                 '}';
     }
