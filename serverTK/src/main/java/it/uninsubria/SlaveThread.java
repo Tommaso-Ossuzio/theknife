@@ -1,9 +1,13 @@
 package it.uninsubria;
+import it.uninsubria.dao.RistoranteDAO;
 import it.uninsubria.dto.*;
 import it.uninsubria.dto.UtenteDTO;
 
 import java.io.*;
 import java.net.*;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.LinkedList;
 
@@ -54,9 +58,24 @@ public class SlaveThread extends Thread {
                     }
                 }
                 if(comando.equals("FILTRO")) {
-                    FiltroRistoranteDTO specificheFilto = (FiltroRistoranteDTO) in.readObject();
-                    //TODO prendere dal db tutti i ristoranti che rientrano nelle specifiche fornite dal client
-                    LinkedList<RistoranteDTO> ristoranti = new LinkedList<>(); //TODO sostituire la lista vuota con la lista dei ristoranti richiesti
+                    FiltroRistoranteDTO specificheFiltro = (FiltroRistoranteDTO) in.readObject();
+                    LinkedList<RistoranteDTO> ristoranti;
+
+                    try (Connection conn = DriverManager.getConnection(
+                            DatabaseConfig.getTargetUrl(),
+                            DatabaseConfig.getUser(),
+                            DatabaseConfig.getPassword())) {
+                        RistoranteDAO ristoranteDAO = new RistoranteDAO();
+                        ristoranti = new LinkedList<>(
+                                ristoranteDAO.filtraRistoranti(conn, specificheFiltro));
+                    } catch (SQLException e) {
+                        System.err.println("Errore durante la ricerca FILTRO");
+                        e.printStackTrace();
+                        // Manteniamo il protocollo sincronizzato restituendo
+                        // comunque una risposta al client.
+                        ristoranti = new LinkedList<>();
+                    }
+
                     out.writeObject(ristoranti);
                     out.flush();
                 }
