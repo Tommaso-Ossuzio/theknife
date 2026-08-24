@@ -32,10 +32,10 @@ public class AdvancedFilterController {
     // TODO: rimuovere prezzoMin e prezzoMax e fare in fasce di prezzo
     // Fasce di prezzo della guida Michelin, con i limiti in euro di ciascuna
     private static final String[] FASCE_PREZZO = {
-            "Meno di 35 €",
-            "Tra 35 € e 60 €",
-            "Tra 60 € e 100 €",
-            "Oltre 100 €"
+            "meno di 35 €",
+            "tra 35 € e 60 €",
+            "tra 60 € e 100 €",
+            "oltre 100 €"
     };
     private static final double[] PREZZO_MIN = { -1, 35, 60, 100 };
     private static final double[] PREZZO_MAX = { 35, 60, 100, -1 };

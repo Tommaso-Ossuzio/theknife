@@ -1,6 +1,7 @@
 package it.uninsubria.dao;
 
 import it.uninsubria.dto.FiltroRistoranteDTO;
+import it.uninsubria.dto.CittaDTO;
 import it.uninsubria.dto.LuogoDTO;
 import it.uninsubria.dto.RistoranteDTO;
 import it.uninsubria.dto.RistoratoreDTO;
@@ -79,63 +80,154 @@ public class RistoranteDAO {
         }
         return null;
     }
+
+    /**
+     * Funzione ricerca filtro ristoranti
+     * @param conn
+     * @param filtro
+     * @return
+     *
+     * @author Elia Toschi, Michele Viselli
+     */
     public List<RistoranteDTO> filtraRistoranti(Connection conn, FiltroRistoranteDTO filtro) {
-        StringBuilder sql = new StringBuilder("SELECT DISTINCT R.* FROM RISTORANTE R ");
+        if (filtro == null) {
+            throw new IllegalArgumentException("Il filtro dei ristoranti non può essere null");
+        }
+
+        /*
+         * Le cucine e le recensioni vengono aggregate prima del collegamento
+         * con RISTORANTE. In questo modo non si crea il prodotto cucina x
+         * recensioni e le statistiche non vengono conteggiate più volte.
+         */
+        StringBuilder sql = new StringBuilder(
+                "SELECT R.id_ristorante, R.nome, R.telefono, R.sito_web, " +
+                        "R.delivery, R.prenotazione_online, R.fascia_prezzo, " +
+                        "L.id AS id_luogo, L.via AS via_luogo, " +
+                        "C.id_citta, C.nome AS nome_citta, C.nome_nazione, " +
+                        "COALESCE(CU.cucine, ARRAY[]::varchar[]) AS cucine, " +
+                        "ST.media_stelle, COALESCE(ST.numero_recensioni, 0) AS numero_recensioni " +
+                        "FROM RISTORANTE R " +
+                        "JOIN LUOGO L ON R.id_luogo = L.id " +
+                        "JOIN CITTA C ON L.id_citta = C.id_citta " +
+                        "LEFT JOIN (" +
+                        "SELECT RTC.id_ristorante, " +
+                        "ARRAY_AGG(RTC.nome_tipo_cucina ORDER BY RTC.nome_tipo_cucina) AS cucine " +
+                        "FROM RISTORANTE_TIPO_CUCINA RTC " +
+                        "GROUP BY RTC.id_ristorante" +
+                        ") CU ON CU.id_ristorante = R.id_ristorante " +
+                        "LEFT JOIN (" +
+                        "SELECT REC.id_ristorante, AVG(REC.numero_stelle) AS media_stelle, " +
+                        "COUNT(*) AS numero_recensioni " +
+                        "FROM RECENSIONE REC " +
+                        "GROUP BY REC.id_ristorante" +
+                        ") ST ON ST.id_ristorante = R.id_ristorante " +
+                        "WHERE 1=1 ");
         List<Object> parametri = new ArrayList<>();
 
-        if (filtro.getLuogo() != null && !filtro.getLuogo().trim().isEmpty()) {
-            sql.append("JOIN LUOGO L ON R.id_luogo = L.id ").append("JOIN CITTA C ON L.id_citta = C.id_citta ");
-        }
-        if (filtro.getCucina() != null && !filtro.getCucina().trim().isEmpty()) {
-            sql.append("JOIN RISTORANTE_TIPO_CUCINA RTC ON R.id_ristorante = RTC.id_ristorante ");
-        }
-        if (filtro.getMediaStelleMinima() != null) {
-            sql.append("LEFT JOIN RECENSIONE REC ON R.id_ristorante = REC.id_ristorante ");
-        }
-
-        // WHERE
-        sql.append("WHERE 1=1 ");
         if (filtro.getLuogo() != null && !filtro.getLuogo().trim().isEmpty()) {
             sql.append("AND C.nome ILIKE ? ");
             parametri.add("%" + filtro.getLuogo().trim() + "%");
         }
+
         if (filtro.getCucina() != null && !filtro.getCucina().trim().isEmpty()) {
-            sql.append("AND RTC.nome_tipo_cucina ILIKE ? ");
+            sql.append("AND EXISTS (" +
+                    "SELECT 1 FROM RISTORANTE_TIPO_CUCINA RTC_FILTRO " +
+                    "WHERE RTC_FILTRO.id_ristorante = R.id_ristorante " +
+                    "AND RTC_FILTRO.nome_tipo_cucina ILIKE ?" +
+                    ") ");
             parametri.add("%" + filtro.getCucina().trim() + "%");
         }
+
         if (filtro.getFasciaPrezzo() != null && !filtro.getFasciaPrezzo().trim().isEmpty()) {
             sql.append("AND R.fascia_prezzo = ? ");
             parametri.add(filtro.getFasciaPrezzo().trim());
         }
-        if (filtro.getDelivery() != null && filtro.getDelivery()) {
-            sql.append("AND R.delivery = true ");
+
+        if (Boolean.TRUE.equals(filtro.getDelivery())) {
+            sql.append("AND R.delivery = TRUE ");
         }
-        if (filtro.getPrenotazione() != null && filtro.getPrenotazione()) {
-            sql.append("AND R.prenotazione_online = true ");
+
+        if (Boolean.TRUE.equals(filtro.getPrenotazione())) {
+            sql.append("AND R.prenotazione_online = TRUE ");
         }
-        // RAGGRUPPAMENTO E MEDIA STELLE
+
         if (filtro.getMediaStelleMinima() != null) {
-            sql.append("GROUP BY R.id_ristorante, R.nome, R.telefono, R.sito_web, R.delivery, ")
-                    .append("R.prenotazione_online, R.fascia_prezzo, R.id_luogo, R.id_utente ")
-                    .append("HAVING AVG(REC.numero_stelle) >= ? ");
+            // Un ristorante senza recensioni ha ST.media_stelle = NULL e non
+            // supera correttamente una soglia minima.
+            sql.append("AND ST.media_stelle >= ? ");
             parametri.add(filtro.getMediaStelleMinima());
         }
+
         try (PreparedStatement ps = conn.prepareStatement(sql.toString())) {
             for (int i = 0; i < parametri.size(); i++) {
                 ps.setObject(i + 1, parametri.get(i));
             }
-            ResultSet rs = ps.executeQuery();
-            List<RistoranteDTO> risultato = new ArrayList<>();
 
-            while (rs.next()) {
-                risultato.add(costruisciRistoranteDaResultSet(conn, rs));
+            try (ResultSet rs = ps.executeQuery()) {
+                List<RistoranteDTO> risultato = new ArrayList<>();
+                while (rs.next()) {
+                    risultato.add(costruisciRistoranteFiltratoDaResultSet(rs));
+                }
+                return risultato;
             }
-            return risultato;
-
         } catch (SQLException e) {
             e.printStackTrace();
         }
         return new ArrayList<>();
+    }
+
+    private RistoranteDTO costruisciRistoranteFiltratoDaResultSet(ResultSet rs) throws SQLException {
+        double media = rs.getDouble("media_stelle");
+        Double mediaStelle = rs.wasNull() ? null : media;
+
+        CittaDTO citta = new CittaDTO(
+                rs.getInt("id_citta"),
+                rs.getString("nome_citta"),
+                rs.getString("nome_nazione"));
+        // Le coordinate non fanno parte del flusso FILTRO per ora.
+        LuogoDTO luogo = new LuogoDTO(
+                rs.getInt("id_luogo"),
+                rs.getString("via_luogo"),
+                citta,
+                null);
+
+        return new RistoranteDTO(
+                rs.getInt("id_ristorante"),
+                rs.getString("nome"),
+                rs.getString("telefono"),
+                rs.getString("sito_web"),
+                rs.getBoolean("delivery"),
+                rs.getBoolean("prenotazione_online"),
+                rs.getString("fascia_prezzo"),
+                estraiCucine(rs),
+                luogo,
+                null,
+                mediaStelle,
+                rs.getInt("numero_recensioni"),
+                null);
+    }
+
+    private List<String> estraiCucine(ResultSet rs) throws SQLException {
+        java.sql.Array arrayCucine = rs.getArray("cucine");
+        List<String> cucine = new ArrayList<>();
+
+        if (arrayCucine == null) {
+            return cucine;
+        }
+
+        try {
+            Object valori = arrayCucine.getArray();
+            if (valori instanceof Object[]) {
+                for (Object valore : (Object[]) valori) {
+                    if (valore != null) {
+                        cucine.add(valore.toString());
+                    }
+                }
+            }
+        } finally {
+            arrayCucine.free();
+        }
+        return cucine;
     }
 
 

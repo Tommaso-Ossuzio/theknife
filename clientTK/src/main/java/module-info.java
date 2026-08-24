@@ -1,4 +1,5 @@
 module it.uninsubria.theknifeui {
+    requires commonTK;
     requires javafx.controls;
     requires javafx.fxml;
     requires java.desktop;
