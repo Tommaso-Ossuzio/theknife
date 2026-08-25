@@ -1,14 +1,10 @@
 package theknife.ui.javafx;
 
+import it.uninsubria.dto.FiltroRistoranteDTO;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.stage.Stage;
-import theknife.model.GestioneRecensioni;
-import theknife.model.GestioneRistoranti;
-import theknife.model.Ristorante;
-
-import java.util.LinkedList;
 
 //TODO da rivedere
 
@@ -29,16 +25,13 @@ public class AdvancedFilterController {
 
     private int stelleSelezionate = 0;
 
-    // TODO: rimuovere prezzoMin e prezzoMax e fare in fasce di prezzo
-    // Fasce di prezzo della guida Michelin, con i limiti in euro di ciascuna
+    // Valori allineati alle stringhe salvate nella colonna fascia_prezzo.
     private static final String[] FASCE_PREZZO = {
             "meno di 35 €",
             "tra 35 € e 60 €",
             "tra 60 € e 100 €",
             "oltre 100 €"
     };
-    private static final double[] PREZZO_MIN = { -1, 35, 60, 100 };
-    private static final double[] PREZZO_MAX = { 35, 60, 100, -1 };
 
     private MainController controllerPrincipale;
 
@@ -103,10 +96,8 @@ public class AdvancedFilterController {
      */
     @FXML
     private void onApply() {
-        String luogo = campoLuogo.getText();
-        String cucina = campoCucina.getText();
-        boolean delivery = checkDelivery.isSelected();
-        boolean booking = checkBooking.isSelected();
+        String luogo = normalizza(campoLuogo.getText());
+        String cucina = normalizza(campoCucina.getText());
 
         if (luogo == null || luogo.isBlank()) {
             mostraErrore("Campo obbligatorio", "Devi inserire una città per effettuare la ricerca.");
@@ -114,19 +105,39 @@ public class AdvancedFilterController {
             return;
         }
 
-        // Nessuna fascia scelta: -1 vale come "senza limite" per Filtro
-        int fascia = menuPrezzo.getSelectionModel().getSelectedIndex();
-        double prezzoMin = fascia < 0 ? -1 : PREZZO_MIN[fascia];
-        double prezzoMax = fascia < 0 ? -1 : PREZZO_MAX[fascia];
+        String fasciaPrezzo = menuPrezzo.getValue();
+        Double mediaStelle = stelleSelezionate == 0
+                ? null
+                : (double) stelleSelezionate;
+        Boolean delivery = checkDelivery.isSelected() ? Boolean.TRUE : null;
+        Boolean prenotazione = checkBooking.isSelected() ? Boolean.TRUE : null;
+
+        FiltroRistoranteDTO filtro = new FiltroRistoranteDTO(
+                luogo,
+                cucina,
+                fasciaPrezzo,
+                mediaStelle,
+                delivery,
+                prenotazione);
 
         if (controllerPrincipale != null) {
-            GestioneRistoranti gr = GestioneRistoranti.getInstance();
-            LinkedList<Ristorante> rist = gr.Filtro(luogo, cucina, prezzoMin, prezzoMax, delivery, booking, stelleSelezionate);
-
-            controllerPrincipale.mostraRistoranti(rist);
+            controllerPrincipale.applicaFiltro(filtro);
         }
 
         chiudiFinestra();
+    }
+
+    /**
+     * Normalizza i valori di luogo e cucina
+     * @param valore
+     * @return
+     *
+     * @author Michele Viselli
+     */
+    private String normalizza(String valore) {
+        if (valore == null) return null;
+        String normalizzato = valore.trim();
+        return normalizzato.isEmpty() ? null : normalizzato;
     }
 
     /**
