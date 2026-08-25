@@ -13,6 +13,7 @@ import java.util.HashMap;
 import java.util.LinkedList;
 
 /**
+ * Thread che si occupa di gestire le rischieste degli utenti
  * @author Celestino Resteghini
  */
 public class SlaveThread extends Thread {
@@ -27,7 +28,7 @@ public class SlaveThread extends Thread {
     }
 
     /**
-     * Metodo per la gestione di tutte le richieste (seguendo il protocollo)
+     * Metodo del thread per la gestione di tutte le richieste (seguendo il protocollo)
      * @author Celestino Resteghini
      */
     public void run() {
