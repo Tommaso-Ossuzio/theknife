@@ -278,8 +278,6 @@ public class RestaurantDetailsController {
      * @author Matteo Franguelli
      */
     private void mostraStelleMichelin(Double stelleMichelin) {
-        // L'aspetto è definito in style.css: .michelin-stars (normale) e
-        // .michelin-none (variante spenta, applicata quando non ci sono stelle)
         valoreStelle.getStyleClass().remove("michelin-none");
 
         if (stelleMichelin == null) {

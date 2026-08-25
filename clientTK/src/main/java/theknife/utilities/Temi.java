@@ -11,23 +11,6 @@ import java.util.List;
 
 /**
  * Gestisce il tema chiaro/scuro dell'applicazione.
- * <p>
- * Il tema non è altro che un secondo foglio di stile, {@code theme-dark.css},
- * che ridefinisce i soli valori della palette dichiarata in {@code style.css}.
- * Attivare il tema scuro significa aggiungere quel foglio alla radice della
- * scena, disattivarlo significa toglierlo: nessuna regola grafica viene
- * duplicata e nessun colore finisce mai nel codice Java.
- * <p>
- * Il foglio viene applicato alla radice della scena e non alla scena stessa
- * perché in JavaFX i fogli dichiarati su un nodo hanno la precedenza su
- * quelli della scena: gli FXML dichiarano già {@code stylesheets="@style.css"}
- * sulla radice, quindi il tema scuro deve stare allo stesso livello per poterlo
- * sovrascrivere.
- * <p>
- * Le finestre aperte sono tenute con riferimenti deboli: quando una finestra
- * viene chiusa il riferimento si annulla da solo e viene rimosso al primo
- * cambio di tema utile, senza tenerla in vita inutilmente.
- *
  * @author Matteo Franguelli
  */
 public final class Temi {
@@ -79,7 +62,6 @@ public final class Temi {
         while (iteratore.hasNext()) {
             Scene scena = iteratore.next().get();
             if (scena == null) {
-                // La finestra è stata chiusa: il riferimento non serve più
                 iteratore.remove();
             } else {
                 applicaA(scena);
@@ -105,7 +87,6 @@ public final class Temi {
         if (url == null) return;
         String foglio = url.toExternalForm();
 
-        // Rimuovere sempre prima evita di accumulare copie dello stesso foglio
         radice.getStylesheets().remove(foglio);
         if (temaCorrente == Tema.SCURO) {
             radice.getStylesheets().add(foglio);

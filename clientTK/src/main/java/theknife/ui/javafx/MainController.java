@@ -41,7 +41,6 @@ import java.util.List;
  */
 public class MainController implements ControllerAutenticazione {
 
-    // I ristoranti sono mostrati come card distribuite su più pagine
     @FXML private Pagination paginazione;
     @FXML private VBox statoVuoto;
     @FXML private Label etichettaStatoVuoto;
@@ -88,8 +87,6 @@ public class MainController implements ControllerAutenticazione {
     private void initialize() {
         inizializzaGriglia();
 
-        // Ogni volta che la lista dei ristoranti cambia (caricamento o filtro)
-        // la griglia viene ricalcolata e ridivisa in pagine.
         ristoranti.addListener((javafx.collections.ListChangeListener<RistoranteDTO>) c -> aggiornaPaginazione());
 
         caricaCatalogo();
@@ -133,18 +130,11 @@ public class MainController implements ControllerAutenticazione {
 
         bottoneTema.setText(Temi.simboloPulsante());
         bottoneTema.setTooltip(new Tooltip(Temi.descrizionePulsante()));
-        // Nome letto dagli strumenti di accessibilità, che sul solo simbolo
-        // non saprebbero dire a cosa serve il pulsante
         bottoneTema.setAccessibleText(Temi.descrizionePulsante());
     }
 
     /**
      * Mostra il catalogo dei ristoranti.
-     * <p>
-     * Il catalogo della schermata principale viene richiesto al server con un
-     * filtro vuoto. La richiesta passa sempre da GestioneRistoranti e viene
-     * eseguita fuori dal JavaFX Application Thread.
-     *
      * @author Matteo Franguelli
      * @author Celestino Resteghini
      */
@@ -245,11 +235,9 @@ public class MainController implements ControllerAutenticazione {
             );
         }
 
-        // La pagina corrente potrebbe non esistere più dopo un filtro
         if (paginazione.getCurrentPageIndex() >= pagine) {
             paginazione.setCurrentPageIndex(0);
         } else {
-            // Forza la ricostruzione della pagina visibile con i nuovi dati
             paginazione.setPageFactory(this::creaPagina);
         }
 
@@ -315,17 +303,13 @@ public class MainController implements ControllerAutenticazione {
             card.getChildren().add(link);
         }
 
-        // Spinge i badge in fondo alla card, così tutte le card si allineano
         Region spaziatore = new Region();
         VBox.setVgrow(spaziatore, javafx.scene.layout.Priority.ALWAYS);
         card.getChildren().add(spaziatore);
 
-        // I badge vanno a capo da soli: in una sola riga i testi più lunghi
-        // (media, cucina e servizi) verrebbero troncati dalla larghezza della card
         FlowPane badge = new FlowPane();
         badge.getStyleClass().add("card-tags");
 
-        // La media delle recensioni è l'informazione più cercata: apre la riga dei badge
         badge.getChildren().add(Etichette.creaBadgeMedia(r));
 
         String cucina = r.getCucine() == null ? "" : String.join(", ", r.getCucine());
@@ -422,7 +406,6 @@ public class MainController implements ControllerAutenticazione {
         // nel database e in RistoranteDTO.
         Double stelleMichelin = null;
 
-        // Il foglio di stile è già dichiarato dentro restaurant_details.fxml
         Finestre.apriModale("restaurant_details.fxml", valoreNonNullo(rd.getNome()),
                 (RestaurantDetailsController ctrl) -> ctrl.setRestaurantData(
                         rd.getNome(),
@@ -444,12 +427,6 @@ public class MainController implements ControllerAutenticazione {
 
     /**
      * Aggiorna la visibilità dei pulsanti in base al ruolo dell'utente.
-     * <p>
-     * Questa schermata è quella di ospiti e clienti: le funzioni da
-     * ristoratore non compaiono più qui nemmeno nascoste, perché il
-     * ristoratore ha una schermata tutta sua (la dashboard). Restano quindi
-     * solo due casi da distinguere, ospite e cliente.
-     *
      * @author Matteo Franguelli
      */
     private void aggiornaInterfaccia() {
@@ -506,8 +483,6 @@ public class MainController implements ControllerAutenticazione {
     public void onLoginSuccess() {
         Session session = Session.getInstance();
 
-        // Il ristoratore non lavora sull'elenco dei ristoranti ma sulla propria
-        // dashboard: appena accede, la finestra passa a quella schermata.
         if (session.isRistoratore()) {
             Finestre.cambiaVista(paginazione.getScene(), "dashboard.fxml");
             return;
@@ -562,8 +537,6 @@ public class MainController implements ControllerAutenticazione {
         alert.setContentText("Logout effettuato.");
         alert.showAndWait();
 
-        // Si torna al benvenuto: uscendo si perde anche il luogo di ricerca,
-        // che va richiesto di nuovo prima di rientrare nel catalogo
         Finestre.cambiaVista(paginazione.getScene(), "welcome.fxml");
     }
 
@@ -607,7 +580,6 @@ public class MainController implements ControllerAutenticazione {
                     ctrl.setRestaurantName(selezionato.getNome());
                 });
 
-        // La nuova recensione cambia la media mostrata sulle card
         aggiornaPaginazione();
     }
 
@@ -672,7 +644,6 @@ public class MainController implements ControllerAutenticazione {
     private void onShowMyReviews() {
         Finestre.apriModale("my_reviews.fxml", "Le mie recensioni");
 
-        // Recensioni modificate o eliminate cambiano la media sulle card
         aggiornaPaginazione();
     }
 

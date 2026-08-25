@@ -75,9 +75,6 @@ public class Ristorante {
      */
     public double getMediaStelle()
     {
-        // Il calcolo è delegato all'indice tenuto in memoria da
-        // GestioneRecensioni: il file viene letto una volta sola invece
-        // che a ogni chiamata.
         return GestioneRecensioni.getInstance().getMedia(id);
     }
 
@@ -88,7 +85,6 @@ public class Ristorante {
      */
     public int getNumRecensioni()
     {
-        // Come getMediaStelle: il conteggio arriva dall'indice in memoria.
         return GestioneRecensioni.getInstance().getConteggio(id);
     }
 

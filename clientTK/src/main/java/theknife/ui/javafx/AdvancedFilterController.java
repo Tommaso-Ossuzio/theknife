@@ -25,7 +25,6 @@ public class AdvancedFilterController {
 
     private int stelleSelezionate = 0;
 
-    // Valori allineati alle stringhe salvate nella colonna fascia_prezzo.
     private static final String[] FASCE_PREZZO = {
             "meno di 35 €",
             "tra 35 € e 60 €",
@@ -80,7 +79,6 @@ public class AdvancedFilterController {
     private void aggiornaGraficaStelle() {
         Button[] stars = {star1, star2, star3, star4, star5};
         for (int i = 0; i < stars.length; i++) {
-            // L'aspetto è definito in style.css: .star-button / .star-button-on
             stars[i].getStyleClass().remove("star-button-on");
             if (i < stelleSelezionate) {
                 stars[i].getStyleClass().add("star-button-on");

@@ -5,22 +5,12 @@
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.image.Image?>
 
-<!--
-    Schermata principale di TheKnife.
-
-    Ogni aspetto grafico (colori, spaziature, tipografia) è definito in
-    style.css tramite le styleClass: in questo file non deve comparire
-    nessun attributo style="...".
--->
 <BorderPane xmlns="http://javafx.com/javafx"
             xmlns:fx="http://javafx.com/fxml"
             fx:controller="theknife.ui.javafx.MainController"
             stylesheets="@style.css"
             styleClass="app-root">
 
-    <!-- ============================================================
-         BARRA SUPERIORE: marchio a sinistra, azioni utente a destra
-         ============================================================ -->
     <top>
         <VBox styleClass="top-bar">
             <HBox styleClass="top-bar-row">
@@ -76,9 +66,6 @@
         </VBox>
     </top>
 
-    <!-- ============================================================
-         CONTENUTO: intestazione, barra di ricerca, griglia impaginata
-         ============================================================ -->
     <center>
         <VBox styleClass="content-pane">
 
@@ -88,7 +75,6 @@
                 <Label fx:id="etichettaRisultati" styleClass="page-status"/>
             </HBox>
 
-            <!-- BARRA DI RICERCA -->
             <HBox styleClass="search-bar">
                 <TextField fx:id="campoLuogo"
                            promptText="In quale città vuoi mangiare?"
@@ -107,11 +93,9 @@
                         styleClass="btn-ghost"/>
             </HBox>
 
-            <!-- GRIGLIA DI CARD DIVISA IN PAGINE -->
             <StackPane VBox.vgrow="ALWAYS">
                 <Pagination fx:id="paginazione"/>
 
-                <!-- Mostrato al posto della griglia quando non ci sono risultati -->
                 <VBox fx:id="statoVuoto" styleClass="empty-state">
                     <Label text="🍽" styleClass="empty-state-icon"/>
                     <Label fx:id="etichettaStatoVuoto"
@@ -124,9 +108,6 @@
         </VBox>
     </center>
 
-    <!-- ============================================================
-         PIEDE: azioni sul ristorante selezionato
-         ============================================================ -->
     <bottom>
         <HBox styleClass="footer-bar">
             <Label fx:id="etichettaSelezione"

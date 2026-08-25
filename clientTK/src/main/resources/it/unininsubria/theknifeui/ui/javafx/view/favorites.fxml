@@ -19,8 +19,6 @@
     </top>
 
     <center>
-        <!-- Il controller nasconde la tabella quando è vuota: lo StackPane
-             fa comparire al suo posto il messaggio, centrato nell'area. -->
         <StackPane styleClass="content-pane">
             <TableView fx:id="tabellaPreferiti">
                 <columns>

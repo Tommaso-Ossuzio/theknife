@@ -1,43 +1,28 @@
-/* =========================================================================
-   THEKNIFE — TEMA SCURO
-   -------------------------------------------------------------------------
-   Ridefinisce i soli valori della PALETTE di style.css, sulla radice della
-   scena e dopo di esso. I rapporti di contrasto rispettano le WCAG:
-   4.5:1 per il testo, 3:1 per i bordi dei campi.
-   ========================================================================= */
 .root {
-
-    /* --- Verde istituzionale --- */
     -color-primary:         #2FA98F;
     -color-primary-hover:   #3FBFA3;
     -color-primary-press:   #26907A;
     -color-primary-soft:    #1C443A;
 
-    /* --- Superfici --- */
     -color-bg:              #0D2621;
     -color-surface:         #12332C;
     -color-surface-alt:     #174037;
 
-    /* --- Bordi --- */
     -color-border:          #24544A;
     -color-border-strong:   #5C8B80;
 
-    /* --- Testo --- */
     -color-text:            #ECF1EF;
     -color-heading:         #7FD9C3;
     -color-text-muted:      #A6BDB6;
     -color-text-invert:     #08110F;
 
-    /* --- Stati --- */
     -color-danger:          #E27C7C;
     -color-danger-hover:    #EF9494;
     -color-danger-soft:     #40201F;
 
-    /* --- Valutazioni a stelle --- */
     -color-star-on:         #F5B942;
     -color-star-off:        #4E6F63;
 
-    /* --- Colori informativi dei badge delle card --- */
     -color-rating-high-bg:  #1E4433;
     -color-rating-high-fg:  #8FE0B4;
     -color-rating-mid-bg:   #423926;
@@ -49,14 +34,11 @@
     -color-service-bg:      #22384B;
     -color-service-fg:      #A8CDEF;
 
-    /* --- Sfondo dei riquadri della dashboard --- */
     -color-tile-bg:         #163A32;
 
-    /* --- Ombre --- */
     -color-shadow:          rgba(0, 0, 0, 0.45);
     -color-shadow-strong:   rgba(0, 0, 0, 0.65);
 
-    /* --- Override dei colori di sistema di JavaFX (tema Modena) --- */
     -fx-accent:             -color-primary;
     -fx-focus-color:        -color-primary;
     -fx-faint-focus-color:  transparent;

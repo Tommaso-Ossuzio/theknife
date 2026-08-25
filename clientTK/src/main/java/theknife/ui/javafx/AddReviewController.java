@@ -116,9 +116,6 @@ public class AddReviewController {
         Button[] stars = {star1, star2, star3, star4, star5};
 
         for (int i = 0; i < stars.length; i++) {
-            // Se l'indice è inferiore al voto selezionato la stella è accesa.
-            // Es. voto 3: indici 0, 1, 2 sono accesi.
-            // L'aspetto è definito in style.css dalle classi .star-button / .star-button-on
             stars[i].getStyleClass().remove("star-button-on");
             if (i < votoSelezionato) {
                 stars[i].getStyleClass().add("star-button-on");
@@ -203,7 +200,6 @@ public class AddReviewController {
             return;
         }
 
-        // Il file è cambiato: media e conteggi mostrati nelle card vanno ricalcolati
         gestRest.ricaricaIndice();
 
         chiudiFinestra();
@@ -274,7 +270,6 @@ public class AddReviewController {
             }
         } catch (IOException e) {}
 
-        // Il file è cambiato: media e conteggi mostrati nelle card vanno ricalcolati
         GestioneRecensioni.getInstance().ricaricaIndice();
 
         chiudiFinestra();

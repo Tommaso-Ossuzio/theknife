@@ -13,7 +13,6 @@
       prefWidth="760"
       prefHeight="720">
 
-    <!-- INTESTAZIONE: nome, posizione e azioni rapide -->
     <HBox styleClass="details-header">
         <VBox HBox.hgrow="ALWAYS">
             <Label fx:id="etichettaNome" styleClass="details-title" wrapText="true"/>
@@ -41,7 +40,6 @@
         </HBox>
     </HBox>
 
-    <!-- SCHEDA INFORMATIVA -->
     <GridPane hgap="14" vgap="10" styleClass="details-info-panel">
         <columnConstraints>
             <ColumnConstraints percentWidth="35"/>
@@ -99,8 +97,6 @@
 
     <Label text="Sito web del ristorante" styleClass="section-title"/>
 
-    <!-- WebView è costruita da un Builder FXML: la styleClass va indicata
-         come elemento annidato, non come attributo. -->
     <WebView fx:id="vistaSito"
              prefWidth="680.0"
              prefHeight="420.0"

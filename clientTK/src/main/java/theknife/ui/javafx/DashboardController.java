@@ -25,16 +25,6 @@ import java.util.Locale;
 
 /**
  * Controller della dashboard del ristoratore.
- * <p>
- * Sostituisce, per chi gestisce ristoranti, l'elenco dei ristoranti che vedono
- * clienti e ospiti: le due figure hanno bisogni opposti, il cliente cerca dove
- * mangiare mentre il ristoratore controlla come stanno andando i propri locali.
- * <p>
- * La schermata riassume in quattro numeri lo stato dell'attività e poi elenca i
- * ristoranti gestiti, ciascuno con la propria media. Il riquadro delle
- * recensioni senza risposta è cliccabile perché è l'unico dei quattro che
- * segnala qualcosa da fare.
- *
  * @author Matteo Franguelli
  */
 public class DashboardController {
@@ -80,9 +70,6 @@ public class DashboardController {
         Session sessione = Session.getInstance();
         etichettaUtente.setText("Ristoratore: " + (sessione.getUsername() == null ? "" : sessione.getUsername()));
 
-        // Di norma il catalogo è già stato letto dalla schermata di benvenuto.
-        // Se si è fatto in tempo ad accedere prima che finisse, lo si attende
-        // in un thread separato per non bloccare la grafica.
         if (gestioneRistoranti.isCaricato()) {
             aggiornaTutto();
         } else {
@@ -123,11 +110,6 @@ public class DashboardController {
 
     /**
      * Calcola e mostra i quattro numeri in evidenza.
-     * <p>
-     * La media complessiva è pesata sul numero di recensioni e non sulla media
-     * dei singoli locali: un ristorante con quaranta recensioni deve contare
-     * più di uno che ne ha due.
-     *
      * @author Matteo Franguelli
      */
     private void aggiornaNumeri() {
@@ -164,9 +146,6 @@ public class DashboardController {
         boolean cSonoRispostePendenti = totaleSenzaRisposta > 0;
         tileSenzaRisposta.setDisable(!cSonoRispostePendenti);
 
-        // Il riquadro non dice più a parole che si può cliccare: chi usa uno
-        // screen reader lo scopre da qui, visto che il cursore a mano non
-        // gli arriva.
         tileSenzaRisposta.setAccessibleText(cSonoRispostePendenti
                 ? totaleSenzaRisposta + " recensioni senza risposta, apri l'elenco per rispondere"
                 : "Nessuna recensione senza risposta");
@@ -247,7 +226,6 @@ public class DashboardController {
         riga.getStyleClass().add("owner-card");
         riga.setOnMouseClicked(evento -> apriRecensioniDi(r));
 
-        // Nome letto dagli strumenti di accessibilità al posto della sola riga grafica
         riga.setAccessibleText("Ristorante " + r.getNome() + ", apri le recensioni");
 
         return riga;

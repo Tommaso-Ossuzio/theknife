@@ -3,12 +3,6 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<!--
-    Finestra di registrazione.
-
-    Il ruolo è una scelta esclusiva: un account è Cliente OPPURE Ristoratore.
-    La doppia appartenenza non è più prevista.
--->
 <BorderPane xmlns="http://javafx.com/javafx"
             xmlns:fx="http://javafx.com/fxml"
             fx:controller="theknife.ui.javafx.RegisterController"
@@ -62,7 +56,6 @@
 
                 <Separator/>
 
-                <!-- SCELTA DEL RUOLO: esclusiva -->
                 <VBox styleClass="field-group">
                     <Label text="COME VUOI USARE THEKNIFE?" styleClass="field-label"/>
 

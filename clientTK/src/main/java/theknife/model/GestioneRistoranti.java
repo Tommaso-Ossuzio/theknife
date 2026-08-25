@@ -218,10 +218,6 @@ public class GestioneRistoranti {
      * Legge il catalogo dei ristoranti dal file CSV e riempie
      * {@link #listaRistoranti}. Se il catalogo è già stato caricato non fa
      * nulla, così può essere invocato senza timore da più schermate.
-     * <p>
-     * Il metodo è bloccante e legge circa 17.700 righe: va richiamato da un
-     * thread separato, mai dal thread grafico.
-     *
      * @author Matteo Franguelli
      * @author Celestino Resteghini
      */
@@ -277,11 +273,6 @@ public class GestioneRistoranti {
      * Restituisce le città presenti nel catalogo con quanti ristoranti
      * ciascuna contiene, ordinate alfabeticamente ignorando maiuscole e
      * minuscole.
-     * <p>
-     * Serve alla schermata di benvenuto: l'ospite sceglie da qui il luogo da
-     * cui sta cercando, così non può digitare una città che nel catalogo non
-     * esiste e non si ritrova mai davanti a una lista vuota.
-     *
      * @author Matteo Franguelli
      */
     public synchronized Map<String, Integer> getCittaConConteggio() {

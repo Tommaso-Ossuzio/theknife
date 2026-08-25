@@ -120,7 +120,6 @@ public class FavoritesController {
             String linea;
             while ((linea = br.readLine()) != null) {
                 if (linea.isBlank()) continue;
-                // split con -1 serve a preservare campi vuoti alla fine della riga se presenti
                 String[] parti = linea.split(";", -1);
 
                 if (parti.length > 0 && parti[0].equals(mioUsername)) {

@@ -17,16 +17,6 @@ import java.util.Map;
 
 /**
  * Controller della schermata di benvenuto.
- * <p>
- * È la prima schermata dell'applicazione e ha tre compiti: proporre le tre
- * strade possibili (accedere, registrarsi, entrare come ospite), leggere il
- * catalogo dei ristoranti in secondo piano e, per chi entra come ospite,
- * raccogliere il luogo da cui sta cercando.
- * <p>
- * Il catalogo viene letto qui e non più nella schermata principale perché
- * l'elenco delle città da proporre all'ospite si ricava proprio da quel file:
- * va quindi conosciuto prima che la schermata principale venga aperta.
- *
  * @author Matteo Franguelli
  */
 public class WelcomeController implements ControllerAutenticazione {
@@ -110,8 +100,6 @@ public class WelcomeController implements ControllerAutenticazione {
         });
 
         campoCitta.getEditor().textProperty().addListener((osservato, precedente, digitato) -> {
-            // Se il testo coincide con la voce già scelta, l'utente non sta
-            // digitando: sta solo vedendo il risultato della selezione.
             String selezionata = campoCitta.getSelectionModel().getSelectedItem();
             if (selezionata != null && selezionata.equals(digitato)) return;
 
@@ -233,8 +221,6 @@ public class WelcomeController implements ControllerAutenticazione {
     private void aggiornaPulsanteTema() {
         bottoneTema.setText(Temi.simboloPulsante());
         bottoneTema.setTooltip(new javafx.scene.control.Tooltip(Temi.descrizionePulsante()));
-        // Nome letto dagli strumenti di accessibilità, che sul solo simbolo
-        // non saprebbero dire a cosa serve il pulsante
         bottoneTema.setAccessibleText(Temi.descrizionePulsante());
     }
 

@@ -27,13 +27,6 @@ public class GestioneRecensioni {
 
     /**
      * Indice delle recensioni raggruppate per ristorante.
-     * <p>
-     * La chiave è l'id del ristorante, il valore è un vettore di tre interi:
-     * somma dei voti, numero di recensioni, numero di recensioni ancora
-     * senza risposta del ristoratore.
-     * <p>
-     * Serve a non rileggere il file a ogni card: il CSV viene letto una volta
-     * sola e riletto solo quando una recensione o una risposta lo modificano.
      */
     private final Map<Integer, int[]> indice = new HashMap<>();
 
@@ -123,7 +116,6 @@ public class GestioneRecensioni {
                     int stelle = Integer.parseInt(parti[0].trim());
                     int idRistorante = Integer.parseInt(parti[4].trim());
 
-                    // La risposta del ristoratore è la sesta colonna, se presente
                     boolean haRisposta = parti.length > 5 && !parti[5].isBlank();
 
                     int[] valori = indice.computeIfAbsent(idRistorante, k -> new int[3]);
@@ -132,7 +124,6 @@ public class GestioneRecensioni {
                     if (!haRisposta) valori[SENZA_RISPOSTA]++;
 
                 } catch (NumberFormatException e) {
-                    // Riga malformata: viene semplicemente ignorata
                 }
             }
         } catch (IOException e) {

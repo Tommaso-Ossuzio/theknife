@@ -19,8 +19,6 @@
     </top>
 
     <center>
-        <!-- Il controller nasconde la tabella quando è vuota: lo StackPane
-             fa comparire al suo posto il messaggio, centrato nell'area. -->
         <StackPane styleClass="content-pane">
             <TableView fx:id="tabellaRistoranti">
                 <columns>
@@ -34,8 +32,6 @@
             </TableView>
 
             <VBox styleClass="empty-state" mouseTransparent="true">
-                <!-- Solo questa Label è pilotata dal controller: l'icona non
-                     va aggiunta qui, resterebbe visibile a tabella piena. -->
                 <Label fx:id="etichettaVuota"
                        text="Non hai ancora inserito ristoranti."
                        styleClass="empty-state-text"/>

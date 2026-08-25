@@ -80,7 +80,6 @@ public class ReplyReviewsController {
             private final VBox layout = new VBox(8);
 
             {
-                // Tutto l'aspetto grafico arriva da style.css tramite le styleClass
                 lblRistorante.getStyleClass().add("review-title");
                 lblStelle.getStyleClass().add("star-display");
                 lblTesto.setWrapText(true);
@@ -272,8 +271,6 @@ public class ReplyReviewsController {
             e.printStackTrace();
         }
 
-        // Il file è cambiato: il conteggio delle recensioni ancora senza
-        // risposta mostrato nella dashboard va ricalcolato
         GestioneRecensioni.getInstance().ricaricaIndice();
     }
 }

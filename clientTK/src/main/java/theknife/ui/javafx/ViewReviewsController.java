@@ -168,7 +168,6 @@ public class ViewReviewsController {
             protected void updateItem(Recensione item, boolean empty) {
                 super.updateItem(item, empty);
 
-                // Tutto l'aspetto grafico arriva da style.css tramite le styleClass
                 if (empty || item == null) {
                     setGraphic(null);
                 } else {

@@ -54,10 +54,6 @@ public class GestioneFile {
 
     /**
      * Restituisce gli id dei ristoranti di cui l'utente indicato è proprietario.
-     * <p>
-     * Nel file degli utenti i ristoranti posseduti stanno tutti nell'ultima
-     * colonna, separati da un trattino; qui vengono riportati a numeri.
-     *
      * @param usernameTarget username del ristoratore
      * @return la lista degli id, vuota se l'utente non possiede ristoranti
      * @author Matteo Franguelli
@@ -81,7 +77,6 @@ public class GestioneFile {
                         try {
                             identificativi.add(Integer.valueOf(pulisci(pezzo)));
                         } catch (NumberFormatException ignorato) {
-                            // Voce non numerica: viene saltata
                         }
                     }
                 }
@@ -234,7 +229,6 @@ public class GestioneFile {
                 e.printStackTrace();
             }
 
-            // Il file è cambiato: media e conteggi mostrati nelle card vanno ricalcolati
             GestioneRecensioni.getInstance().ricaricaIndice();
         }
     }

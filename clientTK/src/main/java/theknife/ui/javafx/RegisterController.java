@@ -16,10 +16,6 @@ import java.security.NoSuchAlgorithmException;
  * Controller della finestra di registrazione.
  * Gestisce la creazione di un nuovo utente e il salvataggio
  * delle credenziali nel file data/users.csv.
- * <p>
- * Il ruolo è esclusivo: un account è Cliente oppure Ristoratore.
- * La doppia appartenenza non è più prevista.
- *
  * @author Matteo Franguelli
  */
 public class RegisterController {

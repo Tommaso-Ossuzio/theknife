@@ -11,15 +11,6 @@ import java.util.function.Consumer;
 
 /**
  * Apertura delle finestre secondarie dell'applicazione.
- * <p>
- * Ogni schermata secondaria di TheKnife è una finestra modale costruita
- * sempre allo stesso modo: si carica un FXML, se ne fa una scena, si crea
- * uno {@link Stage} modale, si configura il controller e si attende la
- * chiusura. Raccogliere qui quel blocco evita di ripeterlo per ogni
- * schermata e garantisce che nessuna finestra dimentichi di registrarsi
- * presso {@link Temi}: se lo dimenticasse, resterebbe chiara anche con il
- * tema scuro attivo.
- *
  * @author Matteo Franguelli
  */
 public final class Finestre {
@@ -53,7 +44,6 @@ public final class Finestre {
             FXMLLoader caricatore = new FXMLLoader(urlFxml);
             Scene scena = new Scene(caricatore.load());
 
-            // Senza questa riga la finestra ignorerebbe il tema scuro
             Temi.registra(scena);
 
             Stage finestra = new Stage();
@@ -86,12 +76,6 @@ public final class Finestre {
 
     /**
      * Sostituisce il contenuto di una finestra già aperta con un'altra vista.
-     * <p>
-     * L'applicazione non ha un sistema di navigazione: le schermate principali
-     * (benvenuto, elenco dei ristoranti, dashboard del ristoratore) si
-     * susseguono dentro la stessa finestra riassegnandone la radice, invece di
-     * aprire finestre nuove che lascerebbero dietro di sé quelle vecchie.
-     *
      * @param scena    finestra da riutilizzare
      * @param nomeFxml nome del file FXML da caricare
      * @return il controller della vista caricata, oppure null se il caricamento fallisce
@@ -110,7 +94,6 @@ public final class Finestre {
             FXMLLoader caricatore = new FXMLLoader(urlFxml);
             scena.setRoot(caricatore.load());
 
-            // La radice appena caricata non ha ancora il foglio del tema scuro
             Temi.applicaA(scena);
 
             return caricatore.getController();

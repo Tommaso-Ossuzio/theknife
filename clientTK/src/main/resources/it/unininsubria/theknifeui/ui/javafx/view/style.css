@@ -1,90 +1,28 @@
-/* =========================================================================
-   THEKNIFE — DESIGN SYSTEM
-   -------------------------------------------------------------------------
-   Foglio di stile unico dell'applicazione.
-
-   REGOLA FONDAMENTALE:
-   nessun colore, font o dimensione va scritto dentro gli FXML o dentro il
-   codice Java (niente style="..." e niente setStyle(...)).
-   Tutto vive qui, e i colori vivono UNA SOLA VOLTA nel blocco PALETTE
-   qui sotto: cambiando un valore lì, cambia tutta l'applicazione.
-
-   Organizzazione del file:
-     1. PALETTE           variabili di colore
-     2. BASE              root, tipografia, testi generici
-     3. LAYOUT            barre, pagine, pannelli, contenitori
-     4. BOTTONI           varianti primario / secondario / ghost / pericolo
-     5. CAMPI DI INPUT    TextField, TextArea, CheckBox, RadioButton...
-     6. CARD RISTORANTE   griglia impaginata della schermata principale
-     7. PAGINAZIONE
-     8. DETTAGLI RISTORANTE
-     9. RECENSIONI        lista, singola recensione, risposta del ristoratore
-    10. STELLE            valutazioni e selettori a stelle
-    11. TABELLE
-    12. LISTE E SCROLLBAR
-    13. DIALOG DI SISTEMA (Alert)
-    14. SCHERMATA DI BENVENUTO
-    15. DASHBOARD DEL RISTORATORE
-
-   Il tema scuro non vive qui: sta in theme-dark.css, che ridefinisce i soli
-   valori della PALETTE e viene aggiunto sopra questo foglio quando serve.
-   ========================================================================= */
-
-
-/* =========================================================================
-   1. PALETTE
-   -------------------------------------------------------------------------
-   Unico punto in cui i colori sono dichiarati.
-   Sono "looked-up colors" JavaFX: definiti su .root, ereditati da tutti
-   i nodi di ogni finestra che carica questo foglio di stile.
-   ========================================================================= */
 .root {
-
-    /* --- Verde istituzionale (azioni principali, brand) --- */
     -color-primary:         #0B6B5B;
     -color-primary-hover:   #085449;
     -color-primary-press:   #063D35;
     -color-primary-soft:    #E3F1EC;
 
-    /* --- Superfici --- */
     -color-bg:              #F4F6F5;
     -color-surface:         #FFFFFF;
     -color-surface-alt:     #F0F2EF;
 
-    /* --- Bordi --- */
     -color-border:          #E1E5E1;
     -color-border-strong:   #C9D0CB;
 
-    /* --- Testo ---
-       -color-heading è riservato ai titoli: dà loro una gerarchia di colore
-       e non solo di dimensione. */
     -color-text:            #0E1A17;
     -color-heading:         #08463C;
     -color-text-muted:      #4F5F5A;
     -color-text-invert:     #FFFFFF;
 
-    /* --- Stati --- */
     -color-danger:          #B02B2B;
     -color-danger-hover:    #8E2020;
     -color-danger-soft:     #FBEAEA;
 
-    /* --- Valutazioni a stelle --- */
     -color-star-on:         #B26A00;
     -color-star-off:        #C9D0CB;
 
-    /* --- Colori informativi dei badge delle card ---
-       I badge sono in tinta pastello: uno sfondo tenue con sopra il testo
-       nella stessa tinta, ma scuro. Una tinta piena e satura su ogni badge
-       trasformava le card in una scacchiera di colori accesi che si
-       contendevano l'attenzione; con il pastello il primo elemento che si
-       legge in una card torna a essere il nome del ristorante.
-
-       Ogni coppia sfondo/testo è verificata sulle WCAG: i rapporti di
-       contrasto vanno da 6,8:1 a 7,9:1, ben oltre il 4,5:1 richiesto per il
-       testo. Cambiando uno di questi valori il rapporto va ricalcolato.
-
-       Ogni badge accosta al colore anche un testo esplicito: il colore
-       accompagna l'informazione, non la sostituisce mai. */
     -color-rating-high-bg:  #D8F0E2;
     -color-rating-high-fg:  #0F5132;
     -color-rating-mid-bg:   #FBEFC8;
@@ -96,18 +34,11 @@
     -color-service-bg:      #DAE8F7;
     -color-service-fg:      #17466F;
 
-    /* --- Sfondo dei riquadri della dashboard ---
-       Una tinta appena percettibile invece del bianco: stacca i quattro
-       numeri dal resto della pagina senza aggiungere un altro bordo. */
     -color-tile-bg:         #EDF3F0;
 
-    /* --- Ombre --- */
     -color-shadow:          rgba(20, 33, 30, 0.10);
     -color-shadow-strong:   rgba(20, 33, 30, 0.18);
 
-    /* --- Override dei colori di sistema di JavaFX (tema Modena) ---
-       Servono a far combaciare focus, selezioni e controlli nativi
-       con la palette dell'applicazione. */
     -fx-accent:             -color-primary;
     -fx-focus-color:        -color-primary;
     -fx-faint-focus-color:  transparent;
@@ -115,10 +46,6 @@
     -fx-selection-bar-text: -color-text;
 }
 
-
-/* =========================================================================
-   2. BASE
-   ========================================================================= */
 .root {
     -fx-font-family: "Segoe UI", "Inter", "Helvetica Neue", Arial, sans-serif;
     -fx-font-size: 14px;
@@ -126,81 +53,62 @@
     -fx-background-color: -color-bg;
 }
 
-/* Radice della finestra principale e delle finestre secondarie */
 .app-root {
     -fx-background-color: -color-bg;
 }
 
-/* Radice delle finestre modali (login, registrazione, filtri, form) */
 .dialog-root {
     -fx-background-color: -color-surface;
 }
 
-/* Ogni Label eredita il colore del testo invece del nero di default */
 .label {
     -fx-text-fill: -color-text;
 }
 
-/* --- Scala tipografica --- */
-
-/* Titolo grande di una schermata (es. "Ristoranti", "Accedi") */
 .page-title {
     -fx-font-size: 24px;
     -fx-font-weight: bold;
     -fx-text-fill: -color-heading;
 }
 
-/* Titolo di sezione dentro una schermata */
 .section-title {
     -fx-font-size: 18px;
     -fx-font-weight: bold;
     -fx-text-fill: -color-heading;
 }
 
-/* Sottotitolo esplicativo sotto un titolo */
 .subtitle {
     -fx-font-size: 13px;
     -fx-text-fill: -color-text-muted;
 }
 
-/* Testo secondario, meno importante */
 .muted-text {
     -fx-font-size: 13px;
     -fx-text-fill: -color-text-muted;
 }
 
-/* Etichetta sopra un campo di un form */
 .field-label {
     -fx-font-size: 12px;
     -fx-font-weight: bold;
     -fx-text-fill: -color-text-muted;
 }
 
-/* Messaggio di errore di validazione sotto un form */
 .error-label {
     -fx-font-size: 13px;
     -fx-font-weight: bold;
     -fx-text-fill: -color-danger;
 }
 
-/* Emoji usate come icone accanto alle etichette */
 .emoticon {
     -fx-font-size: 15px;
     -fx-font-family: "Segoe UI Emoji", "Apple Color Emoji", "Noto Color Emoji", sans-serif;
 }
 
-/* Separatore orizzontale */
 .separator .line {
     -fx-border-color: -color-border;
     -fx-border-width: 1 0 0 0;
 }
 
-
-/* =========================================================================
-   3. LAYOUT
-   ========================================================================= */
-
-/* --- Barra superiore della finestra principale --- */
 .top-bar {
     -fx-background-color: -color-surface;
     -fx-border-color: -color-border;
@@ -209,13 +117,11 @@
     -fx-spacing: 14;
 }
 
-/* Riga con logo a sinistra e azioni utente a destra */
 .top-bar-row {
     -fx-alignment: center-left;
     -fx-spacing: 10;
 }
 
-/* Blocco marchio: pittogramma + nome */
 .brand {
     -fx-alignment: center-left;
     -fx-spacing: 8;
@@ -227,7 +133,6 @@
     -fx-text-fill: -color-primary;
 }
 
-/* Etichetta del ruolo / utente loggato, resa come "pillola" */
 .user-chip {
     -fx-background-color: -color-primary-soft;
     -fx-text-fill: -color-primary;
@@ -237,26 +142,22 @@
     -fx-padding: 5 12 5 12;
 }
 
-/* Gruppo di bottoni di navigazione nella barra superiore */
 .nav-group {
     -fx-alignment: center-right;
     -fx-spacing: 8;
 }
 
-/* --- Area centrale --- */
 .content-pane {
     -fx-background-color: transparent;
     -fx-padding: 20 20 12 20;
 }
 
-/* Intestazione dell'area centrale: titolo + conteggio risultati */
 .content-header {
     -fx-alignment: center-left;
     -fx-spacing: 12;
     -fx-padding: 0 0 14 0;
 }
 
-/* --- Barra di ricerca come card sollevata --- */
 .search-bar {
     -fx-background-color: -color-surface;
     -fx-background-radius: 14;
@@ -268,19 +169,16 @@
     -fx-effect: dropshadow(gaussian, -color-shadow, 10, 0.0, 0, 2);
 }
 
-/* Contenuto di una finestra modale (form di login, registrazione, ecc.) */
 .form-body {
     -fx-background-color: -color-surface;
     -fx-spacing: 14;
     -fx-padding: 22;
 }
 
-/* Gruppo etichetta + campo dentro un form */
 .field-group {
     -fx-spacing: 5;
 }
 
-/* Intestazione di una finestra modale */
 .dialog-header {
     -fx-background-color: -color-surface;
     -fx-border-color: -color-border;
@@ -289,7 +187,6 @@
     -fx-spacing: 4;
 }
 
-/* Piede di una finestra modale con i bottoni di conferma/annulla */
 .dialog-footer {
     -fx-background-color: -color-surface-alt;
     -fx-border-color: -color-border;
@@ -299,7 +196,6 @@
     -fx-alignment: center-right;
 }
 
-/* --- Piede della finestra principale --- */
 .footer-bar {
     -fx-background-color: -color-surface;
     -fx-border-color: -color-border;
@@ -309,18 +205,6 @@
     -fx-alignment: center-right;
 }
 
-
-/* =========================================================================
-   4. BOTTONI
-   -------------------------------------------------------------------------
-   .button        stile di base condiviso (si applica a ogni Button)
-   .btn-primary   azione principale, verde pieno
-   .btn-primary-soft  stessa azione, ma in secondo piano: verde slavato
-   .btn-secondary azione neutra, contorno grigio
-   .btn-ghost     azione terziaria, senza sfondo
-   .btn-danger    azione distruttiva o di uscita (logout)
-   .btn-icon      bottone quadrato con sola icona
-   ========================================================================= */
 .button {
     -fx-background-color: -color-primary;
     -fx-text-fill: -color-text-invert;
@@ -343,7 +227,6 @@
     -fx-cursor: default;
 }
 
-/* --- Primario (esplicito, per leggibilità negli FXML) --- */
 .btn-primary {
     -fx-background-color: -color-primary;
     -fx-text-fill: -color-text-invert;
@@ -351,12 +234,6 @@
 .btn-primary:hover  { -fx-background-color: -color-primary-hover; }
 .btn-primary:pressed { -fx-background-color: -color-primary-press; }
 
-/* --- Accento lime --- */
-/* Variante slavata del bottone principale.
-   La usa "Entra come ospite": è la stessa azione di "Accedi" ma di ripiego,
-   e deve leggersi come tale. Stessa forma e stesso verde, solo scaricati di
-   intensita': fondo verde chiarissimo e testo verde pieno, invece del verde
-   pieno con testo bianco. Il contrasto testo/fondo resta 5,1:1. */
 .btn-primary-soft {
     -fx-background-color: -color-primary-soft;
     -fx-text-fill: -color-primary;
@@ -373,7 +250,6 @@
     -fx-border-color: -color-primary-press;
 }
 
-/* --- Secondario: contorno, sfondo chiaro --- */
 .btn-secondary {
     -fx-background-color: -color-surface;
     -fx-text-fill: -color-text;
@@ -389,7 +265,6 @@
     -fx-background-color: -color-border;
 }
 
-/* --- Ghost: nessuno sfondo finché non ci passi sopra --- */
 .btn-ghost {
     -fx-background-color: transparent;
     -fx-text-fill: -color-text;
@@ -403,7 +278,6 @@
     -fx-background-color: -color-border;
 }
 
-/* --- Pericolo / uscita --- */
 .btn-danger {
     -fx-background-color: -color-danger-soft;
     -fx-text-fill: -color-danger;
@@ -417,7 +291,6 @@
     -fx-text-fill: -color-text-invert;
 }
 
-/* --- Bottone compatto con sola icona --- */
 .btn-icon {
     -fx-background-color: transparent;
     -fx-text-fill: -color-text-muted;
@@ -431,21 +304,16 @@
     -fx-text-fill: -color-danger;
 }
 
-/* --- Variante piccola, per bottoni dentro le celle di una lista --- */
 .btn-small {
     -fx-font-size: 12px;
     -fx-padding: 6 14 6 14;
 }
 
-/* --- Bottone a larghezza piena, usato nelle scelte della schermata di benvenuto --- */
 .btn-block {
     -fx-font-size: 14px;
     -fx-padding: 12 18 12 18;
 }
 
-/* --- Cambio tema chiaro/scuro: sola icona, presente in ogni intestazione ---
-   La misura minima tiene il bersaglio del click abbastanza grande da
-   essere colpito senza precisione. */
 .btn-theme {
     -fx-background-color: -color-surface-alt;
     -fx-text-fill: -color-text;
@@ -462,10 +330,6 @@
     -fx-border-color: -color-primary;
 }
 
-
-/* =========================================================================
-   5. CAMPI DI INPUT
-   ========================================================================= */
 .text-field,
 .password-field,
 .text-area {
@@ -487,7 +351,6 @@
     -fx-border-width: 1.5;
 }
 
-/* La TextArea ha una viewport interna che va ricolorata a parte */
 .text-area {
     -fx-padding: 4;
 }
@@ -497,7 +360,6 @@
     -fx-padding: 8 10 8 10;
 }
 
-/* --- CheckBox --- */
 .check-box {
     -fx-text-fill: -color-text;
     -fx-font-size: 13px;
@@ -518,7 +380,6 @@
     -fx-background-color: -color-text-invert;
 }
 
-/* --- RadioButton (scelta del ruolo in registrazione) --- */
 .radio-button {
     -fx-text-fill: -color-text;
     -fx-font-size: 13px;
@@ -539,7 +400,6 @@
     -fx-background-insets: 0;
 }
 
-/* --- Scelta del ruolo presentata come due card selezionabili --- */
 .role-option {
     -fx-background-color: -color-surface;
     -fx-border-color: -color-border-strong;
@@ -554,7 +414,6 @@
     -fx-background-color: -color-primary-soft;
 }
 
-/* Le due card affiancate, metà larghezza ciascuna. */
 .role-row {
     -fx-spacing: 12;
 }
@@ -562,7 +421,6 @@
     -fx-max-width: infinity;
 }
 
-/* --- ComboBox (scelta della città nella schermata di benvenuto) --- */
 .combo-box {
     -fx-background-color: -color-surface;
     -fx-border-color: -color-border-strong;
@@ -577,7 +435,6 @@
     -fx-border-width: 1.5;
 }
 
-/* Parte scrivibile della tendina */
 .combo-box .text-field {
     -fx-background-color: transparent;
     -fx-border-color: transparent;
@@ -593,7 +450,6 @@
     -fx-background-color: -color-text-muted;
 }
 
-/* Elenco a comparsa */
 .combo-box-popup .list-view {
     -fx-background-color: -color-surface;
     -fx-border-color: -color-border;
@@ -613,8 +469,6 @@
     -fx-text-fill: -color-primary;
 }
 
-
-/* --- Hyperlink --- */
 .hyperlink {
     -fx-text-fill: -color-primary;
     -fx-border-color: transparent;
@@ -629,7 +483,6 @@
     -fx-border-color: transparent;
 }
 
-/* --- Tooltip --- */
 .tooltip {
     -fx-background-color: -color-text;
     -fx-text-fill: -color-text-invert;
@@ -638,15 +491,6 @@
     -fx-padding: 6 10 6 10;
 }
 
-
-/* =========================================================================
-   6. CARD RISTORANTE
-   -------------------------------------------------------------------------
-   Griglia della schermata principale: ogni ristorante è una card,
-   le card sono distribuite su più pagine (vedi sezione PAGINAZIONE).
-   ========================================================================= */
-
-/* Contenitore della griglia di card */
 .card-grid {
     -fx-background-color: transparent;
     -fx-hgap: 14;
@@ -656,7 +500,6 @@
     -fx-tile-alignment: top-left;
 }
 
-/* Card singola */
 .restaurant-card {
     -fx-pref-width: 336;
     -fx-min-height: 150;
@@ -674,21 +517,18 @@
     -fx-effect: dropshadow(gaussian, -color-shadow-strong, 14, 0.0, 0, 4);
 }
 
-/* Card attualmente selezionata */
 .restaurant-card-selected {
     -fx-border-color: -color-primary;
     -fx-border-width: 2;
     -fx-background-color: -color-primary-soft;
 }
 
-/* Nome del ristorante dentro la card */
 .restaurant-name {
     -fx-font-size: 17px;
     -fx-font-weight: bold;
     -fx-text-fill: -color-heading;
 }
 
-/* Riga con icona + testo dentro la card (indirizzo, prezzo...) */
 .card-line {
     -fx-alignment: center-left;
     -fx-spacing: 6;
@@ -699,22 +539,17 @@
     -fx-text-fill: -color-text-muted;
 }
 
-/* Riga finale della card con i badge.
-   È un FlowPane: quando i badge non ci stanno in larghezza vanno a capo
-   invece di essere troncati con i puntini. */
 .card-tags {
     -fx-hgap: 6;
     -fx-vgap: 6;
     -fx-alignment: center-left;
 }
 
-/* Stessi badge, ma nella riga larga della dashboard: qui stanno in fila */
 .owner-card-tags {
     -fx-spacing: 6;
     -fx-alignment: center-right;
 }
 
-/* Badge del tipo di cucina */
 .tag {
     -fx-background-color: -color-surface-alt;
     -fx-text-fill: -color-text-muted;
@@ -724,54 +559,41 @@
     -fx-padding: 3 10 3 10;
 }
 
-/* Badge dei servizi offerti (consegna, prenotazione) */
 .tag-accent {
     -fx-background-color: -color-service-bg;
     -fx-text-fill: -color-service-fg;
 }
 
-/* Badge delle stelle Michelin */
 .tag-michelin {
     -fx-background-color: -color-michelin-bg;
     -fx-text-fill: -color-michelin-fg;
 }
 
-/* --- Badge della media delle recensioni ---
-   Il colore cambia con il voto, ma il badge riporta sempre anche il
-   valore numerico, il simbolo ★ e il numero di recensioni: chi non
-   distingue i colori legge comunque la stessa informazione. */
 .tag-rating {
     -fx-background-color: -color-surface-alt;
     -fx-text-fill: -color-text-muted;
 }
 
-/* Media alta (da 4 stelle in su) */
 .tag-rating-high {
     -fx-background-color: -color-rating-high-bg;
     -fx-text-fill: -color-rating-high-fg;
 }
 
-/* Media intermedia (da 2 a 3,9 stelle) */
 .tag-rating-mid {
     -fx-background-color: -color-rating-mid-bg;
     -fx-text-fill: -color-rating-mid-fg;
 }
 
-/* Media bassa (sotto le 2 stelle) */
 .tag-rating-low {
     -fx-background-color: -color-rating-low-bg;
     -fx-text-fill: -color-rating-low-fg;
 }
 
-/* Badge delle recensioni ancora da evadere, nell'elenco della dashboard.
-   Riusa il giallo della fascia intermedia: segnala qualcosa da fare senza
-   suonare come un allarme, che il rosso invece darebbe. */
 .tag-todo {
     -fx-background-color: -color-rating-mid-bg;
     -fx-text-fill: -color-rating-mid-fg;
 }
 
-/* Ristorante senza recensioni: nessun colore, solo contorno */
 .tag-rating-none {
     -fx-background-color: transparent;
     -fx-text-fill: -color-text-muted;
@@ -780,16 +602,11 @@
     -fx-border-radius: 999;
 }
 
-/* Link al sito dentro la card */
 .restaurant-link {
     -fx-font-size: 12px;
     -fx-text-fill: -color-primary;
 }
 
-/* Messaggio mostrato quando la ricerca non produce risultati.
-   Centrato in entrambe le direzioni: occupa lo spazio che avanza sotto ai
-   contenuti, quindi senza centratura resterebbe appoggiato in alto a
-   sinistra di un'area grande e vuota. */
 .empty-state {
     -fx-alignment: center;
     -fx-spacing: 8;
@@ -807,13 +624,8 @@
     -fx-text-fill: -color-text-muted;
 }
 
-
-/* =========================================================================
-   7. PAGINAZIONE
-   ========================================================================= */
 .pagination {
     -fx-background-color: transparent;
-    /* Con migliaia di ristoranti l'indicazione "pagina X / Y" è indispensabile */
     -fx-page-information-visible: true;
     -fx-page-information-alignment: bottom;
     -fx-max-page-indicator-count: 7;
@@ -839,7 +651,6 @@
     -fx-text-fill: -color-primary;
 }
 
-/* Numero di pagina attualmente selezionato */
 .pagination .pagination-control .toggle-button:selected {
     -fx-background-color: -color-primary;
     -fx-text-fill: -color-text-invert;
@@ -851,23 +662,17 @@
     -fx-font-size: 12px;
 }
 
-/* Riga informativa "Pagina X di Y — N ristoranti" sotto la griglia */
 .page-status {
     -fx-font-size: 12px;
     -fx-text-fill: -color-text-muted;
 }
 
-
-/* =========================================================================
-   8. DETTAGLI RISTORANTE
-   ========================================================================= */
 .details-root {
     -fx-background-color: -color-bg;
     -fx-spacing: 14;
     -fx-padding: 18;
 }
 
-/* Intestazione: nome, indirizzo, azioni */
 .details-header {
     -fx-background-color: -color-surface;
     -fx-background-radius: 14;
@@ -878,20 +683,17 @@
     -fx-alignment: center-left;
 }
 
-/* Nome del ristorante nella finestra dei dettagli */
 .details-title {
     -fx-font-size: 26px;
     -fx-font-weight: bold;
     -fx-text-fill: -color-heading;
 }
 
-/* Riga di testo sotto il nome (indirizzo, città) */
 .details-line {
     -fx-font-size: 13px;
     -fx-text-fill: -color-text-muted;
 }
 
-/* Riquadro con le informazioni tabellari */
 .details-info-panel {
     -fx-background-color: -color-surface;
     -fx-background-radius: 14;
@@ -900,20 +702,17 @@
     -fx-padding: 18;
 }
 
-/* Etichetta di sinistra (es. "Prezzo medio:") */
 .details-label {
     -fx-font-size: 13px;
     -fx-text-fill: -color-text-muted;
 }
 
-/* Valore di destra (es. "€€€") */
 .details-value {
     -fx-font-size: 14px;
     -fx-font-weight: bold;
     -fx-text-fill: -color-text;
 }
 
-/* Anteprima del sito web del ristorante */
 .details-map {
     -fx-background-color: -color-surface;
     -fx-border-color: -color-border;
@@ -922,12 +721,6 @@
     -fx-background-radius: 12;
 }
 
-
-/* =========================================================================
-   9. RECENSIONI
-   ========================================================================= */
-
-/* Lista delle recensioni: trasparente, sono le celle ad avere lo stile */
 .review-list {
     -fx-background-color: transparent;
     -fx-border-color: transparent;
@@ -941,7 +734,6 @@
     -fx-padding: 6 4 6 4;
 }
 
-/* Riquadro di una singola recensione */
 .review-item {
     -fx-background-color: -color-surface;
     -fx-background-radius: 12;
@@ -952,27 +744,23 @@
     -fx-effect: dropshadow(gaussian, -color-shadow, 6, 0.0, 0, 1);
 }
 
-/* Nome del ristorante in cima a una recensione ricevuta */
 .review-title {
     -fx-font-size: 14px;
     -fx-font-weight: bold;
     -fx-text-fill: -color-text;
 }
 
-/* Corpo testuale della recensione */
 .review-text {
     -fx-font-size: 13px;
     -fx-text-fill: -color-text;
 }
 
-/* Corpo testuale in corsivo (citazione della recensione) */
 .review-quote {
     -fx-font-size: 13px;
     -fx-font-style: italic;
     -fx-text-fill: -color-text;
 }
 
-/* Blocco della risposta del ristoratore, rientrato e verde tenue */
 .review-reply {
     -fx-background-color: -color-primary-soft;
     -fx-background-radius: 10;
@@ -994,15 +782,6 @@
     -fx-text-fill: -color-text;
 }
 
-
-/* =========================================================================
-   10. STELLE
-   -------------------------------------------------------------------------
-   Usate in tre punti: selettore voto (add_review), filtro per media
-   (advanced_filter) e visualizzazione (view_reviews, dettagli).
-   ========================================================================= */
-
-/* Stella non selezionata, cliccabile */
 .star-button {
     -fx-background-color: transparent;
     -fx-border-color: transparent;
@@ -1019,41 +798,32 @@
     -fx-background-color: transparent;
 }
 
-/* Stella selezionata */
 .star-button-on {
     -fx-text-fill: -color-star-on;
 }
 
-/* Variante compatta usata nel filtro avanzato */
 .star-button-small {
     -fx-font-size: 24px;
 }
 
-/* Stelle in sola lettura dentro una recensione */
 .star-display {
     -fx-text-fill: -color-star-on;
     -fx-font-size: 16px;
     -fx-font-weight: bold;
 }
 
-/* Stelle Michelin nella finestra dei dettagli */
 .michelin-stars {
     -fx-text-fill: -color-star-on;
     -fx-font-size: 18px;
     -fx-font-weight: bold;
 }
 
-/* Testo mostrato quando non ci sono stelle Michelin */
 .michelin-none {
     -fx-text-fill: -color-text-muted;
     -fx-font-size: 13px;
     -fx-font-weight: normal;
 }
 
-
-/* =========================================================================
-   11. TABELLE
-   ========================================================================= */
 .table-view {
     -fx-background-color: -color-surface;
     -fx-background-radius: 12;
@@ -1065,7 +835,6 @@
     -fx-border-color: -color-border;
 }
 
-/* Intestazione */
 .table-view .column-header-background {
     -fx-background-color: -color-surface-alt;
     -fx-background-radius: 12 12 0 0;
@@ -1085,7 +854,6 @@
     -fx-padding: 0 10 0 10;
 }
 
-/* Righe */
 .table-view .table-row-cell {
     -fx-background-color: -color-surface;
     -fx-border-color: transparent transparent -color-border transparent;
@@ -1119,10 +887,6 @@
     -fx-text-fill: -color-text-muted;
 }
 
-
-/* =========================================================================
-   12. LISTE E SCROLLBAR
-   ========================================================================= */
 .list-view {
     -fx-background-color: transparent;
     -fx-border-color: transparent;
@@ -1168,10 +932,6 @@
     -fx-padding: 0;
 }
 
-
-/* =========================================================================
-   13. DIALOG DI SISTEMA (Alert)
-   ========================================================================= */
 .dialog-pane {
     -fx-background-color: -color-surface;
     -fx-font-family: "Segoe UI", "Inter", "Helvetica Neue", Arial, sans-serif;
@@ -1196,22 +956,11 @@
     -fx-background-color: -color-primary-hover;
 }
 
-
-/* =========================================================================
-   14. SCHERMATA DI BENVENUTO
-   -------------------------------------------------------------------------
-   Prima schermata dell'applicazione: presenta le tre strade possibili
-   (accedere, registrarsi, entrare come ospite) su una sola colonna stretta,
-   perché una colonna sola non lascia dubbi su in che ordine si legge.
-   ========================================================================= */
-
-/* Area che centra la colonna nella finestra */
 .welcome-pane {
     -fx-alignment: top-center;
     -fx-padding: 40 20 40 20;
 }
 
-/* Colonna con le scelte */
 .welcome-card {
     -fx-background-color: -color-surface;
     -fx-background-radius: 18;
@@ -1223,20 +972,17 @@
     -fx-effect: dropshadow(gaussian, -color-shadow, 18, 0.0, 0, 6);
 }
 
-/* Blocco dei due bottoni principali */
 .welcome-actions {
     -fx-spacing: 10;
     -fx-padding: 8 0 0 0;
 }
 
-/* Riga con la parola "oppure" fra due linee */
 .welcome-divider {
     -fx-alignment: center;
     -fx-spacing: 12;
     -fx-padding: 6 0 6 0;
 }
 
-/* Riquadro dell'ingresso come ospite */
 .guest-box {
     -fx-background-color: -color-surface-alt;
     -fx-background-radius: 14;
@@ -1246,32 +992,12 @@
     -fx-spacing: 10;
 }
 
-
-/* =========================================================================
-   15. DASHBOARD DEL RISTORATORE
-   -------------------------------------------------------------------------
-   Quattro numeri in evidenza e l'elenco dei propri locali. È la schermata
-   principale di chi gestisce ristoranti e sostituisce, per lui, la griglia
-   di card che vedono clienti e ospiti.
-   ========================================================================= */
-
-/* Riga dei quattro riquadri.
-   Centrata perché i riquadri hanno una misura fissa e non riempiono per
-   forza tutta la larghezza della finestra. */
 .stat-row {
     -fx-spacing: 16;
     -fx-padding: 0 0 22 0;
     -fx-alignment: center;
 }
 
-/* Singolo riquadro con un numero.
-
-   Larghezza e altezza sono fissate allo stesso valore: i riquadri sono
-   quadrati e restano tali a qualunque larghezza della finestra. Lasciati
-   liberi di crescere si dividevano la riga in parti uguali e si
-   schiacciavano in quattro strisce basse, di forma diversa a ogni
-   ridimensionamento. Il numero e la sua didascalia sono centrati, così il
-   quadrato resta equilibrato comunque vada a finire il testo. */
 .stat-tile {
     -fx-background-color: -color-tile-bg;
     -fx-background-radius: 16;
@@ -1289,11 +1015,6 @@
     -fx-effect: dropshadow(gaussian, -color-shadow, 8, 0.0, 0, 2);
 }
 
-/* --- Il riquadro della media si colora con il voto ---
-   Verde dalle 4 stelle in su, giallo fra le 2 e le 4, rosso sotto le 2.
-   Sono le stesse tinte pastello dei badge, così un voto ha lo stesso
-   colore ovunque compaia nell'applicazione. Il riquadro mostra sempre
-   anche il valore numerico: il colore non è mai l'unica informazione. */
 .stat-tile-rating-high {
     -fx-background-color: -color-rating-high-bg;
     -fx-border-color: -color-rating-high-fg;
@@ -1315,7 +1036,6 @@
 .stat-tile-rating-low .stat-value { -fx-text-fill: -color-rating-low-fg; }
 .stat-tile-rating-low .stat-label { -fx-text-fill: -color-rating-low-fg; }
 
-/* Riquadro che si può cliccare (recensioni ancora da evadere) */
 .stat-tile-action {
     -fx-cursor: hand;
     -fx-border-color: -color-primary;
@@ -1330,16 +1050,12 @@
     -fx-opacity: 0.6;
 }
 
-/* Il numero grande */
 .stat-value {
     -fx-font-size: 46px;
     -fx-font-weight: bold;
     -fx-text-fill: -color-heading;
 }
 
-/* La didascalia sotto al numero.
-   Su più righe quando non ci sta ("Media delle recensioni"), centrata
-   per restare in asse con il numero. */
 .stat-label {
     -fx-font-size: 15px;
     -fx-font-weight: bold;
@@ -1348,21 +1064,15 @@
     -fx-wrap-text: true;
 }
 
-/* Blocco "I miei ristoranti": titolo più elenco.
-   Occupa tutto lo spazio che avanza sotto ai quattro riquadri e vi si centra
-   verticalmente, così con uno o due locali non resta appeso in cima a una
-   pagina quasi vuota. */
 .owner-section {
     -fx-alignment: center;
     -fx-spacing: 4;
 }
 
-/* Elenco dei propri ristoranti */
 .owner-list {
     -fx-spacing: 10;
 }
 
-/* Riga di un ristorante gestito */
 .owner-card {
     -fx-background-color: -color-surface;
     -fx-background-radius: 14;
@@ -1379,9 +1089,6 @@
     -fx-effect: dropshadow(gaussian, -color-shadow-strong, 12, 0.0, 0, 3);
 }
 
-/* Blocco nome + città dentro la riga.
-   Centrato verticalmente: il nome e la città restano in asse con i badge
-   che stanno dall'altro capo della riga, invece di appoggiarsi in alto. */
 .owner-card-text {
     -fx-spacing: 3;
     -fx-alignment: center-left;

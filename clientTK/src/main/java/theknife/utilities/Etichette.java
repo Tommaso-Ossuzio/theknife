@@ -8,12 +8,6 @@ import java.util.Locale;
 
 /**
  * Badge informativi usati nelle schermate che elencano ristoranti.
- * <p>
- * Stanno qui, e non dentro un singolo controller, perché le stesse etichette
- * compaiono sia nelle card dell'elenco sia nella dashboard del ristoratore:
- * tenerne una sola versione evita che i due elenchi mostrino la stessa
- * informazione in due modi diversi.
- *
  * @author Matteo Franguelli
  */
 public final class Etichette {
@@ -63,12 +57,6 @@ public final class Etichette {
 
     /**
      * Crea il badge con la media delle recensioni di un ristorante.
-     * <p>
-     * Il colore cambia in base al voto — verde dalle 4 stelle in su, giallo
-     * fra le 2 e le 4, rosso sotto le 2 — ma il badge riporta sempre anche il
-     * valore numerico e il numero di recensioni: l'informazione resta leggibile
-     * anche a chi non distingue i colori.
-     *
      * @param r ristorante di cui mostrare la media
      * @author Matteo Franguelli
      */
@@ -106,8 +94,6 @@ public final class Etichette {
         String testo = String.format(Locale.ITALY, "★ %.1f  ·  %d %s",
                 media, recensioni, recensioni == 1 ? "recensione" : "recensioni");
 
-        // Le stesse tre soglie del riquadro della media nella dashboard:
-        // un voto deve avere lo stesso colore ovunque compaia.
         String classe;
         if (media >= 4)      classe = "tag-rating-high";
         else if (media >= 2) classe = "tag-rating-mid";
