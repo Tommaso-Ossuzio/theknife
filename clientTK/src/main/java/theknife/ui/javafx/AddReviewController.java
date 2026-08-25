@@ -1,5 +1,6 @@
 package theknife.ui.javafx;
 
+import it.uninsubria.dto.RistoranteDTO;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
@@ -40,6 +41,7 @@ public class AddReviewController {
     @FXML private Button star1, star2, star3, star4, star5;
 
     private Ristorante ristoranteDestinazione;
+    private RistoranteDTO ristoranteDTODestinazione;
 
     // Variabile per tenere traccia del voto (default 5 stelle)
     private int votoSelezionato = 5;
@@ -51,6 +53,19 @@ public class AddReviewController {
      */
     public void setRestaurant(Ristorante restaurant) {
         this.ristoranteDestinazione = restaurant;
+        this.ristoranteDTODestinazione = null;
+    }
+
+    /**
+     * Seleziona il ristorante ricevuto dal nuovo flusso server.
+     *
+     * @param restaurant ristorante DTO da recensire
+     *
+     * @author Michele Viselli
+     */
+    public void setRestaurant(RistoranteDTO restaurant) {
+        this.ristoranteDTODestinazione = restaurant;
+        this.ristoranteDestinazione = null;
     }
 
     /**
@@ -146,12 +161,20 @@ public class AddReviewController {
         GestioneRecensioni gestRest =  GestioneRecensioni.getInstance();
         GestioneRistoranti gr =  GestioneRistoranti.getInstance();
         String utente     = Session.getInstance().getUsername();
-        String indirizzoRistorante = ristoranteDestinazione.getLuogo().getIndirizzo();
         int idUtente =1;
         int  stelle       = votoSelezionato;
         String text      = areaRecensione.getText();
-        Ristorante r = gr.getRistoranteDaIndirizzo(indirizzoRistorante);
-        int idRistorante= r.getId();
+        int idRistorante;
+
+        if (ristoranteDTODestinazione != null) {
+            idRistorante = ristoranteDTODestinazione.getIdRistorante();
+        } else if (ristoranteDestinazione != null && ristoranteDestinazione.getLuogo() != null) {
+            String indirizzoRistorante = ristoranteDestinazione.getLuogo().getIndirizzo();
+            Ristorante r = gr.getRistoranteDaIndirizzo(indirizzoRistorante);
+            idRistorante = r == null ? 0 : r.getId();
+        } else {
+            idRistorante = 0;
+        }
 
         //Prendere id utente
         idUtente=GestioneFile.recuperaId(utente);

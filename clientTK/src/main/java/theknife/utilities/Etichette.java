@@ -1,5 +1,6 @@
 package theknife.utilities;
 
+import it.uninsubria.dto.RistoranteDTO;
 import javafx.scene.control.Label;
 import theknife.model.Ristorante;
 
@@ -51,6 +52,29 @@ public final class Etichette {
     public static Label creaBadgeMedia(Ristorante r) {
         double media = r.getMediaStelle();
         int recensioni = r.getNumRecensioni();
+
+        return creaBadgeMedia(media, recensioni);
+    }
+
+    /**
+     * Crea il badge della media per i ristoranti ricevuti dal nuovo flusso
+     * server, rappresentati da {@link RistoranteDTO}.
+     *
+     * @param r ristorante di cui mostrare la media
+     * @return badge della media o dell'assenza di recensioni
+     *
+     * @author Michele Viselli
+     */
+    public static Label creaBadgeMedia(RistoranteDTO r) {
+        if (r == null) return creaBadge("Nessuna recensione", "tag-rating-none");
+
+        double media = r.getMediaStelle() == null ? -1.0 : r.getMediaStelle();
+        int recensioni = r.getNumeroRecensioni() == null ? 0 : r.getNumeroRecensioni();
+
+        return creaBadgeMedia(media, recensioni);
+    }
+
+    private static Label creaBadgeMedia(double media, int recensioni) {
 
         if (recensioni <= 0 || media < 0) {
             return creaBadge("Nessuna recensione", "tag-rating-none");

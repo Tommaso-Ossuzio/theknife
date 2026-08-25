@@ -1,8 +1,13 @@
 package theknife.ui.javafx;
 
-import javafx.application.Platform;
+import it.uninsubria.dto.CittaDTO;
+import it.uninsubria.dto.CoordinateDTO;
+import it.uninsubria.dto.FiltroRistoranteDTO;
+import it.uninsubria.dto.LuogoDTO;
+import it.uninsubria.dto.RistoranteDTO;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.concurrent.Task;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
 import javafx.scene.control.*;
@@ -13,12 +18,10 @@ import javafx.scene.layout.TilePane;
 import javafx.scene.layout.VBox;
 import theknife.model.GestioneFile;
 import theknife.model.GestioneRistoranti;
-import theknife.model.Ristorante;
 import theknife.utilities.Etichette;
 import theknife.utilities.Finestre;
 import theknife.utilities.Temi;
 
-import java.util.LinkedList;
 import java.util.List;
 
 //TODO da rivedere, vengono usati i file
@@ -58,22 +61,25 @@ public class MainController implements ControllerAutenticazione {
     @FXML private TextField campoLuogo;
     @FXML private TextField campoCucina;
 
-    // Lista dei ristoranti usata dal codice (dati) collegata alla ListView
-    private final ObservableList<Ristorante> ristoranti = FXCollections.observableArrayList();
+    // Lista dei ristoranti mostrata dalla UI. I dati arrivano dal server come DTO.
+    private final ObservableList<RistoranteDTO> ristoranti = FXCollections.observableArrayList();
     GestioneRistoranti gr = GestioneRistoranti.getInstance();
 
     /** Quante card mostrare in ogni pagina della griglia. */
     private static final int RISTORANTI_PER_PAGINA = 12;
 
     /** Ristorante attualmente selezionato con un click su una card. */
-    private Ristorante ristoranteSelezionato;
+    private RistoranteDTO ristoranteSelezionato;
+
+    /** Identificativo della ricerca più recente, per ignorare risposte vecchie. */
+    private long ultimaRicerca;
 
     /** Card evidenziata, tenuta da parte per poterla deselezionare. */
     private Node cardSelezionata;
 
     /**
      * Esegue compiti di inizializzazione:
-     * - Caricare i ristoranti dal file
+     * - Richiedere i ristoranti al server come DTO
      * - Imposta come la lista deve mostrare i ristoranti
      * - Imposta i pulsanti in base al ruolo (default: Ospite)
      * @author Matteo Franguelli
@@ -84,7 +90,7 @@ public class MainController implements ControllerAutenticazione {
 
         // Ogni volta che la lista dei ristoranti cambia (caricamento o filtro)
         // la griglia viene ricalcolata e ridivisa in pagine.
-        ristoranti.addListener((javafx.collections.ListChangeListener<Ristorante>) c -> aggiornaPaginazione());
+        ristoranti.addListener((javafx.collections.ListChangeListener<RistoranteDTO>) c -> aggiornaPaginazione());
 
         caricaCatalogo();
         aggiornaPaginazione();
@@ -135,25 +141,66 @@ public class MainController implements ControllerAutenticazione {
     /**
      * Mostra il catalogo dei ristoranti.
      * <p>
-     * Di norma il catalogo è già stato letto dalla schermata di benvenuto,
-     * che ne ha bisogno per proporre l'elenco delle città: in quel caso qui
-     * basta mostrarlo. Se invece non fosse ancora disponibile, viene letto
-     * ora in un thread separato per non bloccare la grafica, e la lista viene
-     * riempita al termine sul thread applicativo.
+     * Il catalogo della schermata principale viene richiesto al server con un
+     * filtro vuoto. La richiesta passa sempre da GestioneRistoranti e viene
+     * eseguita fuori dal JavaFX Application Thread.
      *
      * @author Matteo Franguelli
      * @author Celestino Resteghini
      */
     private void caricaCatalogo() {
-        if (gr.isCaricato()) {
-            mostraRistoranti(gr.listaRistoranti);
+        applicaFiltro(new FiltroRistoranteDTO(
+                null, null, null, null, null, null));
+    }
+
+    /**
+     * Applica un filtro ricevuto dalla schermata principale o dal filtro
+     * avanzato.
+     *
+     * <p>{@link GestioneRistoranti#filtraRistoranti(FiltroRistoranteDTO)} è
+     * bloccante perché attende la risposta della socket. Per questo motivo la
+     * chiamata viene eseguita dentro un {@link Task}; gli aggiornamenti della
+     * lista e della paginazione avvengono poi sul thread JavaFX tramite gli
+     * handler di completamento.</p>
+     *
+     * @param filtro criteri da inviare al server
+     *
+     * @author Michele Viselli
+     */
+    public void applicaFiltro(FiltroRistoranteDTO filtro) {
+        if (filtro == null) {
+            mostraErrore("Filtro non valido", "I criteri della ricerca non possono essere null.");
             return;
         }
 
-        new Thread(() -> {
-            gr.caricaDaCsv();
-            Platform.runLater(() -> mostraRistoranti(gr.listaRistoranti));
-        }).start();
+        long identificativoRicerca = ++ultimaRicerca;
+
+        Task<List<RistoranteDTO>> richiesta = new Task<>() {
+            @Override
+            protected List<RistoranteDTO> call() {
+                return gr.filtraRistoranti(filtro);
+            }
+        };
+
+        richiesta.setOnSucceeded(evento -> {
+            if (identificativoRicerca == ultimaRicerca) {
+                mostraRistoranti(richiesta.getValue());
+            }
+        });
+
+        richiesta.setOnFailed(evento -> {
+            if (identificativoRicerca != ultimaRicerca) return;
+            ristoranti.clear();
+            Throwable errore = richiesta.getException();
+            String dettaglio = errore == null || errore.getMessage() == null
+                    ? "Impossibile completare la ricerca."
+                    : errore.getMessage();
+            mostraErrore("Ricerca non disponibile", dettaglio);
+        });
+
+        Thread thread = new Thread(richiesta, "filtro-ristoranti");
+        thread.setDaemon(true);
+        thread.start();
     }
 
     /* =========================================================
@@ -237,7 +284,7 @@ public class MainController implements ControllerAutenticazione {
      * Un click seleziona la card, il doppio click apre i dettagli.
      * @author Matteo Franguelli
      */
-    private Node creaCard(Ristorante r) {
+    private Node creaCard(RistoranteDTO r) {
         VBox card = new VBox();
         card.getStyleClass().add("restaurant-card");
 
@@ -246,18 +293,21 @@ public class MainController implements ControllerAutenticazione {
         nome.getStyleClass().add("restaurant-name");
         card.getChildren().add(nome);
 
-        String indirizzo = (valoreNonNullo(r.getLuogo().getIndirizzo())
-                + ", " + valoreNonNullo(r.getLuogo().getCitta())).replaceAll("(^, )|(, $)", "");
+        LuogoDTO luogo = r.getLuogo();
+        CittaDTO citta = luogo == null ? null : luogo.getCitta();
+        String indirizzo = (valoreNonNullo(luogo == null ? null : luogo.getVia())
+                + ", " + valoreNonNullo(citta == null ? null : citta.getNome()))
+                .replaceAll("(^, )|(, $)", "");
         if (!indirizzo.isBlank()) {
             card.getChildren().add(creaRigaCard("📍", indirizzo));
         }
 
-        String prezzo = formattaPrezzo(r.getPrezzo());
+        String prezzo = valoreNonNullo(r.getFasciaPrezzo());
         if (!prezzo.isBlank()) {
             card.getChildren().add(creaRigaCard("💰", prezzo));
         }
 
-        String sitoWeb = r.getWebsite();
+        String sitoWeb = r.getSitoWeb();
         if (sitoWeb != null && !sitoWeb.isBlank() && !sitoWeb.equals("null")) {
             Hyperlink link = new Hyperlink(sitoWeb);
             link.getStyleClass().add("restaurant-link");
@@ -271,26 +321,22 @@ public class MainController implements ControllerAutenticazione {
         card.getChildren().add(spaziatore);
 
         // I badge vanno a capo da soli: in una sola riga i testi più lunghi
-        // (media, cucina, Michelin) verrebbero troncati dalla larghezza della card
+        // (media, cucina e servizi) verrebbero troncati dalla larghezza della card
         FlowPane badge = new FlowPane();
         badge.getStyleClass().add("card-tags");
 
         // La media delle recensioni è l'informazione più cercata: apre la riga dei badge
         badge.getChildren().add(Etichette.creaBadgeMedia(r));
 
-        String cucina = String.join(", ", r.getCucina());
-        if (cucina != null && !cucina.isBlank()) {
+        String cucina = r.getCucine() == null ? "" : String.join(", ", r.getCucine());
+        if (!cucina.isBlank()) {
             badge.getChildren().add(Etichette.creaBadge(cucina, "tag"));
         }
 
-        Label michelin = Etichette.creaBadgeMichelin(r);
-        if (michelin != null) {
-            badge.getChildren().add(michelin);
-        }
         if (r.isDelivery()) {
             badge.getChildren().add(Etichette.creaBadge("Consegna", "tag-accent"));
         }
-        if (r.isBooking()) {
+        if (r.isPrenotazioneOnline()) {
             badge.getChildren().add(Etichette.creaBadge("Prenotabile", "tag-accent"));
         }
         if (!badge.getChildren().isEmpty()) {
@@ -329,7 +375,7 @@ public class MainController implements ControllerAutenticazione {
      * usato poi dai pulsanti "Aggiungi recensione" e "Visualizza recensioni".
      * @author Matteo Franguelli
      */
-    private void selezionaRistorante(Ristorante r, Node card) {
+    private void selezionaRistorante(RistoranteDTO r, Node card) {
         if (cardSelezionata != null) {
             cardSelezionata.getStyleClass().remove("restaurant-card-selected");
         }
@@ -360,37 +406,35 @@ public class MainController implements ControllerAutenticazione {
     }
 
     /**
-     * Traduce il prezzo medio nella fascia a simboli di euro usata nelle card.
-     * @author Matteo Franguelli
-     */
-    private String formattaPrezzo(double prezzo) {
-        if (prezzo <= 0) return "";
-        int simboli = Math.max(1, Math.min(4, (int) Math.round(prezzo / 20.0)));
-        return "€".repeat(simboli) + "  ·  circa " + (int) prezzo + " €";
-    }
-
-    /**
      * Apre una nuova finestra con i dettagli del ristorante selezionato.
      * @author Matteo Franguelli
      * @author Celestino Resteghini
      */
-    private void apriDettagliRistorante(Ristorante rd) {
+    private void apriDettagliRistorante(RistoranteDTO rd) {
+        LuogoDTO luogo = rd.getLuogo();
+        CittaDTO citta = luogo == null ? null : luogo.getCitta();
+        CoordinateDTO coordinate = luogo == null ? null : luogo.getCoordinate();
+        double latitudine = coordinate == null ? 0.0 : coordinate.getLatitudine();
+        double longitudine = coordinate == null ? 0.0 : coordinate.getLongitudine();
+        String cucina = rd.getCucine() == null ? "" : String.join(", ", rd.getCucine());
+        double media = rd.getMediaStelle() == null ? 0.0 : rd.getMediaStelle();
+
         // Il foglio di stile è già dichiarato dentro restaurant_details.fxml
         Finestre.apriModale("restaurant_details.fxml", valoreNonNullo(rd.getNome()),
                 (RestaurantDetailsController ctrl) -> ctrl.setRestaurantData(
                         rd.getNome(),
-                        rd.getLuogo().getNazione(),
-                        rd.getLuogo().getCitta(),
-                        rd.getLuogo().getIndirizzo(),
-                        rd.getLuogo().getLatitudine(),
-                        rd.getLuogo().getLongitudine(),
-                        String.valueOf(rd.getPrezzo()),
-                        rd.getN_tel(),
+                        citta == null ? null : citta.getNazione(),
+                        citta == null ? null : citta.getNome(),
+                        luogo == null ? null : luogo.getVia(),
+                        latitudine,
+                        longitudine,
+                        rd.getFasciaPrezzo(),
+                        rd.getTelefono(),
                         rd.isDelivery(),
-                        rd.isBooking(),
-                        String.join(", ", rd.getCucina()),
-                        rd.getWebsite(),
-                        rd.getAward()
+                        rd.isPrenotazioneOnline(),
+                        cucina,
+                        rd.getSitoWeb(),
+                        media
                 ));
     }
 
@@ -543,7 +587,7 @@ public class MainController implements ControllerAutenticazione {
             return;
         }
 
-        Ristorante selezionato = ristoranteSelezionato;
+        RistoranteDTO selezionato = ristoranteSelezionato;
 
         if (selezionato == null) {
             Alert a = new Alert(Alert.AlertType.WARNING);
@@ -572,21 +616,16 @@ public class MainController implements ControllerAutenticazione {
      */
     @FXML
     protected void onApplyFilters() {
-        String luogo = campoLuogo.getText();
-        if (luogo == null || luogo.isBlank()) {
+        String luogo = normalizza(campoLuogo.getText());
+        String cucina = normalizza(campoCucina.getText());
+        if (luogo == null) {
             mostraErrore("Campo obbligatorio", "Devi inserire una città per effettuare la ricerca.");
             campoLuogo.requestFocus(); // Rimette il cursore nel campo vuoto
             return;
         }
 
-        LinkedList<Ristorante> rist = gr.Filtro(campoLuogo.getText(), campoCucina.getText(), -1,-1, false, false, -1);
-
-        if(rist!=null)
-        {
-            ristoranti.clear();       // Svuota lista grafica attuale
-            ristoranti.addAll(rist);  // aggiunge risultati filtro
-        }
-        else { ristoranti.clear(); }
+        applicaFiltro(new FiltroRistoranteDTO(
+                luogo, cucina, null, null, null, null));
     }
 
     /**
@@ -598,7 +637,7 @@ public class MainController implements ControllerAutenticazione {
         if (campoLuogo != null) campoLuogo.clear();
         if (campoCucina != null) campoCucina.clear();
 
-        mostraRistoranti(gr.listaRistoranti);
+        caricaCatalogo();
 
         System.out.println("[FILTER] Filtri resettati.");
     }
@@ -643,7 +682,7 @@ public class MainController implements ControllerAutenticazione {
      */
     @FXML
     private void onViewReviews() {
-        Ristorante selezionato = ristoranteSelezionato;
+        RistoranteDTO selezionato = ristoranteSelezionato;
 
         if (selezionato == null) {
             Alert a = new Alert(Alert.AlertType.WARNING);
@@ -686,10 +725,23 @@ public class MainController implements ControllerAutenticazione {
      * @param nuovaLista
      * @author Matteo Franguelli
      */
-    public void mostraRistoranti(List<Ristorante> nuovaLista) {
+    public void mostraRistoranti(List<RistoranteDTO> nuovaLista) {
         ristoranti.clear();
         if (nuovaLista != null && !nuovaLista.isEmpty()) {
             ristoranti.addAll(nuovaLista);
         }
+    }
+
+    /**
+     * Normalizza valori come luogo e cucina
+     * @param valore
+     * @return
+     *
+     * @author Michele Viselli
+     */
+    private String normalizza(String valore) {
+        if (valore == null) return null;
+        String normalizzato = valore.trim();
+        return normalizzato.isEmpty() ? null : normalizzato;
     }
 };

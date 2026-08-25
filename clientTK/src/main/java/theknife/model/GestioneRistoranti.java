@@ -101,6 +101,8 @@ public class GestioneRistoranti {
      * @param filtro criteri della ricerca
      * @return ristoranti filtrati, oppure una lista vuota se la risposta non
      *         è disponibile o la connessione al server fallisce
+     *
+     * @author Michele Viselli
      */
     public LinkedList<RistoranteDTO> filtraRistoranti(FiltroRistoranteDTO filtro)
     {

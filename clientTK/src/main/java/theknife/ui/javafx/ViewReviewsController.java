@@ -1,5 +1,6 @@
 package theknife.ui.javafx;
 
+import it.uninsubria.dto.RistoranteDTO;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -28,6 +29,7 @@ public class ViewReviewsController {
     @FXML private Label etichettaConteggio;
 
     private Ristorante ristoranteSelezionato;
+    private Integer idRistoranteSelezionato;
     private final ObservableList<Recensione> recensioniData = FXCollections.observableArrayList();
 
     private static final String NOME_CARTELLA = "data";
@@ -50,8 +52,29 @@ public class ViewReviewsController {
      */
     public void setRestaurant(Ristorante r) {
         this.ristoranteSelezionato = r;
+        this.idRistoranteSelezionato = r == null ? null : r.getId();
 
         if (this.ristoranteSelezionato != null) {
+            if (etichettaTitolo != null) {
+                etichettaTitolo.setText("Recensioni: " + r.getNome());
+            }
+            caricaRecensioniSpecifiche();
+            calcolaStatistiche();
+        }
+    }
+
+    /**
+     * Imposta il ristorante ricevuto dal nuovo flusso server.
+     *
+     * @param r ristorante DTO di cui visualizzare le recensioni
+     *
+     * @author Michele Viselli
+     */
+    public void setRestaurant(RistoranteDTO r) {
+        this.ristoranteSelezionato = null;
+        this.idRistoranteSelezionato = r == null ? null : r.getIdRistorante();
+
+        if (r != null) {
             if (etichettaTitolo != null) {
                 etichettaTitolo.setText("Recensioni: " + r.getNome());
             }
@@ -88,7 +111,9 @@ public class ViewReviewsController {
                         String sIdRistorante = pulisci(parti[4]);
 
                         int idRistCsv = Integer.parseInt(sIdRistorante);
-                        int idRistAttuale = ristoranteSelezionato.getId();
+                        int idRistAttuale = idRistoranteSelezionato == null
+                                ? 0
+                                : idRistoranteSelezionato;
 
                         // Controlliamo se la recensione appartiene al ristorante selezionato
                         if (idRistCsv == idRistAttuale) {
