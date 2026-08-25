@@ -109,7 +109,11 @@ public class RestaurantDetailsController {
      * @author Matteo Franguelli
      */
     private void preparaGoogleMapsUrl() {
-        String urlFinale = " ";
+        // Il flusso FILTRO non restituisce ancora le coordinate: in quel caso
+        // l'URL deve rimanere null, così il pulsante Maps viene disabilitato.
+        // TODO: valorizzare nuovamente l'URL quando le coordinate saranno
+        // incluse in LuogoDTO dal DAO e restituite dal server.
+        String urlFinale = null;
 
         if (latitudine != 0 && longitudine != 0) {
             // Coordinate precise
