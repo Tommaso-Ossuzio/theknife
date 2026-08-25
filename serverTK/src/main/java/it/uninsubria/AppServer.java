@@ -52,6 +52,8 @@ public class AppServer {
                 Socket socket = s.accept();
                 new SlaveThread(socket).start();
             }
+        } catch (ClassNotFoundException e) {
+            throw new RuntimeException(e);
         } finally {
             s.close();
         }
