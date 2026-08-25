@@ -302,7 +302,7 @@ public class MainController implements ControllerAutenticazione {
             card.getChildren().add(creaRigaCard("📍", indirizzo));
         }
 
-        String prezzo = valoreNonNullo(r.getFasciaPrezzo());
+        String prezzo = formattaFasciaPrezzo(r.getFasciaPrezzo());
         if (!prezzo.isBlank()) {
             card.getChildren().add(creaRigaCard("💰", prezzo));
         }
@@ -417,7 +417,10 @@ public class MainController implements ControllerAutenticazione {
         double latitudine = coordinate == null ? 0.0 : coordinate.getLatitudine();
         double longitudine = coordinate == null ? 0.0 : coordinate.getLongitudine();
         String cucina = rd.getCucine() == null ? "" : String.join(", ", rd.getCucine());
-        double media = rd.getMediaStelle() == null ? 0.0 : rd.getMediaStelle();
+
+        // TODO: valorizzare le stelle Michelin quando Award sarà disponibile
+        // nel database e in RistoranteDTO.
+        Double stelleMichelin = null;
 
         // Il foglio di stile è già dichiarato dentro restaurant_details.fxml
         Finestre.apriModale("restaurant_details.fxml", valoreNonNullo(rd.getNome()),
@@ -434,7 +437,7 @@ public class MainController implements ControllerAutenticazione {
                         rd.isPrenotazioneOnline(),
                         cucina,
                         rd.getSitoWeb(),
-                        media
+                        stelleMichelin
                 ));
     }
 
@@ -718,6 +721,27 @@ public class MainController implements ControllerAutenticazione {
      */
     private String valoreNonNullo(String s) {
         return s == null ? "" : s;
+    }
+
+    /**
+     * ?TEMPORANEA?
+     * Converte la fascia testuale usata dal database nei simboli mostrati
+     * nelle card. Il valore originale resta invariato nel DTO e continua a
+     * essere usato dal filtro.
+     *
+     * @author Michele Viselli
+     */
+    private String formattaFasciaPrezzo(String fasciaPrezzo) {
+        if (fasciaPrezzo == null || fasciaPrezzo.isBlank()) return "";
+
+        String fasciaNormalizzata = fasciaPrezzo.trim();
+        return switch (fasciaNormalizzata) {
+            case "meno di 35 €" -> "€";
+            case "tra 35 € e 60 €" -> "€€";
+            case "tra 60 € e 100 €" -> "€€€";
+            case "oltre 100 €" -> "€€€€";
+            default -> fasciaNormalizzata;
+        };
     }
 
     /**
