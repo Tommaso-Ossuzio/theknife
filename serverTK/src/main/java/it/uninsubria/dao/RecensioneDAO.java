@@ -176,7 +176,6 @@ public class RecensioneDAO {
                 int idRecensione = rs.getInt("id");
                 String testo = rs.getString("testo");
                 int numeroStelle = rs.getInt("numero_stelle");
-
                 int idRistorante = rs.getInt("id_ristorante");
 
                 Timestamp ts = rs.getTimestamp("data_ora");
@@ -247,4 +246,6 @@ public class RecensioneDAO {
 
         return lista;
     }
+
+
 }

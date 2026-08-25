@@ -15,6 +15,7 @@ public class RistoranteDTO implements Serializable {
     private boolean delivery;
     private boolean prenotazioneOnline;
     private String fasciaPrezzo;
+    private int stelleMichelin;
     private List<String> cucine;
     private LuogoDTO luogo;
     private RistoratoreDTO ristoratore;
@@ -23,11 +24,12 @@ public class RistoranteDTO implements Serializable {
     private Integer numeroRecensioniSenzaRisposta;
 
 
+
     public RistoranteDTO(int idRistorante, String nome, String telefono, String sitoWeb,
                          boolean delivery, boolean prenotazioneOnline, String fasciaPrezzo,
                          List<String> cucine, LuogoDTO luogo, RistoratoreDTO ristoratore,
                          Double mediaStelle, Integer numeroRecensioni,
-                         Integer numeroRecensioniSenzaRisposta) {
+                         Integer numeroRecensioniSenzaRisposta, int stelleMichelin) {
         this.idRistorante = idRistorante;
         this.nome = nome;
         this.telefono = telefono;
@@ -41,6 +43,15 @@ public class RistoranteDTO implements Serializable {
         this.mediaStelle = mediaStelle;
         this.numeroRecensioni = numeroRecensioni;
         this.numeroRecensioniSenzaRisposta = numeroRecensioniSenzaRisposta;
+        this.stelleMichelin = stelleMichelin;
+    }
+
+    public int getStelleMichelin() {
+        return stelleMichelin;
+    }
+
+    public void setStelleMichelin(int stelleMichelin) {
+        this.stelleMichelin = stelleMichelin;
     }
 
     public int getIdRistorante() {
@@ -157,6 +168,7 @@ public class RistoranteDTO implements Serializable {
                 ", delivery=" + delivery +
                 ", prenotazioneOnline=" + prenotazioneOnline +
                 ", fasciaPrezzo='" + fasciaPrezzo + '\'' +
+                ", stelleMichelin=" + stelleMichelin +
                 ", cucine=" + cucine +
                 ", luogo=" + luogo +
                 ", ristoratore=" + ristoratore +
