@@ -365,12 +365,12 @@ public class RistoranteDAO {
      * @param ristorante
      * @return L'ID del ristorante creato, oppure -1 in caso di errore
      * @author Elia Toschi
+     * @author Celestino Resteghini
      */
-    public int inserisciRistorante(Connection conn, RistoranteDTO ristorante) {
+    public void inserisciRistorante(Connection conn, RistoranteDTO ristorante) {
         LuogoDAO luogoDAO = new LuogoDAO();
         int idLuogo = luogoDAO.inserisciLuogoCompleto(conn, ristorante.getLuogo());
 
-        if (idLuogo == -1) return -1;
         String sql = "INSERT INTO RISTORANTE (nome, telefono, sito_web, delivery, prenotazione_online, fascia_prezzo, id_utente, id_luogo, stelle_michelin) " +
                 "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
@@ -399,12 +399,10 @@ public class RistoranteDAO {
                         psCucina.executeUpdate();
                     }
                 }
-                return idNuovoRistorante;
             }
         } catch (SQLException e) {
             System.err.println("Errore: Ristorante con questo nome probabilmente già esistente.");
             e.printStackTrace();
         }
-        return -1;
     }
 }
