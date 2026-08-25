@@ -15,12 +15,12 @@ public class UtenteDAO {
 
 
     /**
-     *
      * Registra l'utente nel db e crea le tabelle necessarie
      * @param conn
      * @param utente
      * @param passwordHash
      * @return false se la mail è già in uso, true se registrato
+     * @author Elia Toschi
      */
     public boolean registraUtente(Connection conn, UtenteDTO utente, String passwordHash) {
 
@@ -72,7 +72,7 @@ public class UtenteDAO {
      * @return idUtente se successo o null se credenziali errato
      * @author Elia Toschi
      */
-    public UtenteDTO eseguiLogin(Connection conn, AuthDTO credenziali) {
+    public boolean eseguiLogin(Connection conn, AuthDTO credenziali) {
 
         String sql = "SELECT id_utente FROM UTENTE WHERE email = ? AND password = ?";
 
@@ -83,15 +83,16 @@ public class UtenteDAO {
             ResultSet rs = ps.executeQuery();
 
             if (rs.next()) {
-                int idTrovato = rs.getInt("id_utente");
-                return this.getUtente(conn, idTrovato);
+
+                if(rs.getInt("id_utente")>0)
+                    return true;
             }
         } catch (SQLException e) {
             e.printStackTrace();
         }
 
         System.err.println("Login fallito: Credenziali errate.");
-        return null;
+        return false;
     }
 
     /**

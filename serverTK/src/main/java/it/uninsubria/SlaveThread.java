@@ -1,9 +1,7 @@
 package it.uninsubria;
-import it.uninsubria.dao.PreferitiDAO;
-import it.uninsubria.dao.RistoranteDAO;
-import it.uninsubria.dto.*;
-import it.uninsubria.dto.UtenteDTO;
 
+import it.uninsubria.dao.*;
+import it.uninsubria.dto.*;
 import java.io.*;
 import java.net.*;
 import java.sql.Connection;
@@ -25,6 +23,12 @@ public class SlaveThread extends Thread {
         out = new ObjectOutputStream(s.getOutputStream());
         in = new ObjectInputStream(s.getInputStream());
     }
+
+    UtenteDAO utenteDAO = new UtenteDAO();
+    RecensioneDAO recensioneDAO = new RecensioneDAO();
+    RistoranteDAO ristoranteDAO = new RistoranteDAO();
+    PreferitiDAO preferitiDAO = new PreferitiDAO();
+    LuogoDAO luogoDAO = new LuogoDAO();
 
     /**
      * Metodo per la gestione di tutte le richieste (seguendo il protocollo)
@@ -81,17 +85,16 @@ public class SlaveThread extends Thread {
     /**
      * Metodo per il controllo delle credenziali d'accesso nel login
      * @author Celestino Resteghini
+     * @author Elia Toschi
      * @throws IOException
      * @throws ClassNotFoundException
      */
     private void gestisciLogin() throws IOException, ClassNotFoundException {
         AuthDTO credenziali = (AuthDTO) in.readObject();
         System.out.println("LOG: ricevuto: " + credenziali.toString());
-
         boolean esito = false;
         try (Connection conn = getConnection()) {
-            //TODO controllo se le credenziali sono corrette
-            if(true)
+            if(utenteDAO.eseguiLogin(conn,credenziali))
                 esito = true;
         } catch (SQLException e) {
             e.printStackTrace();
@@ -105,17 +108,16 @@ public class SlaveThread extends Thread {
     /**
      * Metodo per effettuare la registrazione di un nuovo utente
      * @author Celestino Resteghini
+     * @author Elia Toschi
      * @throws IOException
      * @throws ClassNotFoundException
      */
     private void gestisciRegistrazione() throws IOException, ClassNotFoundException {
         UtenteDTO nuovoUtente = (UtenteDTO) in.readObject();
         System.out.println("REG: ricevuto: " + nuovoUtente.toString());
-
         boolean esito = false;
         try (Connection conn = getConnection()) {
-            //TODO controllare nel db che l'utente non sia già presente e nel caso registrarlo
-            if(true)
+            if(utenteDAO.registraUtente(conn,nuovoUtente,nuovoUtente.getPassword()))
                 esito = true;
         } catch (SQLException e) {
             e.printStackTrace();
@@ -139,7 +141,7 @@ public class SlaveThread extends Thread {
         LinkedList<RistoranteDTO> ristoranti;
 
         try (Connection conn = getConnection()) {
-            RistoranteDAO ristoranteDAO = new RistoranteDAO();
+
             ristoranti = new LinkedList<>(ristoranteDAO.filtraRistoranti(conn, specificheFiltro));
         } catch (SQLException e) {
             System.err.println("Errore durante la ricerca FILTRO");
@@ -155,21 +157,23 @@ public class SlaveThread extends Thread {
     /**
      * Metodo per ottenere la lista di recensioni relativa ad un ristorante
      * @author Celestino Resteghini
+     * @author Elia Toschi
      * @throws IOException
      * @throws ClassNotFoundException
      */
     private void gestisciRecensioni() throws IOException, ClassNotFoundException {
         int idRistorante = (int) in.readObject();
         System.out.println("REC: ricevuto: " + idRistorante);
-        LinkedList<RecensioneDTO> recensioni = new LinkedList<>();
+        LinkedList<RecensioneDTO> recensioni = null;
 
         try (Connection conn = getConnection()) {
-            //TODO prendere dal db tutte le recensioni relative all'id del ristorante passato dal client
-            recensioni = new LinkedList<>(); //TODO sostituire la lista vuota con la lista delle recensioni richieste
+            recensioni =(LinkedList<RecensioneDTO>) recensioneDAO.getRecensioniPerRistorante(conn,idRistorante);
         } catch (SQLException e) {
             e.printStackTrace();
-        }
 
+        }
+        if(recensioni == null)
+            recensioni = new LinkedList<>();
         System.out.println("REC: invio: lista recensioni");
         out.writeObject(recensioni);
         out.flush();
@@ -178,6 +182,7 @@ public class SlaveThread extends Thread {
     /**
      * Metodo per aggiungere una recensione
      * @author Celestino Resteghini
+     * @author Elia Toschi
      * @throws IOException
      * @throws ClassNotFoundException
      */
@@ -186,7 +191,7 @@ public class SlaveThread extends Thread {
         System.out.println("AGG-REC: ricevuto: " + recensione.toString());
 
         try (Connection conn = getConnection()) {
-            //TODO aggiungere recensione nel db
+            recensioneDAO.inserisciRecensione(conn,recensione);
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -195,20 +200,22 @@ public class SlaveThread extends Thread {
     /**
      * Metodo per ottenere la lista di recensioni scritte da un determinato utente
      * @author Celestino Resteghini
+     * @author Elia Toschi
      * @throws IOException
      * @throws ClassNotFoundException
      */
     private void gestisciVisualizzaRecensioni() throws IOException, ClassNotFoundException {
         int idUtente = (int) in.readObject();
         System.out.println("VIS-REC: ricevuto: " + idUtente);
-        LinkedList<RecensioneDTO> recensioni = new LinkedList<>();
+        LinkedList<RecensioneDTO> recensioni = null;
 
         try (Connection conn = getConnection()) {
-            //TODO prendere dal db tutte le recensioni relative all'id dell'utente passato dal client
-            recensioni = new LinkedList<>(); //TODO sostituire la lista vuota con la lista delle recensioni richieste
+            recensioni =(LinkedList<RecensioneDTO>) recensioneDAO.getRecensioniDaUtente(conn,idUtente);
         } catch (SQLException e) {
             e.printStackTrace();
         }
+        if(recensioni == null)
+            recensioni = new LinkedList<>();
 
         System.out.println("VIS-REC: invio: lista recensioni");
         out.writeObject(recensioni);
@@ -218,21 +225,23 @@ public class SlaveThread extends Thread {
     /**
      * Metodo per modficare una recensione
      * @author Celestino Resteghini
+     * @author Elia Toschi
      * @throws IOException
      * @throws ClassNotFoundException
      */
     private void gestisciModificaRecensione() throws IOException, ClassNotFoundException {
         RecensioneDTO recensione = (RecensioneDTO) in.readObject();
         System.out.println("MOD-REC: ricevuto: " + recensione.toString());
-        LinkedList<RecensioneDTO> recensioni = new LinkedList<>();
-
+        LinkedList<RecensioneDTO> recensioni = null;
         try (Connection conn = getConnection()) {
-            //TODO modificare nel db la recensione con i dati forniti dal client
-            recensioni = new LinkedList<>(); //TODO sostituire la lista vuota con la lista delle recensioni richieste
+            recensioneDAO.modificaRecensione(conn,recensione);
+            recensioni = (LinkedList<RecensioneDTO>) recensioneDAO.getRecensioniDaUtente(conn,recensione.getIdUtente());
         } catch (SQLException e) {
             e.printStackTrace();
-        }
 
+        }
+        if(recensioni == null)
+            recensioni = new LinkedList<>();
         System.out.println("MOD-REC: invio: lista recensioni");
         out.writeObject(recensioni);
         out.flush();
@@ -241,6 +250,7 @@ public class SlaveThread extends Thread {
     /**
      * Metodo per eliminare una recensione
      * @author Celestino Resteghini
+     * @author Elia Toschi
      * @throws IOException
      * @throws ClassNotFoundException
      */
@@ -249,7 +259,7 @@ public class SlaveThread extends Thread {
         System.out.println("ELIM-REC: ricevuto: " + idRecensione);
 
         try (Connection conn = getConnection()) {
-            //TODO eliminare nel db la recensione con i dati forniti dal client
+            recensioneDAO.eliminaRecensione(conn,idRecensione);
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -258,20 +268,23 @@ public class SlaveThread extends Thread {
     /**
      * Metodo per ottenere la lista di ristoranti preferiti di un utente
      * @author Celestino Resteghini
+     * @author Elia Toschi
      * @throws IOException
      * @throws ClassNotFoundException
      */
     private void gestisciVisualizzaPreferiti() throws IOException, ClassNotFoundException {
         int idUtente = (int) in.readObject();
         System.out.println("VIS-PREF: ricevuto: " + idUtente);
-        LinkedList<RistoranteDTO> ristoranti = new LinkedList<>();
+        LinkedList<RistoranteDTO> ristoranti =null;
 
         try (Connection conn = getConnection()) {
-            //TODO prendere dal db tutti i ristoranti preferiti del client
-            ristoranti = new LinkedList<>(); //TODO sostituire la lista vuota con la lista dei ristoranti richiesti
+            ristoranti = (LinkedList<RistoranteDTO>) ristoranteDAO.getRistorantiPreferiti(conn,idUtente);
         } catch (SQLException e) {
             e.printStackTrace();
+
         }
+        if(ristoranti == null)
+            ristoranti = new LinkedList<>();
 
         System.out.println("VIS-PREF: invio: lista ristoranti");
         out.writeObject(ristoranti);
@@ -281,6 +294,7 @@ public class SlaveThread extends Thread {
     /**
      * Metodo per eliminare il ristorante dai preferiti di un utente
      * @author Celestino Resteghini
+     * @author Elia Toschi
      * @throws IOException
      * @throws ClassNotFoundException
      */
@@ -298,7 +312,7 @@ public class SlaveThread extends Thread {
         System.out.println("ELIM-PREF: ricevuto: utente " + idUtente + ", ristorante " + idRistorante);
 
         try (Connection conn = getConnection()) {
-            //TODO eliminare il ristorante dai preferiti
+            preferitiDAO.rimuoviPreferito(conn,idUtente,idRistorante);
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -307,6 +321,7 @@ public class SlaveThread extends Thread {
     /**
      * Metodo per aggiungere il ristorante ai preferiti di un utente
      * @author Celestino Resteghini
+     * @author Elia Toschi
      * @throws IOException
      * @throws ClassNotFoundException
      */
@@ -317,7 +332,7 @@ public class SlaveThread extends Thread {
         System.out.println("AGG-PREF: ricevuto: utente " + idUtente + ", ristorante " + idRistorante);
 
         try (Connection conn = getConnection()) {
-            //TODO aggiungere il ristorante ai preferiti
+            preferitiDAO.aggiungiPreferito(conn,idUtente,idRistorante);
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -326,19 +341,23 @@ public class SlaveThread extends Thread {
     /**
      * Metodo per ottenere le coordinate di un ristorante
      * @author Celestino Resteghini
+     * @author Elia Toschi
      * @throws IOException
      * @throws ClassNotFoundException
      */
     private void gestisciCoordinateMaps() throws IOException, ClassNotFoundException {
         int idRistorante = (int) in.readObject();
         System.out.println("MAPS: ricevuto: " + idRistorante);
-        CoordinateDTO coordinate = new CoordinateDTO(1, 1,1);
+        CoordinateDTO coordinate =null;
 
         try (Connection conn = getConnection()) {
-            //TODO cercare coordinate del ristorante passato dal client
-            coordinate= new CoordinateDTO(1, 1,1); //TODO sostituire le coordinate con quelle prese dal db
+            coordinate= luogoDAO.getCoordinateRistorante(conn,idRistorante);
         } catch (SQLException e) {
             e.printStackTrace();
+        }
+
+        if(coordinate!=null){
+            coordinate= new CoordinateDTO(1,1,1);
         }
 
         System.out.println("MAPS: invio: " + coordinate.toString());
@@ -349,19 +368,21 @@ public class SlaveThread extends Thread {
     /**
      * Metodo per ottenere la lista di ristoranti di un ristoratore
      * @author Celestino Resteghini
+     * @author Elia Toschi
      * @throws IOException
      * @throws ClassNotFoundException
      */
     private void gestisciRistoranti() throws IOException, ClassNotFoundException {
         int idRistoratore = (int) in.readObject();
         System.out.println("RIST: ricevuto: " + idRistoratore);
-        LinkedList<RistoranteDTO> ristoranti = new LinkedList<>();
-
+        LinkedList<RistoranteDTO> ristoranti = null;
         try (Connection conn = getConnection()) {
-            //TODO prendere dal db tutti i ristoranti associati al ristoratore
-            ristoranti = new LinkedList<>(); //TODO sostituire la lista vuota con la lista dei ristoranti richiesti
+            ristoranti =(LinkedList<RistoranteDTO>) ristoranteDAO.getRistorantiDelRistoratore(conn,idRistoratore);
         } catch (SQLException e) {
             e.printStackTrace();
+        }
+        if(ristoranti!=null){
+            ristoranti= new LinkedList<>();
         }
 
         System.out.println("RIST: invio: lista ristoranti");
@@ -372,19 +393,23 @@ public class SlaveThread extends Thread {
     /**
      * Metodo per aggiungere un ristorante
      * @author Celestino Resteghini
+     * @author Elia Toschi
      * @throws IOException
      * @throws ClassNotFoundException
      */
     private void gestisciAggiungiRistorante() throws IOException, ClassNotFoundException {
         RistoranteDTO ristorante = (RistoranteDTO) in.readObject();
         System.out.println("AGG-RIST: ricevuto: " + ristorante.toString());
-        LinkedList<RistoranteDTO> ristoranti = new LinkedList<>();
+        LinkedList<RistoranteDTO> ristoranti =null;
 
         try (Connection conn = getConnection()) {
-            //TODO aggiungere il ristorante nel db associandolo al ristoratore
-            ristoranti = new LinkedList<>(); //TODO sostituire la lista vuota con la lista dei ristoranti richiesti
+            ristoranteDAO.inserisciRistorante(conn,ristorante);
+            ristoranti = (LinkedList<RistoranteDTO>) ristoranteDAO.getRistorantiDelRistoratore(conn, ristorante.getRistoratore().getIdUtente());
         } catch (SQLException e) {
             e.printStackTrace();
+        }
+        if(ristoranti!=null){
+            ristoranti= new LinkedList<>();
         }
 
         System.out.println("AGG-RIST: invio: lista ristoranti aggiornata");
@@ -395,19 +420,22 @@ public class SlaveThread extends Thread {
     /**
      * Metodo per ottenere la lista di recensioni senza risposta
      * @author Celestino Resteghini
+     * @author Elia Toschi
      * @throws IOException
      * @throws ClassNotFoundException
      */
     private void gestisciRecensioniSenzaRisposta() throws IOException, ClassNotFoundException {
         int idRistoratore = (int) in.readObject();
         System.out.println("REC-NO-RISP: ricevuto: " + idRistoratore);
-        LinkedList<RecensioneDTO> recensioni = new LinkedList<>();
+        LinkedList<RecensioneDTO> recensioni = null;
 
         try (Connection conn = getConnection()) {
-            //TODO cercare nel db le recensioni senza risposta relative ai ristoranti del ristoratore
-            recensioni = new LinkedList<>(); //TODO sostituire la lista vuota con la lista delle recensioni richieste
+            recensioni = (LinkedList<RecensioneDTO>) recensioneDAO.getRecensioniSenzaRisposta(conn,idRistoratore);
         } catch (SQLException e) {
             e.printStackTrace();
+        }
+        if(recensioni!=null){
+            recensioni= new LinkedList<>();
         }
 
         System.out.println("REC-NO-RISP: invio: lista recensioni");
@@ -418,15 +446,16 @@ public class SlaveThread extends Thread {
     /**
      * Metodo per rispondere ad una recensione
      * @author Celestino Resteghini
+     * @author Elia Toschi
      * @throws IOException
      * @throws ClassNotFoundException
      */
     private void gestisciRispostaRecensione() throws IOException, ClassNotFoundException {
-        RecensioneDTO recensione = (RecensioneDTO) in.readObject();
-        System.out.println("RISP-REC: ricevuto: " + recensione.toString());
+        RispostaDTO risposta = (RispostaDTO) in.readObject();
+        System.out.println("RISP-REC: ricevuto: " + risposta.toString());
 
         try (Connection conn = getConnection()) {
-            //TODO aggiungere nel db la risposta alla recensione
+           recensioneDAO.inserisciRisposta(conn,risposta);
         } catch (SQLException e) {
             e.printStackTrace();
         }

@@ -12,6 +12,7 @@ public class UtenteDTO implements Serializable {
     private String email;
     private Date dataNascita;
     private LuogoDTO luogo;
+    private String password;
 
     public UtenteDTO(int idUtente, String nome, String cognome, String email, Date dataNascita, LuogoDTO luogo) {
         this.idUtente = idUtente;
@@ -20,6 +21,20 @@ public class UtenteDTO implements Serializable {
         this.email = email;
         this.dataNascita = dataNascita;
         this.luogo = luogo;
+    }
+
+    public UtenteDTO(int idUtente, String nome, String cognome, String email, Date dataNascita, LuogoDTO luogo, String password) {
+        this.idUtente = idUtente;
+        this.nome = nome;
+        this.cognome = cognome;
+        this.email = email;
+        this.dataNascita = dataNascita;
+        this.luogo = luogo;
+        this.password = password;
+    }
+
+    public String getPassword() {
+        return password;
     }
 
     public int getIdUtente() {

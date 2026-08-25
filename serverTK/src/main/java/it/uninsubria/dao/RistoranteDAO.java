@@ -12,7 +12,13 @@ import java.util.List;
 
 public class RistoranteDAO {
 
-
+    /**
+     * Ottien il ristorante cercato per nome
+     * @param conn
+     * @param nomeCercato
+     * @return List<RistoranteDTO>
+     * @author Elia Toschi
+     */
     public List<RistoranteDTO> cercaPerNome(Connection conn, String nomeCercato)
     {
         String sql=" SELECT * FROM RISTORANTE WHERE NOME ILIKE ?";
@@ -36,6 +42,13 @@ public class RistoranteDAO {
         return null;
     }
 
+    /**
+     * Restituisce la lista dei ristoranti preferiti di un utente
+     * @param conn
+     * @param idUtenteCercato
+     * @return List<RistoranteDTO>
+     * @author Elia Toschi
+     */
     public List<RistoranteDTO> getRistorantiPreferiti(Connection conn, int idUtenteCercato)
     {
         String sql = "SELECT R.* FROM RISTORANTE R JOIN PREFERITO P ON R.id_ristorante = P.id_ristorante WHERE P.id_utente = ?";
@@ -56,6 +69,13 @@ public class RistoranteDAO {
         return null;
     }
 
+    /**
+     * Restituisce una lista di cucine avendo l'id del ristorante
+     * @param conn
+     * @param idRistorante
+     * @return List<String>
+     * @author Elia Toschi
+     */
     private List<String> getCucinePerRistorante(Connection conn, int idRistorante)
     {
         String sql = "SELECT nome_tipo_cucina FROM RISTORANTE_TIPO_CUCINA WHERE id_ristorante = ?";
@@ -174,6 +194,13 @@ public class RistoranteDAO {
         return new ArrayList<>();
     }
 
+    /**
+     * Crea un ristorante dopo aver fatto un filtro
+     * @param rs
+     * @return
+     * @throws SQLException
+     * @author Michele Viselli
+     */
     private RistoranteDTO costruisciRistoranteFiltratoDaResultSet(ResultSet rs) throws SQLException {
         double media = rs.getDouble("media_stelle");
         Double mediaStelle = rs.wasNull() ? null : media;
@@ -205,8 +232,15 @@ public class RistoranteDAO {
                 null, rs.getInt("stelle_michelin"));
     }
 
+    /**
+     * Estrae tutte le cucine da un ResulSet
+     * @param rs ResultSet
+     * @return List<String>
+     * @throws SQLException
+     * @author Michele Viselli
+     */
     private List<String> estraiCucine(ResultSet rs) throws SQLException {
-        java.sql.Array arrayCucine = rs.getArray("cucine");
+        Array arrayCucine = rs.getArray("cucine");
         List<String> cucine = new ArrayList<>();
 
         if (arrayCucine == null) {
@@ -229,6 +263,14 @@ public class RistoranteDAO {
     }
 
 
+    /**
+     * Il metodo crea un ristorante dal ResultSet ottenuto dall'interrogazione del database
+     * @param conn
+     * @param rs ResultSet
+     * @return
+     * @throws SQLException
+     * @author Elia Toschi
+     */
     private RistoranteDTO costruisciRistoranteDaResultSet(Connection conn, ResultSet rs) throws SQLException {
         int id = rs.getInt("id_ristorante");
         String nome = rs.getString("nome");
@@ -259,6 +301,13 @@ public class RistoranteDAO {
                 mediaStelle, numeroRecensioni, numeroSenzaRisposta,stelle);
     }
 
+    /**
+     * Il metodo calcola le statistiche delle recensioni (media stelle, totale recensioni e recensioni senza risposta
+     * @param conn
+     * @param idRistorante
+     * @return double[] con i valori ordinati in [media, totale, senza_risposta]
+     * @author Elia Toschi
+     */
     private double[] calcolaStatisticheRecensioni(Connection conn, int idRistorante) {
         // Valori di default a 0.0 se non ci sono recensioni
         double[] risultati = new double[3];

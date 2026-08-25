@@ -247,5 +247,19 @@ public class RecensioneDAO {
         return lista;
     }
 
-
+    /**
+     * Elimina la recensione da un id
+     * @param conn
+     * @param idRecensione
+     * @author Elia Toschi
+     */
+    public void eliminaRecensione(Connection conn, int idRecensione) {
+        String sql = "DELETE FROM RECENSIONE WHERE id = ?";
+        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, idRecensione);
+            ps.executeUpdate();
+        } catch (java.sql.SQLException e) {
+            e.printStackTrace();
+        }
+    }
 }
