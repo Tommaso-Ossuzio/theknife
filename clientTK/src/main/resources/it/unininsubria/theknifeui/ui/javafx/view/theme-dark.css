@@ -1,73 +1,58 @@
 /* =========================================================================
    THEKNIFE — TEMA SCURO
    -------------------------------------------------------------------------
-   Questo foglio NON ridefinisce nessuna regola grafica: contiene solo i
-   valori della palette. Va sempre applicato DOPO style.css, sulla radice
-   della scena, e si limita a riassegnare gli stessi looked-up colors.
-
-   Ne consegue che ogni componente stilizzato in style.css diventa scuro
-   da solo, senza duplicare una sola riga di layout, e che aggiungere un
-   componente nuovo non richiede di toccare questo file.
-
-   I valori sono scelti per rispettare il rapporto di contrasto 4.5:1
-   richiesto dalle WCAG per il testo (3:1 per i bordi dei campi).
+   Ridefinisce i soli valori della PALETTE di style.css, sulla radice della
+   scena e dopo di esso. I rapporti di contrasto rispettano le WCAG:
+   4.5:1 per il testo, 3:1 per i bordi dei campi.
    ========================================================================= */
 .root {
 
-    /* --- Verde istituzionale, schiarito per restare leggibile sul fondo scuro --- */
+    /* --- Verde istituzionale --- */
     -color-primary:         #2FA98F;
     -color-primary-hover:   #3FBFA3;
     -color-primary-press:   #26907A;
-    -color-primary-soft:    #17332C;
+    -color-primary-soft:    #1C443A;
 
     /* --- Superfici --- */
-    -color-bg:              #101715;
-    -color-surface:         #18211E;
-    -color-surface-alt:     #1F2926;
+    -color-bg:              #0D2621;
+    -color-surface:         #12332C;
+    -color-surface-alt:     #174037;
 
-    /* --- Bordi ---
-       border-strong è quello dei campi di input: deve restare distinguibile
-       dallo sfondo, quindi è più chiaro del bordo puramente decorativo. */
-    -color-border:          #2C3835;
-    -color-border-strong:   #617370;
+    /* --- Bordi --- */
+    -color-border:          #24544A;
+    -color-border-strong:   #5C8B80;
 
-    /* --- Testo ---
-       text-invert è il testo che sta SOPRA il verde pieno:
-       nel tema scuro diventa quasi nero. */
+    /* --- Testo --- */
     -color-text:            #ECF1EF;
     -color-heading:         #7FD9C3;
-    -color-text-muted:      #9FB0AA;
+    -color-text-muted:      #A6BDB6;
     -color-text-invert:     #08110F;
 
     /* --- Stati --- */
     -color-danger:          #E27C7C;
     -color-danger-hover:    #EF9494;
-    -color-danger-soft:     #3A1E1E;
+    -color-danger-soft:     #40201F;
 
     /* --- Valutazioni a stelle --- */
     -color-star-on:         #F5B942;
-    -color-star-off:        #4A5B56;
+    -color-star-off:        #4E6F63;
 
-    /* --- Colori informativi dei badge delle card ---
-       Il pastello del tema chiaro qui si rovescia: lo sfondo diventa la
-       tinta scura e il testo la tinta chiara. Il badge resta tenue rispetto
-       alla pagina in entrambi i temi, che è il punto di usare il pastello.
-       Anche queste coppie superano il 4,5:1 richiesto dalle WCAG. */
-    -color-rating-high-bg:  #1C3A2C;
+    /* --- Colori informativi dei badge delle card --- */
+    -color-rating-high-bg:  #1E4433;
     -color-rating-high-fg:  #8FE0B4;
-    -color-rating-mid-bg:   #3C3320;
+    -color-rating-mid-bg:   #423926;
     -color-rating-mid-fg:   #EBC77A;
-    -color-rating-low-bg:   #3D2626;
+    -color-rating-low-bg:   #442C2C;
     -color-rating-low-fg:   #F0A9A9;
-    -color-michelin-bg:     #3F252B;
+    -color-michelin-bg:     #452B31;
     -color-michelin-fg:     #F0A8B2;
-    -color-service-bg:      #1E3245;
+    -color-service-bg:      #22384B;
     -color-service-fg:      #A8CDEF;
 
     /* --- Sfondo dei riquadri della dashboard --- */
-    -color-tile-bg:         #1C2724;
+    -color-tile-bg:         #163A32;
 
-    /* --- Ombre: sul fondo scuro devono essere più profonde per vedersi --- */
+    /* --- Ombre --- */
     -color-shadow:          rgba(0, 0, 0, 0.45);
     -color-shadow-strong:   rgba(0, 0, 0, 0.65);
 
