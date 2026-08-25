@@ -1,5 +1,8 @@
 package it.uninsubria;
 
+import org.flywaydb.core.Flyway;
+import org.flywaydb.core.api.FlywayException;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
@@ -115,4 +118,28 @@ public class DatabaseConfig {
             System.out.println("Il database '" + DB_NAME + "' esiste già.");
         }
     }
-}
+
+    /**
+     * Il metodo che crea il db se non esiste e importa i dati
+     * @author Elia Toschi
+     */
+    public static void inizializzaDatabaseCompleto() {
+        createDatabaseIfMissing();
+
+        try {
+            Flyway flyway = Flyway.configure()
+                    .dataSource(getTargetUrl(), getUser(), getPassword())
+                    .load();
+            flyway.migrate();
+            System.out.println("Tabelle pronte nel database theknife_db!");
+        } catch (FlywayException e) {
+            System.err.println("Errore durante la migrazione delle tabelle:");
+            e.printStackTrace();
+        }
+        try (Connection conn = DriverManager.getConnection(getTargetUrl(), getUser(), getPassword())) {
+            ImportaDati.importa(conn);
+        } catch (Exception e) {
+            System.err.println("Errore durante l'importazione dei dati:");
+            e.printStackTrace();
+        }
+    }}

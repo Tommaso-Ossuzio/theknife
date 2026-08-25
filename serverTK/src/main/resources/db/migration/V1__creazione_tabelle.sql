@@ -57,13 +57,10 @@ CREATE TABLE RISTORANTE (
     sito_web VARCHAR(255),
     delivery BOOLEAN NOT NULL,
     prenotazione_online BOOLEAN NOT NULL,
-    fascia_prezzo VARCHAR(50) NOT NULL,
-    id_utente INT NOT NULL REFERENCES UTENTE(id_utente)
-                           ON UPDATE CASCADE
-                           ON DELETE CASCADE,
-    id_luogo INT NOT NULL UNIQUE REFERENCES LUOGO(id)
-                                 ON UPDATE CASCADE
-                                 ON DELETE CASCADE,
+    fascia_prezzo VARCHAR(20) NOT NULL,
+    stelle_michelin INT DEFAULT 0 CHECK (stelle_michelin >= 0 AND stelle_michelin <= 3),
+    id_utente INT NOT NULL REFERENCES UTENTE(id_utente) ON UPDATE CASCADE ON DELETE CASCADE,
+    id_luogo INT NOT NULL UNIQUE REFERENCES LUOGO(id) ON UPDATE CASCADE ON DELETE CASCADE,
     PRIMARY KEY (id_ristorante)
 );
 

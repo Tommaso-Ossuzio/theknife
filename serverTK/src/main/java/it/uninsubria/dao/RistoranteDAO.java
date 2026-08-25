@@ -182,7 +182,7 @@ public class RistoranteDAO {
                 rs.getInt("id_citta"),
                 rs.getString("nome_citta"),
                 rs.getString("nome_nazione"));
-        // Le coordinate non fanno parte del flusso FILTRO per ora.
+
         LuogoDTO luogo = new LuogoDTO(
                 rs.getInt("id_luogo"),
                 rs.getString("via_luogo"),
@@ -202,7 +202,7 @@ public class RistoranteDAO {
                 null,
                 mediaStelle,
                 rs.getInt("numero_recensioni"),
-                null);
+                null, rs.getInt("stelle_michelin"));
     }
 
     private List<String> estraiCucine(ResultSet rs) throws SQLException {
@@ -239,6 +239,7 @@ public class RistoranteDAO {
         String fasciaPrezzo = rs.getString("fascia_prezzo");
         int idLuogo = rs.getInt("id_luogo");
         int idUtente = rs.getInt("id_utente");
+        int stelle= rs.getInt("stelle_michelin");
 
         List<String> lista = getCucinePerRistorante(conn, id);
 
@@ -255,7 +256,7 @@ public class RistoranteDAO {
 
         return new RistoranteDTO(id, nome, telefono, sitoWeb, delivery, prenotazioneOnline,
                 fasciaPrezzo, lista, luogo, proprietario,
-                mediaStelle, numeroRecensioni, numeroSenzaRisposta);
+                mediaStelle, numeroRecensioni, numeroSenzaRisposta,stelle);
     }
 
     private double[] calcolaStatisticheRecensioni(Connection conn, int idRistorante) {
@@ -321,8 +322,8 @@ public class RistoranteDAO {
         int idLuogo = luogoDAO.inserisciLuogoCompleto(conn, ristorante.getLuogo());
 
         if (idLuogo == -1) return -1;
-        String sql = "INSERT INTO RISTORANTE (nome, telefono, sito_web, delivery, prenotazione_online, fascia_prezzo, id_utente, id_luogo) " +
-                "VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO RISTORANTE (nome, telefono, sito_web, delivery, prenotazione_online, fascia_prezzo, id_utente, id_luogo, stelle_michelin) " +
+                "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
         try (PreparedStatement ps = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
             ps.setString(1, ristorante.getNome());
@@ -331,9 +332,9 @@ public class RistoranteDAO {
             ps.setBoolean(4, ristorante.isDelivery());
             ps.setBoolean(5, ristorante.isPrenotazioneOnline());
             ps.setString(6, ristorante.getFasciaPrezzo());
-
             ps.setInt(7, ristorante.getRistoratore().getIdUtente());
             ps.setInt(8, idLuogo);
+            ps.setInt(9, ristorante.getStelleMichelin());
 
             ps.executeUpdate();
 

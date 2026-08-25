@@ -66,7 +66,27 @@ public class ImportaDati {
                 String location = line[2].trim();
                 String fasciaPrezzo = line[3].trim();
                 String cucineStr = line[4].trim();
-                
+
+                String awardStr= line[10].trim();
+                int stelle=0;
+                if(awardStr.contains("3 Stars")){
+                    stelle=3;
+                }else if(awardStr.contains("2 Stars")){
+                    stelle=2;
+                }else if(awardStr.contains("1 Star")) {
+                    stelle=1;
+                }
+
+                boolean delivery = false;
+                if (line.length > 14 && line[14] != null && !line[14].trim().equalsIgnoreCase("NULL")) {
+                    String delStr = line[14].trim().toLowerCase();
+                    delivery = delStr.equals("1") || delStr.equals("true");
+                }
+                boolean prenotazione_online = false;
+                if (line.length > 15 && line[15] != null && !line[15].trim().equalsIgnoreCase("NULL")) {
+                    String bookStr = line[15].trim().toLowerCase();
+                    prenotazione_online = bookStr.equals("1") || bookStr.equals("true");
+                }
                 // Conversione simboli prezzo (es. €€ -> "tra 35 € e 60 €")
                 fasciaPrezzo = utility.ConvertiStringaPrezzo(fasciaPrezzo);
                 fasciaPrezzo= (fasciaPrezzo);
@@ -110,7 +130,7 @@ public class ImportaDati {
                     int idCitta = inserisciCitta(conn, nomeCitta, nomeNazione);
                     int idCoord = inserisciCoordinate(conn, lat, lon);
                     int idLuogo = inserisciLuogo(conn, via, idCitta, idCoord);
-                                    int idRistorante = inserisciRistorante(conn, nomeRist, telefono, sitoWeb, fasciaPrezzo, idAdmin, idLuogo);
+                    int idRistorante = inserisciRistorante(conn, nomeRist, telefono, sitoWeb, fasciaPrezzo,  idAdmin, idLuogo, stelle,delivery,prenotazione_online);
 
                     String[] cucine = cucineStr.split(", ");
                     for (String c : cucine) {
@@ -232,17 +252,19 @@ public class ImportaDati {
         throw new SQLException("Errore creazione Luogo");
     }
 
-    private static int inserisciRistorante(Connection conn, String nome, String telefono, String sitoWeb, String prezzo, int idUtente, int idLuogo) throws SQLException {
-        String sql = "INSERT INTO RISTORANTE (nome, telefono, sito_web, delivery, prenotazione_online, fascia_prezzo, id_utente, id_luogo) VALUES (?, ?, ?, ?, ?, ?, ?, ?) ON CONFLICT (nome) DO NOTHING";
+    private static int inserisciRistorante(Connection conn, String nome, String telefono, String sitoWeb, String prezzo, int idUtente, int idLuogo, int stelle, boolean delivery, boolean prenotazione_online) throws SQLException {
+        String sql = "INSERT INTO RISTORANTE (nome, telefono, sito_web, delivery, prenotazione_online, fascia_prezzo, id_utente, id_luogo, stelle_michelin) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?) ON CONFLICT (nome) DO NOTHING";
         try (PreparedStatement ps = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
             ps.setString(1, nome);
             ps.setString(2, telefono);
             ps.setString(3, sitoWeb);
-            ps.setBoolean(4, false);
-            ps.setBoolean(5, false);
+            ps.setBoolean(4, delivery);
+            ps.setBoolean(5, prenotazione_online);
             ps.setString(6, prezzo);
             ps.setInt(7, idUtente);
             ps.setInt(8, idLuogo);
+            ps.setInt(9, stelle);
+
             ps.executeUpdate();
             ResultSet rs = ps.getGeneratedKeys();
             if (rs.next())
