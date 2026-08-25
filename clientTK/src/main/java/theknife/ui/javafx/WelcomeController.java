@@ -1,14 +1,10 @@
 package theknife.ui.javafx;
 
 import javafx.application.Platform;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
-import javafx.collections.transformation.FilteredList;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
-import javafx.scene.control.ListCell;
 import theknife.model.GestioneRistoranti;
 import theknife.utilities.Finestre;
 import theknife.utilities.Temi;
@@ -31,9 +27,6 @@ public class WelcomeController implements ControllerAutenticazione {
     /** Città disponibili, con quanti ristoranti contengono. */
     private Map<String, Integer> cittaDisponibili;
 
-    /** Elenco completo delle città, da cui la tendina filtra mentre si scrive. */
-    private final ObservableList<String> tutteLeCitta = FXCollections.observableArrayList();
-
     private final GestioneRistoranti gestioneRistoranti = GestioneRistoranti.getInstance();
 
     /**
@@ -46,7 +39,7 @@ public class WelcomeController implements ControllerAutenticazione {
     @FXML
     private void initialize() {
         aggiornaPulsanteTema();
-        preparaTendinaCitta();
+        Utility.completamentoCitta(campoCitta);
         Utility.confermaConInvio(bottoneOspite, campoCitta);
 
         etichettaErrore.setText("");
@@ -69,51 +62,11 @@ public class WelcomeController implements ControllerAutenticazione {
 
             Platform.runLater(() -> {
                 cittaDisponibili = citta;
-                tutteLeCitta.setAll(citta.keySet());
 
                 bottoneOspite.setDisable(false);
                 etichettaStato.setText(citta.size() + " città disponibili");
             });
         }).start();
-    }
-
-    /**
-     * Configura la tendina delle città: si può scrivere dentro e l'elenco si
-     * restringe alle città che iniziano con quanto digitato. Ogni voce mostra
-     * anche quanti ristoranti contiene, così la scelta è informata.
-     *
-     * @author Matteo Franguelli
-     */
-    private void preparaTendinaCitta() {
-        FilteredList<String> filtrate = new FilteredList<>(tutteLeCitta, c -> true);
-        campoCitta.setItems(filtrate);
-
-        campoCitta.setCellFactory(lista -> new ListCell<>() {
-            @Override
-            protected void updateItem(String citta, boolean vuota) {
-                super.updateItem(citta, vuota);
-                if (vuota || citta == null) {
-                    setText(null);
-                } else {
-                    int quanti = cittaDisponibili == null ? 0 : cittaDisponibili.getOrDefault(citta, 0);
-                    setText(citta + "   ·   " + quanti + (quanti == 1 ? " ristorante" : " ristoranti"));
-                }
-            }
-        });
-
-        campoCitta.getEditor().textProperty().addListener((osservato, precedente, digitato) -> {
-            String selezionata = campoCitta.getSelectionModel().getSelectedItem();
-            if (selezionata != null && selezionata.equals(digitato)) return;
-
-            String ricerca = digitato == null ? "" : digitato.trim().toLowerCase();
-            filtrate.setPredicate(citta -> ricerca.isEmpty() || citta.toLowerCase().startsWith(ricerca));
-
-            if (!ricerca.isEmpty() && !filtrate.isEmpty()) {
-                campoCitta.show();
-            } else {
-                campoCitta.hide();
-            }
-        });
     }
 
     /**

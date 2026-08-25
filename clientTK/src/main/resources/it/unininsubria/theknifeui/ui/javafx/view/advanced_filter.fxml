@@ -21,7 +21,7 @@
 
             <VBox styleClass="field-group">
                 <Label text="LUOGO" styleClass="field-label"/>
-                <TextField fx:id="campoLuogo" promptText="Città, indirizzo..."/>
+                <ComboBox fx:id="campoLuogo" editable="true" promptText="Città, indirizzo..." maxWidth="Infinity"/>
             </VBox>
 
             <VBox styleClass="field-group">

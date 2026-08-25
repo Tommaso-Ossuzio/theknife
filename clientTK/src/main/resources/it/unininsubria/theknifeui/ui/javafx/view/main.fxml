@@ -76,9 +76,11 @@
             </HBox>
 
             <HBox styleClass="search-bar">
-                <TextField fx:id="campoLuogo"
-                           promptText="In quale città vuoi mangiare?"
-                           HBox.hgrow="ALWAYS"/>
+                <ComboBox fx:id="campoLuogo"
+                          editable="true"
+                          promptText="In quale città vuoi mangiare?"
+                          maxWidth="Infinity"
+                          HBox.hgrow="ALWAYS"/>
                 <TextField fx:id="campoCucina"
                            promptText="Tipo di cucina (es. Italian)"
                            HBox.hgrow="ALWAYS"/>

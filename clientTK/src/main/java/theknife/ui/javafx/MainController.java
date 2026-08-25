@@ -59,7 +59,7 @@ public class MainController implements ControllerAutenticazione {
     @FXML private Button bottoneTema;
     @FXML private Button bottoneCerca;
 
-    @FXML private TextField campoLuogo;
+    @FXML private ComboBox<String> campoLuogo;
     @FXML private TextField campoCucina;
 
     // Lista dei ristoranti mostrata dalla UI. I dati arrivano dal server come DTO.
@@ -89,6 +89,7 @@ public class MainController implements ControllerAutenticazione {
     private void initialize() {
         inizializzaGriglia();
         Utility.confermaConInvio(bottoneCerca);
+        Utility.completamentoCitta(campoLuogo);
 
         ristoranti.addListener((javafx.collections.ListChangeListener<RistoranteDTO>) c -> aggiornaPaginazione());
 
@@ -110,7 +111,7 @@ public class MainController implements ControllerAutenticazione {
     public void impostaLuogoIniziale(String citta) {
         if (citta == null || citta.isBlank() || campoLuogo == null) return;
 
-        campoLuogo.setText(citta);
+        campoLuogo.getEditor().setText(citta);
         onApplyFilters();
     }
 
@@ -499,7 +500,7 @@ public class MainController implements ControllerAutenticazione {
                 session.setCitta(cittaUtente);
 
                 if (campoLuogo != null) {
-                    campoLuogo.setText(cittaUtente);
+                    campoLuogo.getEditor().setText(cittaUtente);
                     onApplyFilters();
                     System.out.println("Filtro applicato automaticamente per città: " + cittaUtente);
                 }
@@ -594,7 +595,7 @@ public class MainController implements ControllerAutenticazione {
      */
     @FXML
     protected void onApplyFilters() {
-        String luogo = normalizza(campoLuogo.getText());
+        String luogo = normalizza(campoLuogo.getEditor().getText());
         String cucina = normalizza(campoCucina.getText());
         if (luogo == null) {
             mostraErrore("Campo obbligatorio", "Devi inserire una città per effettuare la ricerca.");
@@ -612,7 +613,7 @@ public class MainController implements ControllerAutenticazione {
      */
     @FXML
     public void onResetFilters() {
-        if (campoLuogo != null) campoLuogo.clear();
+        if (campoLuogo != null) campoLuogo.getEditor().clear();
         if (campoCucina != null) campoCucina.clear();
 
         caricaCatalogo();

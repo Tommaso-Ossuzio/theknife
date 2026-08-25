@@ -15,7 +15,7 @@ import theknife.utilities.Utility;
  */
 public class AdvancedFilterController {
 
-    @FXML private TextField campoLuogo;
+    @FXML private ComboBox<String> campoLuogo;
     @FXML private TextField campoCucina;
     @FXML private ComboBox<String> menuPrezzo;
 
@@ -49,6 +49,7 @@ public class AdvancedFilterController {
     private void initialize() {
         menuPrezzo.getItems().setAll(FASCE_PREZZO);
         Utility.confermaConInvio(bottoneApplica);
+        Utility.completamentoCitta(campoLuogo);
     }
 
     /**
@@ -97,7 +98,7 @@ public class AdvancedFilterController {
      */
     @FXML
     private void onApply() {
-        String luogo = normalizza(campoLuogo.getText());
+        String luogo = normalizza(campoLuogo.getEditor().getText());
         String cucina = normalizza(campoCucina.getText());
 
         if (luogo == null || luogo.isBlank()) {
