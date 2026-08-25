@@ -84,7 +84,8 @@ public class RistoranteDAO {
      * @param filtro
      * @return
      *
-     * @author Elia Toschi, Michele Viselli
+     * @author Elia Toschi
+     * @author Michele Viselli
      */
     public List<RistoranteDTO> filtraRistoranti(Connection conn, FiltroRistoranteDTO filtro) {
         if (filtro == null) {

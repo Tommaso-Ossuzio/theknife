@@ -39,6 +39,29 @@ public final class Etichette {
     }
 
     /**
+     * Converte la fascia testuale usata dal database nei simboli mostrati
+     * dall'interfaccia. Il valore originale nel DTO non viene modificato.
+     *
+     * @param fasciaPrezzo fascia testuale proveniente dal database
+     * @return simboli della fascia, stringa vuota per un valore assente oppure
+     *         il valore originale se la fascia non è riconosciuta
+     *
+     * @author Michele Viselli
+     */
+    public static String formattaFasciaPrezzo(String fasciaPrezzo) {
+        if (fasciaPrezzo == null || fasciaPrezzo.isBlank()) return "";
+
+        String fasciaNormalizzata = fasciaPrezzo.trim();
+        return switch (fasciaNormalizzata) {
+            case "meno di 35 €" -> "€";
+            case "tra 35 € e 60 €" -> "€€";
+            case "tra 60 € e 100 €" -> "€€€";
+            case "oltre 100 €" -> "€€€€";
+            default -> fasciaNormalizzata;
+        };
+    }
+
+    /**
      * Crea il badge con la media delle recensioni di un ristorante.
      * <p>
      * Il colore cambia in base al voto — verde dalle 4 stelle in su, giallo

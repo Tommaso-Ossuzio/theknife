@@ -9,6 +9,7 @@ import javafx.scene.web.WebView;
 import javafx.stage.Stage;
 import theknife.model.GestioneRistoranti;
 import theknife.model.Ristorante;
+import theknife.utilities.Etichette;
 
 import java.awt.Desktop;
 import java.io.*;
@@ -75,7 +76,8 @@ public class RestaurantDetailsController {
             etichettaCitta.setText(valoreNonNullo(nation));
         }
 
-        valorePrezzo.setText((price != null && !price.isBlank()) ? price : "-");
+        String prezzoVisualizzato = Etichette.formattaFasciaPrezzo(price);
+        valorePrezzo.setText(prezzoVisualizzato.isBlank() ? "-" : prezzoVisualizzato);
         valoreTelefono.setText((phoneNumber != null && !phoneNumber.isBlank()) ? phoneNumber : "-");
         valoreCucina.setText(valoreNonNullo(cuisine));
         valoreConsegna.setText(delivery ? "Disponibile" : "No");

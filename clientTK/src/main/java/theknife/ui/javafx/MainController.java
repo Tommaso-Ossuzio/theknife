@@ -302,7 +302,7 @@ public class MainController implements ControllerAutenticazione {
             card.getChildren().add(creaRigaCard("📍", indirizzo));
         }
 
-        String prezzo = formattaFasciaPrezzo(r.getFasciaPrezzo());
+        String prezzo = Etichette.formattaFasciaPrezzo(r.getFasciaPrezzo());
         if (!prezzo.isBlank()) {
             card.getChildren().add(creaRigaCard("💰", prezzo));
         }
@@ -721,27 +721,6 @@ public class MainController implements ControllerAutenticazione {
      */
     private String valoreNonNullo(String s) {
         return s == null ? "" : s;
-    }
-
-    /**
-     * ?TEMPORANEA?
-     * Converte la fascia testuale usata dal database nei simboli mostrati
-     * nelle card. Il valore originale resta invariato nel DTO e continua a
-     * essere usato dal filtro.
-     *
-     * @author Michele Viselli
-     */
-    private String formattaFasciaPrezzo(String fasciaPrezzo) {
-        if (fasciaPrezzo == null || fasciaPrezzo.isBlank()) return "";
-
-        String fasciaNormalizzata = fasciaPrezzo.trim();
-        return switch (fasciaNormalizzata) {
-            case "meno di 35 €" -> "€";
-            case "tra 35 € e 60 €" -> "€€";
-            case "tra 60 € e 100 €" -> "€€€";
-            case "oltre 100 €" -> "€€€€";
-            default -> fasciaNormalizzata;
-        };
     }
 
     /**
