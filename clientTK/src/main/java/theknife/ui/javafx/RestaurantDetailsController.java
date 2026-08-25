@@ -59,7 +59,7 @@ public class RestaurantDetailsController {
                                   boolean booking,
                                   String cuisine,
                                   String website,
-                                  double mediaStelle) {
+                                  Double stelleMichelin) {
 
         this.latitudine = latitude;
         this.longitudine = longitude;
@@ -81,7 +81,7 @@ public class RestaurantDetailsController {
         valoreConsegna.setText(delivery ? "Disponibile" : "No");
         valorePrenotazione.setText(booking ? "Disponibile" : "No");
 
-        mostraMediaStelle(mediaStelle);
+        mostraStelleMichelin(stelleMichelin);
 
         // GESTIONE SITO WEB (WebView)
         if (website != null && !website.isBlank() && !website.equalsIgnoreCase("null")){
@@ -264,22 +264,30 @@ public class RestaurantDetailsController {
     }
 
     /**
-     * Visualizza graficamente il numero di stelle Michelin (da 1 a 3) aggiornando il testo e lo stile dell'etichetta.
+     * Visualizza graficamente il numero di stelle Michelin (da 1 a 3)
+     * aggiornando il testo e lo stile dell'etichetta.
      *
-     * @param media
+     * @param stelleMichelin numero di stelle Michelin, oppure {@code null}
+     *                       quando il dato non è ancora disponibile
      * @author Matteo Franguelli
      */
-    private void mostraMediaStelle(double media) {
+    private void mostraStelleMichelin(Double stelleMichelin) {
         // L'aspetto è definito in style.css: .michelin-stars (normale) e
         // .michelin-none (variante spenta, applicata quando non ci sono stelle)
         valoreStelle.getStyleClass().remove("michelin-none");
 
-        if (media <= 0) {
+        if (stelleMichelin == null) {
+            valoreStelle.setText("Dato non disponibile");
+            valoreStelle.getStyleClass().add("michelin-none");
+            return;
+        }
+
+        if (stelleMichelin <= 0) {
             valoreStelle.setText("Nessuna stella Michelin");
             valoreStelle.getStyleClass().add("michelin-none");
             return;
         }
-        long stellePiene = Math.round(media);
+        long stellePiene = Math.min(3, Math.round(stelleMichelin));
 
         StringBuilder sb = new StringBuilder();
 
