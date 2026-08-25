@@ -26,27 +26,42 @@
 
                 <VBox styleClass="field-group">
                     <Label text="NOME *" styleClass="field-label"/>
-                    <TextField fx:id="campoNome" promptText="Il tuo nome"/>
+                    <HBox styleClass="field-row">
+                        <TextField fx:id="campoNome" promptText="Il tuo nome" HBox.hgrow="ALWAYS"/>
+                        <Label fx:id="erroreNome" styleClass="error-label"/>
+                    </HBox>
                 </VBox>
 
                 <VBox styleClass="field-group">
                     <Label text="COGNOME *" styleClass="field-label"/>
-                    <TextField fx:id="campoCognome" promptText="Il tuo cognome"/>
+                    <HBox styleClass="field-row">
+                        <TextField fx:id="campoCognome" promptText="Il tuo cognome" HBox.hgrow="ALWAYS"/>
+                        <Label fx:id="erroreCognome" styleClass="error-label"/>
+                    </HBox>
                 </VBox>
 
                 <VBox styleClass="field-group">
                     <Label text="EMAIL *" styleClass="field-label"/>
-                    <TextField fx:id="campoUsername" promptText="Es. mario.rossi@email.it"/>
+                    <HBox styleClass="field-row">
+                        <TextField fx:id="campoUsername" promptText="Es. mario.rossi@email.it" HBox.hgrow="ALWAYS"/>
+                        <Label fx:id="erroreUsername" styleClass="error-label"/>
+                    </HBox>
                 </VBox>
 
                 <VBox styleClass="field-group">
                     <Label text="PASSWORD *" styleClass="field-label"/>
-                    <PasswordField fx:id="campoPassword" promptText="Scegli una password"/>
+                    <HBox styleClass="field-row">
+                        <PasswordField fx:id="campoPassword" promptText="Scegli una password" HBox.hgrow="ALWAYS"/>
+                        <Label fx:id="errorePassword" styleClass="error-label"/>
+                    </HBox>
                 </VBox>
 
                 <VBox styleClass="field-group">
                     <Label text="CITTÀ / DOMICILIO *" styleClass="field-label"/>
-                    <TextField fx:id="campoCitta" promptText="Es. Varese"/>
+                    <HBox styleClass="field-row">
+                        <TextField fx:id="campoCitta" promptText="Es. Varese" HBox.hgrow="ALWAYS"/>
+                        <Label fx:id="erroreCitta" styleClass="error-label"/>
+                    </HBox>
                 </VBox>
 
                 <VBox styleClass="field-group">

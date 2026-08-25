@@ -179,6 +179,11 @@
     -fx-spacing: 5;
 }
 
+.field-row {
+    -fx-spacing: 10;
+    -fx-alignment: center-left;
+}
+
 .dialog-header {
     -fx-background-color: -color-surface;
     -fx-border-color: -color-border;

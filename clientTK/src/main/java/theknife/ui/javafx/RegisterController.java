@@ -32,6 +32,11 @@ public class RegisterController {
     @FXML private RadioButton radioRistoratore;
 
     @FXML private Label etichettaErrore;
+    @FXML private Label erroreNome;
+    @FXML private Label erroreCognome;
+    @FXML private Label erroreUsername;
+    @FXML private Label errorePassword;
+    @FXML private Label erroreCitta;
     @FXML private Button bottoneCrea;
 
     private ControllerAutenticazione controllerPrincipale;
@@ -108,10 +113,14 @@ public class RegisterController {
         boolean isCliente     = !isRistoratore;
 
         // Cambi obbligatori
-        if (username == null || username.isBlank() || password == null || password.isBlank()
-                || nome == null || nome.isBlank() || cognome == null || cognome.isBlank()
-                || citta == null || citta.isBlank()) {
-            etichettaErrore.setText("Tutti i campi sono obbligatori.");
+        boolean nomeVuoto     = segnalaSeVuoto(campoNome, erroreNome);
+        boolean cognomeVuoto  = segnalaSeVuoto(campoCognome, erroreCognome);
+        boolean emailVuota    = segnalaSeVuoto(campoUsername, erroreUsername);
+        boolean passwordVuota = segnalaSeVuoto(campoPassword, errorePassword);
+        boolean cittaVuota    = segnalaSeVuoto(campoCitta, erroreCitta);
+
+        if (nomeVuoto || cognomeVuoto || emailVuota || passwordVuota || cittaVuota) {
+            etichettaErrore.setText("");
             return;
         }
 
@@ -172,6 +181,19 @@ public class RegisterController {
         }
 
         chiudiFinestra();
+    }
+
+    /**
+     * Scrive "Obbligatorio" di fianco al campo se è rimasto vuoto.
+     * @param campo campo obbligatorio da controllare
+     * @param errore etichetta accanto al campo
+     * @return true se il campo è vuoto
+     * @author Matteo Franguelli
+     */
+    private boolean segnalaSeVuoto(TextField campo, Label errore) {
+        boolean vuoto = campo.getText() == null || campo.getText().isBlank();
+        errore.setText(vuoto ? "Obbligatorio" : "");
+        return vuoto;
     }
 
     /**
