@@ -99,7 +99,7 @@
     <bottom>
         <HBox styleClass="dialog-footer">
             <Button text="Annulla" onAction="#onAnnulla" styleClass="btn-secondary"/>
-            <Button text="Salva ristorante" onAction="#onSalva" styleClass="btn-primary"/>
+            <Button fx:id="bottoneSalva" text="Salva ristorante" onAction="#onSalva" styleClass="btn-primary"/>
         </HBox>
     </bottom>
 </BorderPane>

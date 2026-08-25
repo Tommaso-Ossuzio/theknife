@@ -6,6 +6,7 @@ import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.stage.Stage;
 import theknife.model.*;
+import theknife.utilities.Utility;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;
@@ -39,6 +40,7 @@ public class AddReviewController {
 
     // Riferimenti ai 5 bottoni stella
     @FXML private Button star1, star2, star3, star4, star5;
+    @FXML private Button bottonePubblica;
 
     private Ristorante ristoranteDestinazione;
     private RistoranteDTO ristoranteDTODestinazione;
@@ -87,6 +89,7 @@ public class AddReviewController {
     private void initialize() {
         // Appena si apre la finestra, coloriamo le stelle in base al default (5)
         aggiornaGraficaStelle();
+        Utility.confermaConInvio(bottonePubblica);
     }
 
     /* =========================

@@ -68,7 +68,7 @@
     <bottom>
         <HBox styleClass="dialog-footer">
             <Button text="Annulla" onAction="#onCancel" styleClass="btn-secondary"/>
-            <Button text="Applica filtri" onAction="#onApply" styleClass="btn-primary"/>
+            <Button fx:id="bottoneApplica" text="Applica filtri" onAction="#onApply" styleClass="btn-primary"/>
         </HBox>
     </bottom>
 </BorderPane>

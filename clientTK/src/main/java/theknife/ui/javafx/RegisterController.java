@@ -4,6 +4,7 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.stage.Stage;
+import theknife.utilities.Utility;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;
@@ -31,6 +32,7 @@ public class RegisterController {
     @FXML private RadioButton radioRistoratore;
 
     @FXML private Label etichettaErrore;
+    @FXML private Button bottoneCrea;
 
     private ControllerAutenticazione controllerPrincipale;
 
@@ -54,6 +56,8 @@ public class RegisterController {
         if (radioCliente != null) {
             radioCliente.setSelected(true);
         }
+
+        Utility.confermaConInvio(bottoneCrea);
     }
 
     /**

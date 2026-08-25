@@ -83,7 +83,7 @@
     <bottom>
         <HBox styleClass="dialog-footer">
             <Button onAction="#onBack" text="Annulla" styleClass="btn-secondary"/>
-            <Button onAction="#onCreate" text="Crea account" styleClass="btn-primary"/>
+            <Button fx:id="bottoneCrea" onAction="#onCreate" text="Crea account" styleClass="btn-primary"/>
         </HBox>
     </bottom>
 </BorderPane>

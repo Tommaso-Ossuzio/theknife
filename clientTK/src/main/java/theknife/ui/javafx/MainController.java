@@ -21,6 +21,7 @@ import theknife.model.GestioneRistoranti;
 import theknife.utilities.Etichette;
 import theknife.utilities.Finestre;
 import theknife.utilities.Temi;
+import theknife.utilities.Utility;
 
 import java.util.List;
 
@@ -56,6 +57,7 @@ public class MainController implements ControllerAutenticazione {
 
     @FXML private Button bottoneAggiungiRecensione;
     @FXML private Button bottoneTema;
+    @FXML private Button bottoneCerca;
 
     @FXML private TextField campoLuogo;
     @FXML private TextField campoCucina;
@@ -86,6 +88,7 @@ public class MainController implements ControllerAutenticazione {
     @FXML
     private void initialize() {
         inizializzaGriglia();
+        Utility.confermaConInvio(bottoneCerca);
 
         ristoranti.addListener((javafx.collections.ListChangeListener<RistoranteDTO>) c -> aggiornaPaginazione());
 

@@ -12,6 +12,7 @@ import javafx.scene.control.ListCell;
 import theknife.model.GestioneRistoranti;
 import theknife.utilities.Finestre;
 import theknife.utilities.Temi;
+import theknife.utilities.Utility;
 
 import java.util.Map;
 
@@ -46,6 +47,7 @@ public class WelcomeController implements ControllerAutenticazione {
     private void initialize() {
         aggiornaPulsanteTema();
         preparaTendinaCitta();
+        Utility.confermaConInvio(bottoneOspite, campoCitta);
 
         etichettaErrore.setText("");
         bottoneOspite.setDisable(true);

@@ -82,7 +82,7 @@
                 <TextField fx:id="campoCucina"
                            promptText="Tipo di cucina (es. Italian)"
                            HBox.hgrow="ALWAYS"/>
-                <Button text="Cerca"
+                <Button fx:id="bottoneCerca" text="Cerca"
                         onAction="#onApplyFilters"
                         styleClass="btn-primary"/>
                 <Button text="Filtri avanzati"

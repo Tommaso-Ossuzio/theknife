@@ -49,7 +49,7 @@
     <bottom>
         <HBox styleClass="dialog-footer">
             <Button text="Annulla" onAction="#onAnnulla" styleClass="btn-secondary"/>
-            <Button text="Pubblica recensione" onAction="#onCreate" styleClass="btn-primary"/>
+            <Button fx:id="bottonePubblica" text="Pubblica recensione" onAction="#onCreate" styleClass="btn-primary"/>
         </HBox>
     </bottom>
 </BorderPane>

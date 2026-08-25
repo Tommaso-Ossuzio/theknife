@@ -6,6 +6,7 @@ import javafx.stage.Stage;
 import theknife.model.GestioneRistoranti;
 import theknife.model.Luogo;
 import theknife.model.Ristorante;
+import theknife.utilities.Utility;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;
@@ -36,6 +37,7 @@ public class AddRestaurantController {
 
     // Etichetta per mostrare i messaggi di errore all’utente
     @FXML private Label etichettaErrore;
+    @FXML private Button bottoneSalva;
 
     // Riferimento al controller principale della finestra principale
     private MainController controllerPrincipale;
@@ -44,6 +46,15 @@ public class AddRestaurantController {
     private static final String NOME_FILE = "michelin_my_maps.csv";
     private static final String NOME_FILE_U = "users.csv";
     GestioneRistoranti gr = GestioneRistoranti.getInstance();
+
+    /**
+     * Permette di salvare il ristorante anche premendo Invio.
+     * @author Matteo Franguelli
+     */
+    @FXML
+    private void initialize() {
+        Utility.confermaConInvio(bottoneSalva);
+    }
 
     /**
      * Imposta il controller principale (la finestra da cui è stata aperta questa finestra).

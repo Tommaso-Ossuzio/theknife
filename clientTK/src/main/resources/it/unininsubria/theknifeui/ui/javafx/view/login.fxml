@@ -40,7 +40,7 @@
             <Button text="Annulla"
                     onAction="#onBack"
                     styleClass="btn-secondary"/>
-            <Button text="Accedi"
+            <Button fx:id="bottoneAccedi" text="Accedi"
                     onAction="#onLogin"
                     styleClass="btn-primary"/>
         </HBox>

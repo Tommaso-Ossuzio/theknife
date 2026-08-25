@@ -5,6 +5,7 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.stage.Stage;
+import theknife.utilities.Utility;
 
 //TODO da rivedere
 
@@ -19,6 +20,7 @@ public class AdvancedFilterController {
     @FXML private ComboBox<String> menuPrezzo;
 
     @FXML private Button star1, star2, star3, star4, star5;
+    @FXML private Button bottoneApplica;
 
     @FXML private CheckBox checkDelivery;
     @FXML private CheckBox checkBooking;
@@ -46,6 +48,7 @@ public class AdvancedFilterController {
     @FXML
     private void initialize() {
         menuPrezzo.getItems().setAll(FASCE_PREZZO);
+        Utility.confermaConInvio(bottoneApplica);
     }
 
     /**

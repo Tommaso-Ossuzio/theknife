@@ -1,11 +1,13 @@
 package theknife.ui.javafx;
 
 import javafx.fxml.FXML;
+import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.event.ActionEvent;
 import javafx.stage.Stage;
+import theknife.utilities.Utility;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;
@@ -24,11 +26,21 @@ public class LoginController {
     @FXML private TextField campoUsername;
     @FXML private PasswordField campoPassword;
     @FXML private Label etichettaErrore;
+    @FXML private Button bottoneAccedi;
 
     private ControllerAutenticazione controllerPrincipale;
 
     private static final String NOME_CARTELLA = "data";
     private static final String NOME_FILE = "users.csv";
+
+    /**
+     * Permette di accedere anche premendo Invio.
+     * @author Matteo Franguelli
+     */
+    @FXML
+    private void initialize() {
+        Utility.confermaConInvio(bottoneAccedi);
+    }
 
     /**
      * Esclude la possibilità di agire a comandi su altre finestre
