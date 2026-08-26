@@ -14,6 +14,7 @@ public class UtenteDTO implements Serializable {
     private LuogoDTO luogo;
     private String password;
 
+    //senza psw
     public UtenteDTO(int idUtente, String nome, String cognome, String email, Date dataNascita, LuogoDTO luogo) {
         this.idUtente = idUtente;
         this.nome = nome;
@@ -23,7 +24,8 @@ public class UtenteDTO implements Serializable {
         this.luogo = luogo;
     }
 
-    public UtenteDTO(int idUtente, String nome, String cognome, String email, Date dataNascita, LuogoDTO luogo, String password) {
+    //usato dal client
+    public UtenteDTO(String nome, String cognome, String email, Date dataNascita, LuogoDTO luogo, String password) {
         this.idUtente = idUtente;
         this.nome = nome;
         this.cognome = cognome;

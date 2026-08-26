@@ -8,10 +8,14 @@ public class CittaDTO implements Serializable {
     private String nome;
     private String nazione;
 
-    public CittaDTO(int id, String nome, String nazione ) {
+    public CittaDTO(int id, String nome, String nazione) {
         this.nazione = nazione;
         this.nome = nome;
         this.id_citta = id;
+    }
+
+    public CittaDTO(String nome) {
+        this.nome = nome;
     }
 
 

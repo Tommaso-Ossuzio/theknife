@@ -1,15 +1,22 @@
 package theknife.ui.javafx;
 
+import it.uninsubria.dto.CittaDTO;
+import it.uninsubria.dto.LuogoDTO;
+import it.uninsubria.dto.UtenteDTO;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.stage.Stage;
+import theknife.model.GestioneRichieste;
 import theknife.utilities.Utility;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.time.LocalDate;
+import java.time.ZoneId;
+import java.util.Date;
 
 //TODO da rivedere, vengono usati i file
 
@@ -41,8 +48,8 @@ public class RegisterController {
 
     private ControllerAutenticazione controllerPrincipale;
 
-    private static final String NOME_CARTELLA = "data";
-    private static final String NOME_FILE = "users.csv";
+    //todo da cancellare private static final String NOME_CARTELLA = "data";
+    //todo da cancellare private static final String NOME_FILE = "users.csv";
     /**
      * Imposta il controller principale come riferimento.
      *
@@ -61,7 +68,6 @@ public class RegisterController {
         if (radioCliente != null) {
             radioCliente.setSelected(true);
         }
-
         Utility.confermaConInvio(bottoneCrea);
     }
 
@@ -97,16 +103,17 @@ public class RegisterController {
     /**
      * Gestisce la creazione di un nuovo utente.
      *
+     * @author Celestino Resteghini
      * @author Matteo Franguelli
      */
     @FXML
-    private void onCreate(ActionEvent event) {
+    private void onCreate(ActionEvent event) throws IOException {
         String nome         = campoNome.getText();
         String cognome      = campoCognome.getText();
-        String username     = campoUsername.getText();
+        String email     = campoUsername.getText();
         String password     = campoPassword.getText();
         String citta        = campoCitta.getText();
-        //TODO implementare inserimento nel DB per data di nascita
+        LocalDate dataN = campoDataNascita.getValue();
 
         // Il ruolo è esclusivo: uno dei due è sempre e solo vero
         boolean isRistoratore = radioRistoratore.isSelected();
@@ -126,15 +133,15 @@ public class RegisterController {
 
         //TODO implementare controllo indirizzo mail
 
-        // Controllo se username gia' presente
+        /* todo da cancellare Controllo se username gia' presente
         if (usernameEsiste(username)) {
             etichettaErrore.setText("Email già in uso. Usane un'altra.");
             return;
-        }
+        }*/
 
         String passwordHashed = calcolaSha256(password);
 
-        // Verifica cartella
+        /* todo da cancellare Verifica cartella
         File cartellaDoc = new File(NOME_CARTELLA);
         if (!cartellaDoc.exists()) {
             boolean creata = cartellaDoc.mkdirs();
@@ -162,25 +169,42 @@ public class RegisterController {
             e.printStackTrace();
             etichettaErrore.setText("Errore nel salvataggio utente su file.");
             return;
-        }
+        }*/
+        Date dataNascita;
 
-        // Auto login
-        Session.Role ruoloSessione;
-        if (isRistoratore) {
-            ruoloSessione = Session.Role.RISTORATORE;
+        if(dataN == null) {
+            dataNascita = null;
         } else {
-            ruoloSessione = Session.Role.CLIENTE;
+            dataNascita = Date.from(dataN.atStartOfDay(ZoneId.systemDefault()).toInstant());
         }
+        GestioneRichieste gr = new GestioneRichieste();
+        UtenteDTO utente = new UtenteDTO(nome,cognome,email,dataNascita, new LuogoDTO(new CittaDTO(citta)), passwordHashed);
+        boolean risposta = (boolean) gr.inviaEAttendi("REG",utente);
 
-        Session.getInstance().login(username, ruoloSessione);
-        //Permessi impostati dopo la registrazione
-        Session.getInstance().setPermessi(isCliente, isRistoratore);
+        // true se la registrazione è andata a buon fine
+        if(risposta) {
+            // Auto login
+            Session.Role ruoloSessione;
+            if (isRistoratore) {
+                ruoloSessione = Session.Role.RISTORATORE;
+            } else {
+                ruoloSessione = Session.Role.CLIENTE;
+            }
 
-        if (controllerPrincipale != null) {
-            controllerPrincipale.onLoginSuccess();
+            Session.getInstance().login(email, ruoloSessione);
+            //Permessi impostati dopo la registrazione
+            Session.getInstance().setPermessi(isCliente, isRistoratore);
+
+            if (controllerPrincipale != null) {
+                controllerPrincipale.onLoginSuccess();
+            }
+
+            chiudiFinestra();
+
+        } else {
+            etichettaErrore.setText("Email già in uso. Usane un'altra.");
+            return;
         }
-
-        chiudiFinestra();
     }
 
     /**
@@ -202,7 +226,7 @@ public class RegisterController {
      *
      * @author Matteo Franguelli
      */
-    private boolean usernameEsiste(String usernameDaCercare) {
+    /*private boolean usernameEsiste(String usernameDaCercare) {
         File fileUtenti = new File(NOME_CARTELLA, NOME_FILE);
 
         // Se il file non esiste ancora non esiste nemmeno lo username
@@ -227,7 +251,7 @@ public class RegisterController {
             e.printStackTrace();
         }
         return false;
-    }
+    } todo da cancellare*/
     /**
      * Chiude la finestra di registrazione.
      *
@@ -258,7 +282,7 @@ public class RegisterController {
      *
      * @author Matteo Franguelli
      */
-    private int calcolaProssimoId(File fileUtenti) {
+    /*private int calcolaProssimoId(File fileUtenti) {
         if (!fileUtenti.exists()) {     return 1;   }
 
         int maxId = 0;
@@ -281,13 +305,13 @@ public class RegisterController {
             e.printStackTrace();
         }
         return maxId + 1;
-    }
+    } todo da cancellare*/
     /**
      * Restituisce una stringa non nulla per il salvataggio.
      *
      * @author Matteo Franguelli
      */
-    private String valoreNonNullo(String s) {
+    /*private String valoreNonNullo(String s) {
         return s == null ? "" : s.trim();
-    }
+    } todo da cancellare*/
 }
