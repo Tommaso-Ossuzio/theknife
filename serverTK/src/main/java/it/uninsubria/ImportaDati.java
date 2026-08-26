@@ -413,6 +413,7 @@ public class ImportaDati {
                     int idLuogo = inserisciLuogo(conn, "Via Roma 1", idCitta, idCoord);
                     String sqlUser = "INSERT INTO UTENTE (email, password, nome, cognome, is_ristoratore, id_luogo_vive, data_nascita) VALUES (?, ?, ?, ?, ?, ?, ?) ON CONFLICT (email) DO NOTHING RETURNING id_utente";
                     int idUtenteCreato = -1;
+                    //TODO psw da generare l'hash
                     try (PreparedStatement ps = conn.prepareStatement(sqlUser)) {
                         ps.setString(1, email);
                         ps.setString(2, password);

@@ -6,6 +6,10 @@ import it.uninsubria.dto.LuogoDTO;
 
 import java.sql.*;
 
+/**
+ * interfaccia al database per le informazioni del luogo
+ * @author Elia Toschi
+ */
 public class LuogoDAO {
 
     /**
