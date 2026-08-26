@@ -1,0 +1,6 @@
+Username;password;Nome;Cognome;Citta;isRistoratore;RistorantiPreferiti;MieiRistoranti
+matteo@gmail.com;matteo;Matteo;Giovanni;Arcisate;false;2-1;
+ris@gmail.com;ris;Ris;Otto;Varese;true;;17043-17044
+clt@gmail.com;clt;Cli;Ente;Milano;false;17041-17043;
+mario@gmail.com;mario;Mario;Rossi;Varese;false;17042-17040;
+giorgio@gmail.com;giorgio;Giorgio;Verdi;Varsavia;true;;17041-17042
