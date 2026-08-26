@@ -119,7 +119,7 @@ public class RistoranteDAO {
          */
         StringBuilder sql = new StringBuilder(
                 "SELECT R.id_ristorante, R.nome, R.telefono, R.sito_web, " +
-                        "R.delivery, R.prenotazione_online, R.fascia_prezzo, " +
+                        "R.delivery, R.prenotazione_online, R.fascia_prezzo, R.stelle_michelin, " +
                         "L.id AS id_luogo, L.via AS via_luogo, " +
                         "C.id_citta, C.nome AS nome_citta, C.nome_nazione, " +
                         "COALESCE(CU.cucine, ARRAY[]::varchar[]) AS cucine, " +
