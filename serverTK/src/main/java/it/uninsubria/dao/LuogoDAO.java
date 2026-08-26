@@ -171,4 +171,32 @@ public class LuogoDAO {
 
         return null;
     }
+
+    /**
+     * Metodo per ottenere l'id di un luogo conoscendo il nome della città
+     * @param conn
+     * @param nomeCitta
+     * @author Celestino Resteghini
+     */
+    public int getIdLuogoByCitta(Connection conn, String nomeCitta) {
+        String sql = "SELECT L.id " +
+                "FROM LUOGO L " +
+                "JOIN CITTA C ON L.id_citta = C.id_citta " +
+                "WHERE LOWER(C.nome) = LOWER(?) " +
+                "LIMIT 1";
+
+        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setString(1, nomeCitta.trim());
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getInt("id");
+                }
+            }
+        } catch (SQLException e) {
+            System.err.println("Errore id del luogo per la città: " + nomeCitta + " non trovato");
+            e.printStackTrace();
+        }
+
+        return -1;
+    }
 }
