@@ -59,7 +59,10 @@ public class UtenteDAO {
             psInsert.setString(2, utente.getNome());
             psInsert.setString(3, utente.getCognome());
             psInsert.setString(4, passwordHash);
-            psInsert.setDate(5, new java.sql.Date(utente.getDataNascita().getTime()));
+            if(utente.getDataNascita() == null)
+                psInsert.setDate(5, null);
+            else
+                psInsert.setDate(5, new java.sql.Date(utente.getDataNascita().getTime()));
             psInsert.setBoolean(6, isRistoratore);
             psInsert.setInt(7, idLuogo);
 

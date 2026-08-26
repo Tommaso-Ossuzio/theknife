@@ -18,8 +18,6 @@ import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.Date;
 
-//TODO da rivedere, vengono usati i file
-
 /**
  * Controller della finestra di registrazione.
  * Gestisce la creazione di un nuovo utente e il salvataggio
@@ -48,8 +46,6 @@ public class RegisterController {
 
     private ControllerAutenticazione controllerPrincipale;
 
-    //todo da cancellare private static final String NOME_CARTELLA = "data";
-    //todo da cancellare private static final String NOME_FILE = "users.csv";
     /**
      * Imposta il controller principale come riferimento.
      *
@@ -133,43 +129,8 @@ public class RegisterController {
 
         //TODO implementare controllo indirizzo mail
 
-        /* todo da cancellare Controllo se username gia' presente
-        if (usernameEsiste(username)) {
-            etichettaErrore.setText("Email già in uso. Usane un'altra.");
-            return;
-        }*/
-
         String passwordHashed = calcolaSha256(password);
 
-        /* todo da cancellare Verifica cartella
-        File cartellaDoc = new File(NOME_CARTELLA);
-        if (!cartellaDoc.exists()) {
-            boolean creata = cartellaDoc.mkdirs();
-            if (!creata) {
-                etichettaErrore.setText("Impossibile creare la cartella " + NOME_CARTELLA);
-                return;
-            }
-        }
-
-        File fileUtenti = new File(cartellaDoc, NOME_FILE);
-
-        int nuovoId = calcolaProssimoId(fileUtenti);
-
-        // Salva su file
-        try (BufferedWriter bw = new BufferedWriter(new FileWriter(fileUtenti, true))) {
-            bw.write(username + ";" + passwordHashed + ";" +
-                    valoreNonNullo(nome) + ";" +
-                    valoreNonNullo(cognome) + ";" +
-                    valoreNonNullo(citta) + ";" +
-                    isCliente + ";" +
-                    isRistoratore + ";" +
-                    nuovoId);
-            bw.newLine();
-        } catch (IOException e) {
-            e.printStackTrace();
-            etichettaErrore.setText("Errore nel salvataggio utente su file.");
-            return;
-        }*/
         Date dataNascita;
 
         if(dataN == null) {
@@ -179,7 +140,7 @@ public class RegisterController {
         }
         GestioneRichieste gr = new GestioneRichieste();
         UtenteDTO utente = new UtenteDTO(nome,cognome,email,dataNascita, new LuogoDTO(new CittaDTO(citta)), passwordHashed);
-        boolean risposta = (boolean) gr.inviaEAttendi("REG",utente);
+        Boolean risposta = (Boolean) gr.inviaEAttendi("REG",utente);
 
         // true se la registrazione è andata a buon fine
         if(risposta) {
@@ -221,38 +182,6 @@ public class RegisterController {
     }
 
     /**
-     * Legge il file users.csv per verificare se lo username è già presente.
-     * Restituisce true se lo trova, false altrimenti.
-     *
-     * @author Matteo Franguelli
-     */
-    /*private boolean usernameEsiste(String usernameDaCercare) {
-        File fileUtenti = new File(NOME_CARTELLA, NOME_FILE);
-
-        // Se il file non esiste ancora non esiste nemmeno lo username
-        if (!fileUtenti.exists()) {
-            return false;
-        }
-
-        try (BufferedReader br = new BufferedReader(new FileReader(fileUtenti, StandardCharsets.UTF_8))) {
-            String linea;
-            while ((linea = br.readLine()) != null) {
-                if (linea.isBlank()) continue;
-
-                String[] parti = linea.split(";");
-                if (parti.length >= 1) {
-                    String usernameSalvato = parti[0];
-                    if (usernameSalvato.equalsIgnoreCase(usernameDaCercare)) {
-                        return true;
-                    }
-                }
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return false;
-    } todo da cancellare*/
-    /**
      * Chiude la finestra di registrazione.
      *
      * @author Matteo Franguelli
@@ -261,6 +190,7 @@ public class RegisterController {
         Stage stage = (Stage) campoUsername.getScene().getWindow();
         stage.close();
     }
+
     /**
      * Calcola l'hash SHA-256 di una stringa.
      *
@@ -277,41 +207,4 @@ public class RegisterController {
             throw new RuntimeException(e);
         }
     }
-    /**
-     * Calcola il prossimo ID disponibile per un nuovo utente.
-     *
-     * @author Matteo Franguelli
-     */
-    /*private int calcolaProssimoId(File fileUtenti) {
-        if (!fileUtenti.exists()) {     return 1;   }
-
-        int maxId = 0;
-
-        try (BufferedReader br = new BufferedReader(new FileReader(fileUtenti, StandardCharsets.UTF_8))) {
-            String linea;
-            while ((linea = br.readLine()) != null) {
-
-                String[] parti = linea.split(";");
-                if (parti.length >= 8) {
-                    try {
-                        int idLetto = Integer.parseInt(parti[parti.length - 1].trim());
-                        if (idLetto > maxId) {
-                            maxId = idLetto;
-                        }
-                    } catch (NumberFormatException e) {}
-                }
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return maxId + 1;
-    } todo da cancellare*/
-    /**
-     * Restituisce una stringa non nulla per il salvataggio.
-     *
-     * @author Matteo Franguelli
-     */
-    /*private String valoreNonNullo(String s) {
-        return s == null ? "" : s.trim();
-    } todo da cancellare*/
 }
