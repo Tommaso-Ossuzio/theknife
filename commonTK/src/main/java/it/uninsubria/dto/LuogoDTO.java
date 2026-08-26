@@ -5,6 +5,7 @@ import java.io.Serializable;
 /**
  * Indica il modello del luogo con cittaDTO e CoordinateDTO
  * @author Elia Toschi
+ * @author Celestino Resteghini
  */
 public class LuogoDTO implements Serializable {
 

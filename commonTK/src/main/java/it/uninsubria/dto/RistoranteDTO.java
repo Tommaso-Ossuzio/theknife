@@ -6,6 +6,7 @@ import java.util.List;
 /**
  * Rappresenta il modello DTO del ristorante e contiene luogoDTO, RistoratoreDTO
  * @author  Elia Toschi
+ * @author Michele Viselli
  */
 public class RistoranteDTO implements Serializable {
 

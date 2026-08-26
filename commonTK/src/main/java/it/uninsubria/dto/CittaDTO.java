@@ -5,6 +5,7 @@ import java.io.Serializable;
 /**
  * Rappresenta il modello delle città
  * @author Elia Toschi
+ * @author Celestino Resteghini
  */
 public class CittaDTO implements Serializable {
     private static final long serialVersionUID = 1L;
