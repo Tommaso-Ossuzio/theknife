@@ -1,9 +1,9 @@
-N_Stelle;Text;Date;IdUtente;IdRistorante;Risposta
-4;Buona qualità;2026-01-10T19:06:59.079;2;17042;
-5;Buonissimo!;2026-01-22T19:43:39.082;2;17044;
-2;Ristorante un po' sporco;2026-01-22T19:47:02.838;4;17044;
-3;Camerieri poco professionali;2026-01-23T10:30:16.236;4;1;
-5;Tutto perfetto;2026-05-16T12:50:14.756;5;17044;La ringrazio
-1;Non mi è piaciuto;2026-05-16T12:52:48.993;5;17043;Poteva argomentare meglio
-5;Piatti abbondanti;2026-08-16T18:04:48.993;4;17042;
-2;Non mi ha fatto impazzire;2026-08-16T18:05:42.963;4;17043;
+N_Stelle,Text,Date,IdUtente,IdRistorante,Risposta
+4,Buona qualità,2026-01-10T19:06:59.079,2,17042,
+5,Buonissimo!,2026-01-22T19:43:39.082,2,17044,
+2,Ristorante un po' sporco,2026-01-22T19:47:02.838,4,17044,
+3,Camerieri poco professionali,2026-01-23T10:30:16.236,4,1,
+5,Tutto perfetto,2026-05-16T12:50:14.756,5,17044,La ringrazio
+1,Non mi è piaciuto,2026-05-16T12:52:48.993,5,17043,Poteva argomentare meglio
+5,Piatti abbondanti,2026-08-16T18:04:48.993,4,17042,
+2,Non mi ha fatto impazzire,2026-08-16T18:05:42.963,4,17043,
