@@ -145,6 +145,7 @@ public class MainController implements ControllerAutenticazione {
     private void caricaCatalogo() {
         applicaFiltro(new FiltroRistoranteDTO(
                 null, null, null, null, null, null));
+        //TODO Gestire il fatto che quando accede l'utente deve vedere i ristoranre vicini al suo luogo di domicilio..
     }
 
     /**

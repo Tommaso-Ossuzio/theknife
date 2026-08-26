@@ -93,7 +93,7 @@ public class SlaveThread extends Thread {
     private void gestisciLogin() throws IOException, ClassNotFoundException {
         AuthDTO credenziali = (AuthDTO) in.readObject();
         System.out.println("LOG: ricevuto: " + credenziali.toString());
-        boolean esito = false;
+        Boolean esito = false;
         try (Connection conn = getConnection()) {
             if(utenteDAO.eseguiLogin(conn,credenziali))
                 esito = true;
@@ -116,7 +116,7 @@ public class SlaveThread extends Thread {
     private void gestisciRegistrazione() throws IOException, ClassNotFoundException {
         UtenteDTO nuovoUtente = (UtenteDTO) in.readObject();
         System.out.println("REG: ricevuto: " + nuovoUtente.toString());
-        boolean esito = false;
+        Boolean esito = false;
         try (Connection conn = getConnection()) {
             if(utenteDAO.registraUtente(conn,nuovoUtente,nuovoUtente.getPassword()))
                 esito = true;

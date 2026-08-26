@@ -57,7 +57,7 @@ public class WelcomeController implements ControllerAutenticazione {
      */
     private void caricaCatalogo() {
         new Thread(() -> {
-            gestioneRistoranti.caricaDaCsv();
+            //gestioneRistoranti.caricaDaCsv();
             Map<String, Integer> citta = gestioneRistoranti.getCittaConConteggio();
 
             Platform.runLater(() -> {
