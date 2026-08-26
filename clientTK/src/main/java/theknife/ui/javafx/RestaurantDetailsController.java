@@ -60,7 +60,7 @@ public class RestaurantDetailsController {
                                   boolean booking,
                                   String cuisine,
                                   String website,
-                                  Double stelleMichelin) {
+                                  Integer stelleMichelin) {
 
         this.latitudine = latitude;
         this.longitudine = longitude;
@@ -274,10 +274,10 @@ public class RestaurantDetailsController {
      * aggiornando il testo e lo stile dell'etichetta.
      *
      * @param stelleMichelin numero di stelle Michelin, oppure {@code null}
-     *                       quando il dato non è ancora disponibile
+     *                       quando il dato non è disponibile
      * @author Matteo Franguelli
      */
-    private void mostraStelleMichelin(Double stelleMichelin) {
+    private void mostraStelleMichelin(Integer stelleMichelin) {
         valoreStelle.getStyleClass().remove("michelin-none");
 
         if (stelleMichelin == null) {
@@ -291,7 +291,7 @@ public class RestaurantDetailsController {
             valoreStelle.getStyleClass().add("michelin-none");
             return;
         }
-        long stellePiene = Math.min(3, Math.round(stelleMichelin));
+        long stellePiene = Math.min(3, stelleMichelin);
 
         StringBuilder sb = new StringBuilder();
 

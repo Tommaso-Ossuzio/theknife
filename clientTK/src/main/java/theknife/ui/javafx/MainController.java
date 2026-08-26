@@ -316,6 +316,11 @@ public class MainController implements ControllerAutenticazione {
 
         badge.getChildren().add(Etichette.creaBadgeMedia(r));
 
+        Label michelin = Etichette.creaBadgeMichelin(r);
+        if (michelin != null) {
+            badge.getChildren().add(michelin);
+        }
+
         String cucina = r.getCucine() == null ? "" : String.join(", ", r.getCucine());
         if (!cucina.isBlank()) {
             badge.getChildren().add(Etichette.creaBadge(cucina, "tag"));
@@ -406,9 +411,8 @@ public class MainController implements ControllerAutenticazione {
         double longitudine = coordinate == null ? 0.0 : coordinate.getLongitudine();
         String cucina = rd.getCucine() == null ? "" : String.join(", ", rd.getCucine());
 
-        // TODO: valorizzare le stelle Michelin quando Award sarà disponibile
-        // nel database e in RistoranteDTO.
-        Double stelleMichelin = null;
+        // Il valore arriva dal database tramite RistoranteDTO.
+        Integer stelleMichelin = rd.getStelleMichelin();
 
         Finestre.apriModale("restaurant_details.fxml", valoreNonNullo(rd.getNome()),
                 (RestaurantDetailsController ctrl) -> ctrl.setRestaurantData(

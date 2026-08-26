@@ -113,4 +113,16 @@ public final class Etichette {
         if (r.getAward() <= 0) return null;
         return creaBadge("★ " + (int) r.getAward() + " Michelin", "tag-michelin");
     }
+
+    /**
+     * Crea il badge delle stelle Michelin per un ristorante ricevuto dal
+     * server tramite il nuovo flusso basato su {@link RistoranteDTO}.
+     *
+     * @param r ristorante di cui mostrare il riconoscimento
+     * @return badge Michelin oppure {@code null} se il ristorante non ha stelle
+     */
+    public static Label creaBadgeMichelin(RistoranteDTO r) {
+        if (r == null || r.getStelleMichelin() <= 0) return null;
+        return creaBadge("★ " + r.getStelleMichelin() + " Michelin", "tag-michelin");
+    }
 }
