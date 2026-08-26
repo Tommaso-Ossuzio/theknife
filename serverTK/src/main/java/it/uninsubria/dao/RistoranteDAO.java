@@ -1,5 +1,6 @@
 package it.uninsubria.dao;
 
+import it.uninsubria.Utility;
 import it.uninsubria.dto.FiltroRistoranteDTO;
 import it.uninsubria.dto.CittaDTO;
 import it.uninsubria.dto.LuogoDTO;
@@ -11,6 +12,15 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class RistoranteDAO {
+
+    private static final Utility UTILITY = new Utility();
+
+    /**
+     * Punto geografico usato come centro della ricerca per vicinanza.
+     * Il nome canonico della città serve per includere sempre tutti i
+     * ristoranti della città richiesta, anche se uno fosse oltre il raggio.
+     */
+    private record RiferimentoRicerca(String citta, double latitudine, double longitudine) { }
 
     /**
      * Ottien il ristorante cercato per nome
@@ -112,6 +122,16 @@ public class RistoranteDAO {
             throw new IllegalArgumentException("Il filtro dei ristoranti non può essere null");
         }
 
+        String luogoRichiesto = normalizza(filtro.getLuogo());
+        RiferimentoRicerca riferimento = null;
+
+        if (luogoRichiesto != null) {
+            riferimento = trovaRiferimentoRicerca(conn, luogoRichiesto);
+            if (riferimento == null) {
+                return new ArrayList<>();
+            }
+        }
+
         /*
          * Le cucine e le recensioni vengono aggregate prima del collegamento
          * con RISTORANTE. In questo modo non si crea il prodotto cucina x
@@ -122,11 +142,13 @@ public class RistoranteDAO {
                         "R.delivery, R.prenotazione_online, R.fascia_prezzo, R.stelle_michelin, " +
                         "L.id AS id_luogo, L.via AS via_luogo, " +
                         "C.id_citta, C.nome AS nome_citta, C.nome_nazione, " +
+                        "CO.latitudine AS latitudine_luogo, CO.longitudine AS longitudine_luogo, " +
                         "COALESCE(CU.cucine, ARRAY[]::varchar[]) AS cucine, " +
                         "ST.media_stelle, COALESCE(ST.numero_recensioni, 0) AS numero_recensioni " +
                         "FROM RISTORANTE R " +
                         "JOIN LUOGO L ON R.id_luogo = L.id " +
                         "JOIN CITTA C ON L.id_citta = C.id_citta " +
+                        "JOIN COORDINATE CO ON L.id_coordinate = CO.id " +
                         "LEFT JOIN (" +
                         "SELECT RTC.id_ristorante, " +
                         "ARRAY_AGG(RTC.nome_tipo_cucina ORDER BY RTC.nome_tipo_cucina) AS cucine " +
@@ -141,11 +163,6 @@ public class RistoranteDAO {
                         ") ST ON ST.id_ristorante = R.id_ristorante " +
                         "WHERE 1=1 ");
         List<Object> parametri = new ArrayList<>();
-
-        if (filtro.getLuogo() != null && !filtro.getLuogo().trim().isEmpty()) {
-            sql.append("AND C.nome ILIKE ? ");
-            parametri.add("%" + filtro.getLuogo().trim() + "%");
-        }
 
         if (filtro.getCucina() != null && !filtro.getCucina().trim().isEmpty()) {
             sql.append("AND EXISTS (" +
@@ -176,6 +193,8 @@ public class RistoranteDAO {
             parametri.add(filtro.getMediaStelleMinima());
         }
 
+        sql.append("ORDER BY R.id_ristorante ");
+
         try (PreparedStatement ps = conn.prepareStatement(sql.toString())) {
             for (int i = 0; i < parametri.size(); i++) {
                 ps.setObject(i + 1, parametri.get(i));
@@ -184,7 +203,9 @@ public class RistoranteDAO {
             try (ResultSet rs = ps.executeQuery()) {
                 List<RistoranteDTO> risultato = new ArrayList<>();
                 while (rs.next()) {
-                    risultato.add(costruisciRistoranteFiltratoDaResultSet(rs));
+                    if (riferimento == null || appartieneAllaRicercaGeografica(rs, riferimento)) {
+                        risultato.add(costruisciRistoranteFiltratoDaResultSet(rs));
+                    }
                 }
                 return risultato;
             }
@@ -192,6 +213,77 @@ public class RistoranteDAO {
             e.printStackTrace();
         }
         return new ArrayList<>();
+    }
+
+    /**
+     * Cerca il primo ristorante della città richiesta e usa le sue coordinate
+     * come centro del raggio di 10 km, replicando in modo deterministico il
+     * comportamento del filtro locale del Laboratorio A.
+     *
+     * <p>La corrispondenza della città è esatta ma non distingue maiuscole e
+     * minuscole: in questo modo una ricerca di "Milan" non sceglie per errore
+     * un ristorante di "Milano Marittima".</p>
+     *
+     * @author Michele Viselli
+     */
+    private RiferimentoRicerca trovaRiferimentoRicerca(Connection conn, String luogo) {
+        String sql = "SELECT C.nome AS nome_citta, CO.latitudine, CO.longitudine " +
+                "FROM RISTORANTE R " +
+                "JOIN LUOGO L ON R.id_luogo = L.id " +
+                "JOIN CITTA C ON L.id_citta = C.id_citta " +
+                "JOIN COORDINATE CO ON L.id_coordinate = CO.id " +
+                "WHERE LOWER(C.nome) = LOWER(?) " +
+                "ORDER BY R.id_ristorante " +
+                "LIMIT 1";
+
+        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setString(1, luogo);
+
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    return new RiferimentoRicerca(
+                            rs.getString("nome_citta"),
+                            rs.getDouble("latitudine"),
+                            rs.getDouble("longitudine"));
+                }
+            }
+        } catch (SQLException e) {
+            System.err.println("Errore nel recupero delle coordinate per la città " + luogo);
+            e.printStackTrace();
+        }
+
+        return null;
+    }
+
+    /**
+     * Include sempre i ristoranti della città richiesta e, per le altre
+     * città, soltanto quelli entro 10 km dal ristorante di riferimento.
+     *
+     * @author Michele Viselli
+     */
+    private boolean appartieneAllaRicercaGeografica(
+            ResultSet rs,
+            RiferimentoRicerca riferimento) throws SQLException {
+
+        String cittaRistorante = rs.getString("nome_citta");
+        if (cittaRistorante != null && cittaRistorante.equalsIgnoreCase(riferimento.citta())) {
+            return true;
+        }
+
+        return UTILITY.checkDistance10KM(
+                riferimento.latitudine(),
+                riferimento.longitudine(),
+                rs.getDouble("latitudine_luogo"),
+                rs.getDouble("longitudine_luogo"));
+    }
+
+    private String normalizza(String valore) {
+        if (valore == null) {
+            return null;
+        }
+
+        String normalizzato = valore.trim();
+        return normalizzato.isEmpty() ? null : normalizzato;
     }
 
     /**

@@ -5,9 +5,12 @@ import java.io.Serializable;
 /**
  * Parametri della richiesta di ricerca dei ristoranti ({@code FILTRO}).
  *
- * <p>{@code luogo} è il solo criterio obbligatorio. Gli altri campi possono
- * essere {@code null}: in quel caso il server non applica il relativo
- * criterio di ricerca.</p>
+ * <p>Quando {@code luogo} è valorizzato, il server usa un ristorante della
+ * città indicata come riferimento e restituisce sia i ristoranti della città
+ * sia quelli entro 10 km. Quando è {@code null}, non viene applicato alcun
+ * criterio geografico e può essere restituito l'intero catalogo. Anche gli
+ * altri campi possono essere {@code null}: in quel caso il server non applica
+ * il relativo criterio di ricerca.</p>
  *
  * @author Michele Viselli
  */
