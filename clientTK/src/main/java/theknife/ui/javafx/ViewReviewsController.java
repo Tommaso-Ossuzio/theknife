@@ -1,21 +1,20 @@
 package theknife.ui.javafx;
 
+import it.uninsubria.dto.RecensioneDTO;
 import it.uninsubria.dto.RistoranteDTO;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.concurrent.Task;
 import javafx.fxml.FXML;
 import javafx.geometry.Insets;
 import javafx.scene.control.*;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
-import theknife.model.Recensione;
-import theknife.model.Risposta;
+import theknife.model.GestioneRecensioni;
 import theknife.model.Ristorante;
 
-import java.io.*;
-import java.nio.charset.StandardCharsets;
+import java.util.List;
 
-//TODO da rivedere, vengono usati i file
 
 /**
  * Controller della vista che mostra le recensioni di un ristorante selezionato.
@@ -24,18 +23,14 @@ import java.nio.charset.StandardCharsets;
 public class ViewReviewsController {
 
     @FXML private Label etichettaTitolo;
-    @FXML private ListView<Recensione> listaRecensioni;
+    @FXML private ListView<RecensioneDTO> listaRecensioni;
     @FXML private Label etichettaMedia;
     @FXML private Label etichettaConteggio;
 
-    private Ristorante ristoranteSelezionato;
     private Integer idRistoranteSelezionato;
-    private final ObservableList<Recensione> recensioniData = FXCollections.observableArrayList();
+    private final ObservableList<RecensioneDTO> recensioniData = FXCollections.observableArrayList();
+    private final GestioneRecensioni gestioneRecensioni = GestioneRecensioni.getInstance();
 
-    private static final String NOME_CARTELLA = "data";
-    private static final String NOME_FILE_RECENSIONI = "recensioni.csv";
-    private static final String NOME_FILE_UTENTI = "users.csv";
-    private final java.util.Map<Integer, String> utentiAttuali = new java.util.HashMap<>();
     /**
      * Inizializza la lista delle recensioni e la grafica delle celle.
      * @author Matteo Franguelli
@@ -51,16 +46,10 @@ public class ViewReviewsController {
      * @author Matteo Franguelli
      */
     public void setRestaurant(Ristorante r) {
-        this.ristoranteSelezionato = r;
-        this.idRistoranteSelezionato = r == null ? null : r.getId();
-
-        if (this.ristoranteSelezionato != null) {
-            if (etichettaTitolo != null) {
-                etichettaTitolo.setText("Recensioni: " + r.getNome());
-            }
-            caricaRecensioniSpecifiche();
-            calcolaStatistiche();
-        }
+        impostaRistorante(
+                r == null ? null : r.getId(),
+                r == null ? null : r.getNome()
+        );
     }
 
     /**
@@ -71,91 +60,87 @@ public class ViewReviewsController {
      * @author Michele Viselli
      */
     public void setRestaurant(RistoranteDTO r) {
-        this.ristoranteSelezionato = null;
-        this.idRistoranteSelezionato = r == null ? null : r.getIdRistorante();
-
-        if (r != null) {
-            if (etichettaTitolo != null) {
-                etichettaTitolo.setText("Recensioni: " + r.getNome());
-            }
-            caricaRecensioniSpecifiche();
-            calcolaStatistiche();
-        }
+        impostaRistorante(
+                r == null ? null : r.getIdRistorante(),
+                r == null ? null : r.getNome()
+        );
     }
 
     /**
-     * Carica dal file solo le recensioni associate al ristorante selezionato.
-     * @author Matteo Franguelli
+     * Imposta i dati comuni ai due tipi di ristorante ancora presenti nel
+     * client e avvia il caricamento delle recensioni dal server.
+     *
+     * @param idRistorante identificativo del ristorante
+     * @param nomeRistorante nome da mostrare nel titolo
+     * @author Michele Viselli
+     */
+    private void impostaRistorante(Integer idRistorante, String nomeRistorante) {
+        idRistoranteSelezionato = idRistorante;
+
+        if (idRistorante == null) return;
+
+        if (etichettaTitolo != null) {
+            etichettaTitolo.setText("Recensioni: " + nomeRistorante);
+        }
+
+        caricaRecensioniSpecifiche();
+    }
+
+    /**
+     * Richiede al server le recensioni del ristorante selezionato senza
+     * bloccare il thread JavaFX.
+     *
+     * @author Michele Viselli
      */
     private void caricaRecensioniSpecifiche() {
         recensioniData.clear();
+        calcolaStatistiche();
 
-        File file = new File(NOME_CARTELLA, NOME_FILE_RECENSIONI);
-        if (!file.exists()) return;
+        if (idRistoranteSelezionato == null) return;
 
-        try (BufferedReader br = new BufferedReader(new FileReader(file, StandardCharsets.UTF_8))) {
-            String linea = br.readLine(); // Salta header
+        listaRecensioni.setDisable(true);
+        impostaPlaceholder("Caricamento recensioni...");
 
-            while ((linea = br.readLine()) != null) {
-                if (linea.isBlank()) continue;
-
-                String[] parti;
-                if (linea.contains(";")) parti = linea.split(";");
-                else parti = linea.split(",");
-
-                if (parti.length >= 5) {
-                    try {
-                        String sStelle = pulisci(parti[0]);
-                        String testo = pulisci(parti[1]);
-                        String sIdUtente = pulisci(parti[3]);
-                        String sIdRistorante = pulisci(parti[4]);
-
-                        int idRistCsv = Integer.parseInt(sIdRistorante);
-                        int idRistAttuale = idRistoranteSelezionato == null
-                                ? 0
-                                : idRistoranteSelezionato;
-
-                        // Controlliamo se la recensione appartiene al ristorante selezionato
-                        if (idRistCsv == idRistAttuale) {
-                            int stelle = Integer.parseInt(sStelle);
-                            int idUtente = Integer.parseInt(sIdUtente);
-
-                            Recensione rec = new Recensione(stelle, testo, idUtente, idRistCsv);
-
-                            // Lettura della risposta
-                            if (parti.length >= 6) {
-                                String testoRisposta = pulisci(parti[5]);
-
-                                if (testoRisposta.startsWith("RISPOSTA:")) {
-                                    testoRisposta = testoRisposta.substring(9).trim();
-                                }
-
-                                if (!testoRisposta.isBlank() && !testoRisposta.equals("null")) {
-                                    Risposta rispObj = new Risposta(idRistCsv, testoRisposta);
-                                    rec.setRisposta(rispObj);
-                                }
-                            }
-
-                            recensioniData.add(rec);
-                        }
-
-                    } catch (Exception ignored) {
-                        // Ignora righe malformate
-                    }
-                }
+        int idRistorante = idRistoranteSelezionato;
+        Task<List<RecensioneDTO>> richiesta = new Task<>() {
+            @Override
+            protected List<RecensioneDTO> call() {
+                return gestioneRecensioni.getRecensioniPerRistorante(idRistorante);
             }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        };
+
+        richiesta.setOnSucceeded(evento -> {
+            listaRecensioni.setDisable(false);
+            List<RecensioneDTO> recensioni = richiesta.getValue();
+            if (recensioni != null) {
+                recensioniData.setAll(recensioni);
+            }
+            impostaPlaceholder("Non ci sono ancora recensioni.");
+            calcolaStatistiche();
+        });
+
+        richiesta.setOnFailed(evento -> {
+            listaRecensioni.setDisable(false);
+            recensioniData.clear();
+            impostaPlaceholder("Impossibile caricare le recensioni.");
+            calcolaStatistiche();
+        });
+
+        Thread thread = new Thread(richiesta, "recensioni-ristorante");
+        thread.setDaemon(true);
+        thread.start();
     }
 
     /**
-     * Pulisce una stringa rimuovendo spazi e separatori non desiderati.
-     * @author Matteo Franguelli
+     * Aggiorna il messaggio mostrato quando la lista non contiene elementi.
+     *
+     * @param testo messaggio da mostrare
+     * @author Michele Viselli
      */
-    private String pulisci(String s) {
-        if (s == null) return "";
-        return s.trim().replace(";", "");
+    private void impostaPlaceholder(String testo) {
+        Label placeholder = new Label(testo);
+        placeholder.getStyleClass().add("muted-text");
+        listaRecensioni.setPlaceholder(placeholder);
     }
 
     /**
@@ -165,7 +150,7 @@ public class ViewReviewsController {
     private void impostaGraficaCelle() {
         listaRecensioni.setCellFactory(param -> new ListCell<>() {
             @Override
-            protected void updateItem(Recensione item, boolean empty) {
+            protected void updateItem(RecensioneDTO item, boolean empty) {
                 super.updateItem(item, empty);
 
                 if (empty || item == null) {
@@ -181,7 +166,7 @@ public class ViewReviewsController {
                     Label lblStelle = new Label(stelleStr.toString());
                     lblStelle.getStyleClass().add("star-display");
 
-                    Label lblTesto = new Label(item.getText());
+                    Label lblTesto = new Label(item.getTesto());
                     lblTesto.setWrapText(true);
                     lblTesto.setMaxWidth(350);
                     lblTesto.getStyleClass().add("review-text");
@@ -196,7 +181,7 @@ public class ViewReviewsController {
                         Label lblTitolo = new Label("Risposta del ristoratore");
                         lblTitolo.getStyleClass().add("review-reply-title");
 
-                        Label lblRisposta = new Label(item.getRisposta().getTextString());
+                        Label lblRisposta = new Label(item.getRisposta().getTesto());
                         lblRisposta.setWrapText(true);
                         lblRisposta.setMaxWidth(330);
                         lblRisposta.getStyleClass().add("review-reply-text");
@@ -230,7 +215,7 @@ public class ViewReviewsController {
         }
 
         double sommaStelle = 0;
-        for (Recensione rec : recensioniData) {
+        for (RecensioneDTO rec : recensioniData) {
             sommaStelle += rec.getNumeroStelle();
         }
         double media = sommaStelle / recensioniData.size();
