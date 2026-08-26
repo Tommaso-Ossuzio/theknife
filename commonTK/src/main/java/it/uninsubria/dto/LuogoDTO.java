@@ -2,6 +2,10 @@ package it.uninsubria.dto;
 
 import java.io.Serializable;
 
+/**
+ * Indica il modello del luogo con cittaDTO e CoordinateDTO
+ * @author Elia Toschi
+ */
 public class LuogoDTO implements Serializable {
 
     private static final long serialVersionUID = 1L;

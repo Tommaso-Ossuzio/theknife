@@ -2,6 +2,10 @@ package it.uninsubria.dto;
 
 import java.io.Serializable;
 
+/**
+ * Rappresenta il DTO delle coordinate
+ * @author Elia Toschi
+ */
 public class CoordinateDTO implements Serializable {
     private static final long serialVersionUID = 1L;
 

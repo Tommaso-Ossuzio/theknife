@@ -2,6 +2,10 @@ package it.uninsubria.dto;
 
 import java.io.Serializable;
 
+/**
+ * Rappresenta i dati della risposta
+ * @author Elia Toschi
+ */
 public class RispostaDTO implements Serializable {
     private static final long serialVersionUID = 1L;
 
