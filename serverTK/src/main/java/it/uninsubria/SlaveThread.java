@@ -165,16 +165,16 @@ public class SlaveThread extends Thread {
     private void gestisciRecensioni() throws IOException, ClassNotFoundException {
         int idRistorante = (int) in.readObject();
         System.out.println("REC: ricevuto: " + idRistorante);
-        LinkedList<RecensioneDTO> recensioni = null;
+        LinkedList<RecensioneDTO> recensioni = new LinkedList<>();
 
         try (Connection conn = getConnection()) {
-            recensioni =(LinkedList<RecensioneDTO>) recensioneDAO.getRecensioniPerRistorante(conn,idRistorante);
+            recensioni = new LinkedList<>(
+                    recensioneDAO.getRecensioniPerRistorante(conn, idRistorante)
+            );
         } catch (SQLException e) {
             e.printStackTrace();
-
         }
-        if(recensioni == null)
-            recensioni = new LinkedList<>();
+
         System.out.println("REC: invio: lista recensioni");
         out.writeObject(recensioni);
         out.flush();

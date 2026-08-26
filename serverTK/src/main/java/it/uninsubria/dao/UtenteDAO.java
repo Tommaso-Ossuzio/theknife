@@ -24,6 +24,8 @@ public class UtenteDAO {
      */
     public boolean registraUtente(Connection conn, UtenteDTO utente, String passwordHash) {
 
+        //TODO da cambiare!!!
+
         String checkEmailSql = "SELECT id_utente FROM UTENTE WHERE email = ?";
         try (PreparedStatement psCheck = conn.prepareStatement(checkEmailSql)) {
             psCheck.setString(1, utente.getEmail());
@@ -37,6 +39,12 @@ public class UtenteDAO {
             return false;
         }
 
+        //TODO quello che viene passato è solo la città.. bisogna ottenere un luogoDAO completo con id, via, ecc???
+        // o nel db basta salvare la città?
+
+        //TODO a sto punto invece di inserie sempre un luogo nuovo a prescindere, bisogna fare un metodo per ottenre
+        // l'id della città indicata dall'utente,  se non si trova tocca inserirne una nuova
+        // con via inventata e coordinate da capire dove le pijamo eh???
         LuogoDAO luogoDAO = new LuogoDAO();
         int idLuogo = luogoDAO.inserisciLuogoCompleto(conn, utente.getLuogo());
 

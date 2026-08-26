@@ -30,8 +30,6 @@ public class RecensioneDAO {
             ps.setInt(1, idRistorante);
             ResultSet rs = ps.executeQuery();
 
-            // Prepariamo i DAO e i formattatori
-            UtenteDAO utenteDAO = new UtenteDAO();
             DateTimeFormatter formattatoreData = DateTimeFormatter.ofPattern("dd/MM/yyyy");
             DateTimeFormatter formattatoreOra = DateTimeFormatter.ofPattern("HH:mm");
 
@@ -40,7 +38,7 @@ public class RecensioneDAO {
                 String testo = rs.getString("testo");
                 int numeroStelle = rs.getInt("numero_stelle");
                 int idAutore = rs.getInt("id_utente");
-                int idRisorante = rs.getInt("id_ristorante");
+                int idRistoranteRecensione = rs.getInt("id_ristorante");
 
                 Timestamp ts = rs.getTimestamp("data_ora");
                 LocalDateTime ldt = ts.toLocalDateTime();
@@ -49,7 +47,16 @@ public class RecensioneDAO {
 
                 RispostaDTO risposta = getRispostaPerRecensione(conn, idRecensione);
 
-                RecensioneDTO recensione = new RecensioneDTO( testo, numeroStelle, data, ora, idAutore,idRistorante, risposta);
+                RecensioneDTO recensione = new RecensioneDTO(
+                        idRistoranteRecensione,
+                        testo,
+                        numeroStelle,
+                        data,
+                        ora,
+                        idAutore,
+                        risposta,
+                        idRecensione
+                );
                 listaRecensioni.add(recensione);
             }
 
