@@ -9,6 +9,10 @@ import java.io.InputStream;
 import java.sql.*;
 import java.util.Properties;
 
+/**
+ * La classe serve per inizializzare tutti i dati nel database
+ * @author Elia Toschi
+ */
 public class DatabaseConfig {
     private static final Properties props = new Properties();
     public static final String DB_NAME = "theknife_db";
@@ -124,7 +128,11 @@ public class DatabaseConfig {
      * @author Elia Toschi
      */
     public static void inizializzaDatabaseCompleto() {
-        createDatabaseIfMissing();
+        java.util.logging.Logger rootLogger = java.util.logging.LogManager.getLogManager().getLogger("");
+        rootLogger.setLevel(java.util.logging.Level.SEVERE);
+        for (java.util.logging.Handler h : rootLogger.getHandlers()) {
+            h.setLevel(java.util.logging.Level.SEVERE);
+        }        createDatabaseIfMissing();
 
         try {
             Flyway flyway = Flyway.configure()

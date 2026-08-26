@@ -3,6 +3,10 @@ package it.uninsubria.dto;
 import java.io.Serializable;
 import java.sql.Timestamp;
 
+/**
+ * Rappresenta i dati della recensione
+ * @author Elia Toschi
+ */
 public class RecensioneDTO implements Serializable {
     private static final long serialVersionUID = 1L;
 

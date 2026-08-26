@@ -10,6 +10,11 @@ import java.util.ArrayList;
 
 import java.util.List;
 
+/**
+ * L'intefaccia per accedere ai dati del database dei ristoranti preferiti
+ * @author Elia Toschi
+ */
+
 public class PreferitiDAO {
     /**
      * Aggiunge un ristorante preferito

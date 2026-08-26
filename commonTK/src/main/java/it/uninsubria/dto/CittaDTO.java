@@ -2,6 +2,10 @@ package it.uninsubria.dto;
 
 import java.io.Serializable;
 
+/**
+ * Rappresenta il modello delle città
+ * @author Elia Toschi
+ */
 public class CittaDTO implements Serializable {
     private static final long serialVersionUID = 1L;
     private int id_citta;

@@ -3,6 +3,10 @@ package it.uninsubria.dto;
 import java.io.Serializable;
 import java.util.Date;
 
+/**
+ * Rappresenta il modello degli utenti. Contiene il luogoDTO della sua residenza
+ * @author Elia Toschi
+ */
 public class UtenteDTO implements Serializable {
     private static final long serialVersionUID = 1L;
 

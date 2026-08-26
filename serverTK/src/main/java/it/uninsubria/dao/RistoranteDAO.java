@@ -11,6 +11,10 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ *  RistoranteDAO rappresenta il punto di accesso al database per le informazioni dei ristoranti
+ *  * @author Elia Toschi
+ */
 public class RistoranteDAO {
 
     private static final Utility UTILITY = new Utility();

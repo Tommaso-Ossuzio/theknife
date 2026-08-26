@@ -3,6 +3,10 @@ package it.uninsubria.dto;
 import java.io.Serializable;
 import java.util.Date;
 
+/**
+ * Indica il modello del ristoratore e estende la classe UtenteDTO
+ * @author Elia Toschi
+ */
 public class RistoratoreDTO extends UtenteDTO implements Serializable
 {
     private static final long serialVersionUID = 1L;

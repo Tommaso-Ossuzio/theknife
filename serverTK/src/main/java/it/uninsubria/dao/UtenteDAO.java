@@ -11,6 +11,10 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Date;
 
+/**
+ * L'utenteDAO rappresenta il punto di accesso al database per le informazioni degli utenti
+ * @author Elia Toschi
+ */
 public class UtenteDAO {
 
 

@@ -3,7 +3,10 @@ package it.uninsubria.dto;
 import java.io.Serializable;
 import java.util.List;
 
-
+/**
+ * Rappresenta il modello DTO del ristorante e contiene luogoDTO, RistoratoreDTO
+ * @author  Elia Toschi
+ */
 public class RistoranteDTO implements Serializable {
 
     private static final long serialVersionUID = 1L;
