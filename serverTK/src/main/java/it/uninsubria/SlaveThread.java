@@ -9,6 +9,7 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.LinkedList;
+import java.util.List;
 
 /**
  * Thread che si occupa di gestire le rischieste degli utenti
@@ -498,10 +499,17 @@ public class SlaveThread extends Thread {
     /**
      * Metodo per ottenere la lista di tutte le città
      * @author Celestino Resteghini
+     * @author Elia Toschi
      * @throws IOException
      */
     private void gestisciCitta() throws IOException {
-        LinkedList<String> citta = new LinkedList<>(); //TODO sostituire lista vuota con lista nomi città
+        List<String> citta = null;
+        try(Connection conn= getConnection()) {
+            citta= ristoranteDAO.getCitta(conn);
+        }catch(SQLException e){
+            e.printStackTrace();
+        }
+
         System.out.println("CITTA: invio: lista citta");
         out.writeObject(citta);
         out.flush();
@@ -510,10 +518,18 @@ public class SlaveThread extends Thread {
     /**
      * Metodo per ottenere la lista di tutte le cucine
      * @author Celestino Resteghini
+     * @author Elia Toschi
      * @throws IOException
      */
     private void gestisciCucine() throws IOException {
-        LinkedList<String> cucine = new LinkedList<>(); //TODO sostituire lista vuota con lista nomi cucine
+        List<String> cucine =null;
+        try(Connection conn= getConnection())
+        {
+            cucine = ristoranteDAO.getCucine(getConnection());
+        }catch(SQLException e){
+            e.printStackTrace();
+        }
+
         System.out.println("CUC: invio: lista cucine");
         out.writeObject(cucine);
         out.flush();
