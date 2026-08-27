@@ -1,5 +1,8 @@
 package theknife.ui.javafx;
 
+
+import it.uninsubria.dto.CoordinateDTO;
+import it.uninsubria.dto.RistoranteDTO;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
@@ -7,6 +10,7 @@ import javafx.scene.control.Hyperlink;
 import javafx.scene.control.Label;
 import javafx.scene.web.WebView;
 import javafx.stage.Stage;
+import theknife.model.GestioneRichieste;
 import theknife.model.GestioneRistoranti;
 import theknife.model.Ristorante;
 import theknife.utilities.Etichette;
@@ -44,61 +48,67 @@ public class RestaurantDetailsController {
     private static final String NOME_CARTELLA = "data";
     private static final String NOME_FILE = "users.csv";
 
-    private double latitudine;
-    private double longitudine;
+    private double latitudineLoc;
+    private double longitudineLoc;
     private String googleMapsUrl;
+private  RistoranteDTO ristoranteDTO;
+    public void setRestaurantData(RistoranteDTO ristorante) throws IOException {
+        this.ristoranteDTO = ristorante;
+        // 1. Estrazione sicura degli oggetti annidati per evitare NullPointerException
+        it.uninsubria.dto.LuogoDTO luogo = ristorante.getLuogo();
+        it.uninsubria.dto.CittaDTO citta = (luogo != null) ? luogo.getCitta() : null;
+        it.uninsubria.dto.CoordinateDTO coord = (luogo != null) ? luogo.getCoordinate() : null;
+        // 2. Assegnazione sicura coordinate
+        this.latitudineLoc = (coord != null) ? coord.getLatitudine() : 0.0;
+        this.longitudineLoc = (coord != null) ? coord.getLongitudine() : 0.0;
+        // 3. Assegnazione testi base
+        etichettaNome.setText(valoreNonNullo(ristorante.getNome()));
 
-    public void setRestaurantData(String name,
-                                  String nation,
-                                  String city,
-                                  String address,
-                                  double latitude,
-                                  double longitude,
-                                  String price,
-                                  String phoneNumber,
-                                  boolean delivery,
-                                  boolean booking,
-                                  String cuisine,
-                                  String website,
-                                  Integer stelleMichelin) {
+        String via = (luogo != null) ? luogo.getVia() : null;
+        etichettaIndirizzo.setText(valoreNonNullo(via));
+        // 4. Formattazione Città in totale sicurezza
+        if (citta != null) {
+            // Presumo che citta.getNome() ti dia il nome in stringa, altrimenti puoi lasciare citta.toString()
+            String nomeCitta = citta.getNome();
+            String nazione = citta.getNazione();
 
-        this.latitudine = latitude;
-        this.longitudine = longitude;
-
-        etichettaNome.setText(valoreNonNullo(name));
-        etichettaIndirizzo.setText(valoreNonNullo(address));
-
-        // Format città
-        if (city != null && !city.isBlank()) {
-            if (nation != null && !nation.isBlank()) etichettaCitta.setText(city + ", " + nation);
-            else etichettaCitta.setText(city);
+            if (nazione != null && !nazione.isBlank()) {
+                etichettaCitta.setText(nomeCitta + ", " + nazione);
+            } else {
+                etichettaCitta.setText(valoreNonNullo(nomeCitta));
+            }
         } else {
-            etichettaCitta.setText(valoreNonNullo(nation));
+            etichettaCitta.setText("-"); // Se non c'è la città, stampiamo un trattino
         }
-
-        String prezzoVisualizzato = Etichette.formattaFasciaPrezzo(price);
+        // 5. Prezzo, Telefono, Delivery, Prenotazione
+        String prezzoVisualizzato = Etichette.formattaFasciaPrezzo(ristorante.getFasciaPrezzo());
         valorePrezzo.setText(prezzoVisualizzato.isBlank() ? "-" : prezzoVisualizzato);
-        valoreTelefono.setText((phoneNumber != null && !phoneNumber.isBlank()) ? phoneNumber : "-");
-        valoreCucina.setText(valoreNonNullo(cuisine));
-        valoreConsegna.setText(delivery ? "Disponibile" : "No");
-        valorePrenotazione.setText(booking ? "Disponibile" : "No");
 
-        mostraStelleMichelin(stelleMichelin);
+        valoreTelefono.setText((ristorante.getTelefono() != null && !ristorante.getTelefono().isBlank()) ? ristorante.getTelefono() : "-");
 
-        // GESTIONE SITO WEB (WebView)
-        if (website != null && !website.isBlank() && !website.equalsIgnoreCase("null")){
-            linkSitoWeb.setText(website);
+        valoreConsegna.setText(ristorante.isDelivery() ? "Disponibile" : "No");
+        valorePrenotazione.setText(ristorante.isPrenotazioneOnline() ? "Disponibile" : "No");
+        // 6. Formattazione pulita per le Cucine (evita le parentesi quadre di Java)
+        if (ristorante.getCucine() != null && !ristorante.getCucine().isEmpty()) {
+            valoreCucina.setText(String.join(", ", ristorante.getCucine()));
+        } else {
+            valoreCucina.setText("-");
+        }
+        // 7. Stelle Michelin
+        mostraStelleMichelin(ristorante.getStelleMichelin());
+        // 8. Gestione Sito Web (WebView)
+        if (ristorante.getSitoWeb() != null && !ristorante.getSitoWeb().isBlank() && !ristorante.getSitoWeb().equalsIgnoreCase("null")) {
+            linkSitoWeb.setText(ristorante.getSitoWeb());
             linkSitoWeb.setDisable(false);
-            linkSitoWeb.setOnAction(e -> apriInWebView(website));
-            apriInWebView(website);
+            linkSitoWeb.setOnAction(e -> apriInWebView(ristorante.getSitoWeb()));
+            apriInWebView(ristorante.getSitoWeb());
         } else {
             linkSitoWeb.setText("-");
             linkSitoWeb.setDisable(true);
             mostraMessaggioNessunSito();
         }
-        // "Apri in Maps"
+        // 9. Link Esterni e Preferiti
         preparaGoogleMapsUrl();
-        // Gestione bottone Preferiti in base al ruolo
         aggiornaVisibilitaPreferiti();
     }
 
@@ -108,16 +118,22 @@ public class RestaurantDetailsController {
      *
      * @author Matteo Franguelli
      */
-    private void preparaGoogleMapsUrl() {
+    private void preparaGoogleMapsUrl() throws IOException {
         // Il flusso FILTRO non restituisce ancora le coordinate: in quel caso
         // l'URL deve rimanere null, così il pulsante Maps viene disabilitato.
         // TODO: valorizzare nuovamente l'URL quando le coordinate saranno
         // incluse in LuogoDTO dal DAO e restituite dal server.
         String urlFinale = null;
 
-        if (latitudine != 0 && longitudine != 0) {
+        GestioneRichieste gs =GestioneRichieste.getInstance();
+        Integer id= ristoranteDTO.getIdRistorante();
+
+        CoordinateDTO coordinate =(CoordinateDTO) GestioneRichieste.getInstance().inviaEAttendi("MAPS",id);
+       latitudineLoc=coordinate.getLatitudine();
+       longitudineLoc=coordinate.getLongitudine();
+        if (latitudineLoc != 0 && longitudineLoc != 0) {
             // Coordinate precise
-            urlFinale = "https://www.google.com/maps?q=" + latitudine + "," + longitudine;
+           urlFinale = "https://www.google.com/maps?q=" + latitudineLoc + "," + longitudineLoc;
         }
 
         this.googleMapsUrl = urlFinale;
@@ -307,6 +323,7 @@ public class RestaurantDetailsController {
         valoreStelle.setText(sb.toString());
     }
 
+    //todo Da cancellare
     /**
      * Aggiunge l'ID del ristorante alla lista dei preferiti dell'utente nel file CSV.
      * Legge il file, individua la riga dell'utente loggato, aggiorna la colonna dei preferiti evitando duplicati, e riscrive il file aggiornato.

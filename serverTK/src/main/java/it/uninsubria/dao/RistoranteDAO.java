@@ -111,7 +111,6 @@ public class RistoranteDAO {
         return null;
     }
 
-    //todo vanno ordinati in ordine alfabetico
     /**
      * Funzione ricerca filtro ristoranti
      * @param conn
@@ -197,7 +196,7 @@ public class RistoranteDAO {
             parametri.add(filtro.getMediaStelleMinima());
         }
 
-        sql.append("ORDER BY R.id_ristorante ");
+        sql.append("ORDER BY R.nome ASC ");
 
         try (PreparedStatement ps = conn.prepareStatement(sql.toString())) {
             for (int i = 0; i < parametri.size(); i++) {

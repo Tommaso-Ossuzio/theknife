@@ -370,7 +370,7 @@ public class SlaveThread extends Thread {
             e.printStackTrace();
         }
 
-        if(coordinate!=null){
+        if(coordinate==null){
             coordinate= new CoordinateDTO(1,1,1);
         }
 

@@ -405,32 +405,16 @@ public class MainController implements ControllerAutenticazione {
      * @author Celestino Resteghini
      */
     private void apriDettagliRistorante(RistoranteDTO rd) {
-        LuogoDTO luogo = rd.getLuogo();
-        CittaDTO citta = luogo == null ? null : luogo.getCitta();
-        CoordinateDTO coordinate = luogo == null ? null : luogo.getCoordinate();
-        double latitudine = coordinate == null ? 0.0 : coordinate.getLatitudine();
-        double longitudine = coordinate == null ? 0.0 : coordinate.getLongitudine();
-        String cucina = rd.getCucine() == null ? "" : String.join(", ", rd.getCucine());
-
-        // Il valore arriva dal database tramite RistoranteDTO.
-        Integer stelleMichelin = rd.getStelleMichelin();
-
         Finestre.apriModale("restaurant_details.fxml", valoreNonNullo(rd.getNome()),
-                (RestaurantDetailsController ctrl) -> ctrl.setRestaurantData(
-                        rd.getNome(),
-                        citta == null ? null : citta.getNazione(),
-                        citta == null ? null : citta.getNome(),
-                        luogo == null ? null : luogo.getVia(),
-                        latitudine,
-                        longitudine,
-                        rd.getFasciaPrezzo(),
-                        rd.getTelefono(),
-                        rd.isDelivery(),
-                        rd.isPrenotazioneOnline(),
-                        cucina,
-                        rd.getSitoWeb(),
-                        stelleMichelin
-                ));
+                (RestaurantDetailsController ctrl) -> {
+                    try {
+                        // Ora passiamo l'intero oggetto RistoranteDTO in un colpo solo!
+                        ctrl.setRestaurantData(rd);
+                    } catch (java.io.IOException e) {
+                        System.err.println("Errore durante il caricamento dei dati del ristorante.");
+                        e.printStackTrace();
+                    }
+                });
     }
 
 
