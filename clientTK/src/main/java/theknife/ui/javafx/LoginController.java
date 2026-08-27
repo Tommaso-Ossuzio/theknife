@@ -100,7 +100,7 @@ public class LoginController {
      * @throws IOException
      */
     private boolean eseguiLogin(String email, String password) throws IOException {
-        GestioneRichieste gr = new GestioneRichieste();
+        GestioneRichieste gr = GestioneRichieste.getInstance();
         AuthDTO credenziali = new AuthDTO(email, Utility.calcolaSha256(password));
         HashMap<String, Boolean> hm = (HashMap<String, Boolean>) gr.inviaEAttendi("LOG",credenziali);
         Boolean risposta = hm.get("LOG");
