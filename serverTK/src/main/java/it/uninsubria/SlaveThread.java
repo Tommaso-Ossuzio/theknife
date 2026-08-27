@@ -416,7 +416,7 @@ public class SlaveThread extends Thread {
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        if(ristoranti!=null){
+        if(ristoranti==null){
             ristoranti= new LinkedList<>();
         }
 
@@ -443,7 +443,7 @@ public class SlaveThread extends Thread {
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        if(ristoranti!=null){
+        if(ristoranti==null){
             ristoranti= new LinkedList<>();
         }
 
@@ -469,7 +469,7 @@ public class SlaveThread extends Thread {
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        if(recensioni!=null){
+        if(recensioni==null){
             recensioni= new LinkedList<>();
         }
 
