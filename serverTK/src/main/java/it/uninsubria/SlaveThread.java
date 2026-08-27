@@ -9,6 +9,7 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.LinkedList;
+import java.util.List;
 
 /**
  * Thread che si occupa di gestire le rischieste degli utenti
@@ -501,15 +502,13 @@ public class SlaveThread extends Thread {
      * @throws IOException
      */
     private void gestisciCitta() throws IOException {
-        LinkedList<String> citta = null;
+        List<String> citta = null;
         try(Connection conn= getConnection()) {
-            citta= (LinkedList<String>) ristoranteDAO.getCitta(conn);
+            citta= ristoranteDAO.getCitta(conn);
         }catch(SQLException e){
             e.printStackTrace();
         }
-        if(citta!=null){
-            citta= new LinkedList<>();
-        }
+
         System.out.println("CITTA: invio: lista citta");
         out.writeObject(citta);
         out.flush();
@@ -522,16 +521,14 @@ public class SlaveThread extends Thread {
      * @throws IOException
      */
     private void gestisciCucine() throws IOException {
-        LinkedList<String> cucine =null;
+        List<String> cucine =null;
         try(Connection conn= getConnection())
         {
-            cucine =(LinkedList<String>) ristoranteDAO.getCucine(getConnection());
+            cucine = ristoranteDAO.getCucine(getConnection());
         }catch(SQLException e){
             e.printStackTrace();
         }
-        if(cucine!=null){
-            cucine= new LinkedList<>();
-        }
+
         System.out.println("CUC: invio: lista cucine");
         out.writeObject(cucine);
         out.flush();
