@@ -62,6 +62,7 @@ public class SlaveThread extends Thread {
                     case "RISP-REC" -> gestisciRispostaRecensione();
                     case "CITTA" -> gestisciCitta();
                     case "CUC" -> gestisciCucine();
+                    case "ID" -> gestisciId();
                     default -> System.err.println("Comando sconosciuto: " + comando);
                 }
             }
@@ -515,6 +516,21 @@ public class SlaveThread extends Thread {
         LinkedList<String> cucine = new LinkedList<>(); //TODO sostituire lista vuota con lista nomi cucine
         System.out.println("CUC: invio: lista cucine");
         out.writeObject(cucine);
+        out.flush();
+    }
+
+    /**
+     * Metodo per inviare l'id una volta ricevuta l'email del client
+     * @author Celestino Resteghini
+     * @throws IOException
+     * @throws ClassNotFoundException
+     */
+    private void gestisciId() throws IOException, ClassNotFoundException {
+        String email = (String) in.readObject();
+        System.out.println("ID: ricevuto: " + email.toString());
+        int id = -1; //TODO da sostituire con il metodo
+        System.out.println("ID: invio id:" + id);
+        out.writeObject(id);
         out.flush();
     }
 }

@@ -1,8 +1,10 @@
 package theknife.ui.javafx;
 
+import it.uninsubria.dto.*;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
+import theknife.model.GestioneRichieste;
 import theknife.model.GestioneRistoranti;
 import theknife.model.Luogo;
 import theknife.model.Ristorante;
@@ -12,6 +14,7 @@ import javafx.collections.ObservableList;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -29,11 +32,14 @@ public class FavoritesController {
     @FXML private TableColumn<RestaurantRow, String> colonnaRistorante;
     @FXML private TableColumn<RestaurantRow, String> colonnaLuogo;
     @FXML private TableView<RestaurantRow> tabellaPreferiti;
-
     @FXML private Label etichettaVuota;
 
     private final ObservableList<RestaurantRow> preferiti = FXCollections.observableArrayList();
-    GestioneRistoranti gr = GestioneRistoranti.getInstance();
+    //TODO da cancellare GestioneRistoranti grist = GestioneRistoranti.getInstance();
+    GestioneRichieste gr = new GestioneRichieste();
+
+    public FavoritesController() throws IOException {
+    }
 
     /**
      * Inizializza la grafica della lista
@@ -88,7 +94,7 @@ public class FavoritesController {
                                 for (String st : s) {
                                     idRistorante = Integer.valueOf(st);
                                     int id = idRistorante;
-                                    Ristorante r = gr.listaRistoranti.stream().filter(x -> x.getId() == id).findFirst().orElse(null);
+                                    Ristorante r = grist.listaRistoranti.stream().filter(x -> x.getId() == id).findFirst().orElse(null);
                                     if (r != null)
                                         preferiti.add(new RestaurantRow(r.getNome(), r.getLuogo().toString(), idRistorante));
                                 }
@@ -108,7 +114,7 @@ public class FavoritesController {
      * @author Matteo Franguelli
      * @param idDaRimuovere
      */
-    private void rimuoviPreferitoDalFile(int idDaRimuovere) {
+    /*private void rimuoviPreferitoDalFile(int idDaRimuovere) {
         File file = new File("data", "users.csv");
         if (!file.exists()) return;
 
@@ -161,6 +167,15 @@ public class FavoritesController {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    } TODO DA CANCELLARE */
+
+    private void rimuoviPreferito(int idDaRimuovere) {
+        Session session = Session.getInstance();
+        HashMap<String, Integer> id = new HashMap<>();
+        session.getUsername();
+        id.put("idUtente", 1);
+        id.put("idRistorante", idDaRimuovere);
+        LinkedList<RistoranteDTO> ristoranti = (LinkedList<RistoranteDTO>) GestioneRichieste.getInstance().inviaEAttendi("ELIM-PREF", id);
     }
 
 
