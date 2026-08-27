@@ -167,4 +167,25 @@ public class UtenteDAO {
         }
         return null;
     }
+
+    /**
+     * Restituisce l'idUtente sapendo la mail
+     * @param conn connesione al database
+     * @param email email univoca dell'utente
+     * @return int id dell'utente
+     * @author Elia Toschi
+     */
+    public int getIdUtenteDaMail(Connection conn, String email)
+    {
+        String sql = "SELECT id_utente FROM UTENTE WHERE email = ?";
+        try(PreparedStatement ps= conn.prepareStatement(sql); ResultSet rs =ps.executeQuery();) {
+            rs.next();
+            int idUtente = rs.getInt("id_utente");
+            return idUtente;
+        }catch (SQLException e) {
+            e.printStackTrace();
+            System.err.println("L'utente non trovato.");
+        }
+        return -1;
+    }
 }
