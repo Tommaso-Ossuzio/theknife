@@ -110,7 +110,7 @@ public class WelcomeController implements ControllerAutenticazione {
             if(sessione.isGuest()){
                 sessione.setCitta(campoCitta.getValue());
             }else{
-                GestioneRichieste gr = new GestioneRichieste();
+                GestioneRichieste gr= GestioneRichieste.getInstance();
                 String risposta = (String) gr.inviaEAttendi("DOM", sessione.getUsername());
                 sessione.setCitta(risposta);
             }

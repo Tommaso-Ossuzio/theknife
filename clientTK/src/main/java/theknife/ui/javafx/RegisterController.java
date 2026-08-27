@@ -139,7 +139,7 @@ public class RegisterController {
         } else {
             dataNascita = Date.from(dataN.atStartOfDay(ZoneId.systemDefault()).toInstant());
         }
-        GestioneRichieste gr = new GestioneRichieste();
+        GestioneRichieste gr = GestioneRichieste.getInstance();
         UtenteDTO utente = new UtenteDTO(nome,cognome,email,dataNascita, new LuogoDTO(new CittaDTO(citta)), passwordHashed);
         Boolean risposta = (Boolean) gr.inviaEAttendi("REG",utente);
 

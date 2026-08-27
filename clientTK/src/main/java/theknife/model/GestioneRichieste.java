@@ -34,6 +34,7 @@ public class GestioneRichieste {
     /**
      * Metodo per chiudere la Socket alla chiusura della GUI
      * @author Celestino Resteghini
+     * @author Elia Toschi
      */
     public void chiudiConnessione() {
         try {
@@ -43,7 +44,6 @@ public class GestioneRichieste {
             System.out.println("Connessione col server chiusa");
         } catch (IOException e) {
             e.printStackTrace();
-
         }
     }
 
