@@ -36,7 +36,6 @@ public class FavoritesController {
 
     private final ObservableList<RestaurantRow> preferiti = FXCollections.observableArrayList();
     //TODO da cancellare GestioneRistoranti grist = GestioneRistoranti.getInstance();
-    GestioneRichieste gr = new GestioneRichieste();
 
     public FavoritesController() throws IOException {
     }
@@ -169,13 +168,13 @@ public class FavoritesController {
         }
     } TODO DA CANCELLARE */
 
-    private void rimuoviPreferito(int idDaRimuovere) {
+    private void rimuoviPreferito(int idDaRimuovere) throws IOException {
         Session session = Session.getInstance();
         HashMap<String, Integer> id = new HashMap<>();
-        session.getUsername();
-        id.put("idUtente", 1);
+        int idUtente = (int) GestioneRichieste.getInstance().inviaEAttendi("ID", session.getUsername());
+        id.put("idUtente", idUtente);
         id.put("idRistorante", idDaRimuovere);
-        LinkedList<RistoranteDTO> ristoranti = (LinkedList<RistoranteDTO>) GestioneRichieste.getInstance().inviaEAttendi("ELIM-PREF", id);
+        GestioneRichieste.getInstance().inviaSolo("ELIM-PREF", id);
     }
 
 
@@ -220,7 +219,11 @@ public class FavoritesController {
             deleteItem.setOnAction(event -> {
                 RestaurantRow rigaSelezionata = row.getItem();
                 if (rigaSelezionata != null) {
-                    chiediConfermaERimuovi(rigaSelezionata);
+                    try {
+                        chiediConfermaERimuovi(rigaSelezionata);
+                    } catch (IOException e) {
+                        throw new RuntimeException(e);
+                    }
                 }
             });
 
@@ -240,7 +243,7 @@ public class FavoritesController {
      * Chiede, tramite un popup di conferma, se la rimozione e' volontaria
      * @author Matteo Franguelli
      */
-    private void chiediConfermaERimuovi(RestaurantRow riga) {
+    private void chiediConfermaERimuovi(RestaurantRow riga) throws IOException {
         Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
         alert.setTitle("Rimuovi Preferito");
         alert.setHeaderText("Rimuovere " + riga.getNome() + " dai preferiti?");
@@ -248,7 +251,7 @@ public class FavoritesController {
 
         if (alert.showAndWait().orElse(ButtonType.CANCEL) == ButtonType.OK) {
             preferiti.remove(riga);
-            rimuoviPreferitoDalFile(riga.getRawRestaurantId());
+            rimuoviPreferito(riga.getRawRestaurantId());
             aggiornaMessaggioVuoto();
         }
     }
