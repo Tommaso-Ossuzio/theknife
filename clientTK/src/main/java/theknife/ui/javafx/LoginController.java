@@ -1,5 +1,9 @@
 package theknife.ui.javafx;
 
+import it.uninsubria.dto.AuthDTO;
+import it.uninsubria.dto.CittaDTO;
+import it.uninsubria.dto.LuogoDTO;
+import it.uninsubria.dto.UtenteDTO;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
@@ -7,19 +11,20 @@ import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.event.ActionEvent;
 import javafx.stage.Stage;
+import theknife.model.GestioneRichieste;
 import theknife.utilities.Utility;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-
-//TODO da rivedere, vengono usati i file
+import java.util.HashMap;
 
 /**
  * Controller della finestra di login.
- * Gestisce l'accesso leggendo i permessi specifici dal CSV data/users.csv.
+ * Gestisce l'accesso richiedendo i permessi specifici al DB
  * @author Matteo Franguelli
+ * @author Celestino Resteghini
  */
 public class LoginController {
 
@@ -29,9 +34,6 @@ public class LoginController {
     @FXML private Button bottoneAccedi;
 
     private ControllerAutenticazione controllerPrincipale;
-
-    private static final String NOME_CARTELLA = "data";
-    private static final String NOME_FILE = "users.csv";
 
     /**
      * Permette di accedere anche premendo Invio.
@@ -54,11 +56,12 @@ public class LoginController {
 
     /**
      * Metodo che si occupa della finestra di Login.
-     * @param event
      * @author Matteo Franguelli
+     * @param event
+     * @throws IOException
      */
     @FXML
-    private void onLogin(ActionEvent event) {
+    private void onLogin(ActionEvent event) throws IOException {
         String nomeUtente = campoUsername.getText();
         String password   = campoPassword.getText();
 
@@ -88,62 +91,28 @@ public class LoginController {
     }
 
     /**
-     * Cerca l'utente nel CSV e, se presente, imposta la sessione con i permessi corretti.
+     * Cerca l'utente nel DB e, se presente, imposta la sessione con i permessi corretti.
      * @author Matteo Franguelli
+     * @author Celestino Resteghini
+     * @param email
+     * @param password
+     * @return true se la ricerca è andata a buon fine
+     * @throws IOException
      */
-    private boolean eseguiLogin(String nomeUtente, String password) {
-        File fileUtenti = new File(NOME_CARTELLA, NOME_FILE);
-        if (!fileUtenti.exists()) return false;
+    private boolean eseguiLogin(String email, String password) throws IOException {
+        GestioneRichieste gr = new GestioneRichieste();
+        AuthDTO credenziali = new AuthDTO(email, Utility.calcolaSha256(password));
+        HashMap<String, Boolean> hm = (HashMap<String, Boolean>) gr.inviaEAttendi("LOG",credenziali);
+        Boolean risposta = hm.get("LOG");
+        Boolean is_ristoratore = hm.get("is_ristoratore");
 
-        try (BufferedReader lettore = new BufferedReader(new FileReader(fileUtenti, StandardCharsets.UTF_8))) {
-            String hashPassword = calcolaSha256(password);
-            String linea;
-
-            while ((linea = lettore.readLine()) != null) {
-                if (linea.isBlank()) continue;
-                String[] parti = linea.split(";");
-
-                // Formato CSV atteso: username;hash;nome;cognome;città;isCliente;isRistoratore
-                if (parti.length >= 2) {
-                    if (parti[0].equals(nomeUtente) && parti[1].equals(hashPassword)) {
-
-                        boolean isCliente = true;
-                        boolean isRistoratore = false;
-
-                        if (parti.length >= 7) {
-                            isCliente = Boolean.parseBoolean(parti[5]);
-                            isRistoratore = Boolean.parseBoolean(parti[6]);
-                        }
-                        else if (parti.length >= 6) {
-                            isRistoratore = Boolean.parseBoolean(parti[5]);
-                        }
-                        Session.Role ruoloMain = isRistoratore ? Session.Role.RISTORATORE : Session.Role.CLIENTE;
-                        Session.getInstance().login(nomeUtente, ruoloMain);
-                        Session.getInstance().setPermessi(isCliente, isRistoratore);
-                        return true;
-                    }
-                }
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
+        if(risposta) {
+            Session.Role ruoloMain = is_ristoratore ? Session.Role.RISTORATORE : Session.Role.CLIENTE;
+            Session.getInstance().login(email, ruoloMain);
+            Session.getInstance().setPermessi(!is_ristoratore, is_ristoratore); //.setPermessi(isCliente, isRistoratore);
         }
-        return false;
-    }
 
-    /**
-     * Permette di criptare la password per essere memorizzata.
-     * @param testo
-     * @return
-     * @author Matteo Franguelli
-     */
-    private String calcolaSha256(String testo) {
-        try {
-            MessageDigest md = MessageDigest.getInstance("SHA-256");
-            byte[] digest = md.digest(testo.getBytes(StandardCharsets.UTF_8));
-            StringBuilder sb = new StringBuilder();
-            for (byte b : digest) sb.append(String.format("%02x", b));
-            return sb.toString();
-        } catch (NoSuchAlgorithmException e) { throw new RuntimeException(e); }
+        return risposta;
     }
 
     /**

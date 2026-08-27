@@ -21,8 +21,9 @@ import java.util.Date;
 /**
  * Controller della finestra di registrazione.
  * Gestisce la creazione di un nuovo utente e il salvataggio
- * delle credenziali nel file data/users.csv.
+ * delle credenziali nel DB
  * @author Matteo Franguelli
+ * @author Celestino Resteghini
  */
 public class RegisterController {
 

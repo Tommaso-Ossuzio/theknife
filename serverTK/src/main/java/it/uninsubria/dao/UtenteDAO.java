@@ -79,7 +79,7 @@ public class UtenteDAO {
      * Accede al db e controlla le credenziali
      * @param conn
      * @param credenziali AuthDTO
-     * @return idUtente se successo o null se credenziali errato
+     * @return true se successo o false se credenziali errate
      * @author Elia Toschi
      */
     public boolean eseguiLogin(Connection conn, AuthDTO credenziali) {
@@ -102,6 +102,33 @@ public class UtenteDAO {
         }
 
         System.err.println("Login fallito: Credenziali errate.");
+        return false;
+    }
+
+    /**
+     * Metodoto che controlla se un utente è ristoratore
+     * @param conn
+     * @param email
+     * @return true se è ristoratore o false se non lo è oppure credenziali errate
+     * @author Celestino Resteghini
+     */
+    public boolean isRistoratore(Connection conn, String email) {
+
+        String sql = "SELECT is_ristoratore FROM UTENTE WHERE email = ?";
+
+        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setString(1, email);
+
+            ResultSet rs = ps.executeQuery();
+
+            if (rs.next()) {
+                return rs.getBoolean("is_ristoratore");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        System.err.println("L'utente non trovato.");
         return false;
     }
 

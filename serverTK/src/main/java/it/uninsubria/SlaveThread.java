@@ -93,16 +93,24 @@ public class SlaveThread extends Thread {
     private void gestisciLogin() throws IOException, ClassNotFoundException {
         AuthDTO credenziali = (AuthDTO) in.readObject();
         System.out.println("LOG: ricevuto: " + credenziali.toString());
+        HashMap<String, Boolean> hm = new HashMap<>();
+        Boolean m=false;
+
         Boolean esito = false;
         try (Connection conn = getConnection()) {
-            if(utenteDAO.eseguiLogin(conn,credenziali))
+            if(utenteDAO.eseguiLogin(conn,credenziali)){
                 esito = true;
+            }
+            m = utenteDAO.isRistoratore(conn, credenziali.getEmail());
         } catch (SQLException e) {
             e.printStackTrace();
         }
 
-        System.out.println("LOG: invio: " + esito);
-        out.writeObject(esito);
+        hm.put("LOG", esito);
+        hm.put("is_ristoratore", m);
+
+        System.out.println("LOG: invio: " + hm);
+        out.writeObject(hm);
         out.flush();
     }
 
