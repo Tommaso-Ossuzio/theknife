@@ -18,8 +18,6 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 
-//TODO da rivedere, vengono usati i file
-
 /**
  * Classe che si occupa della gestione dei ristoranti preferiti.
  * @author Celestino Resteghini
@@ -35,17 +33,13 @@ public class FavoritesController {
     @FXML private Label etichettaVuota;
 
     private final ObservableList<RestaurantRow> preferiti = FXCollections.observableArrayList();
-    //TODO da cancellare GestioneRistoranti grist = GestioneRistoranti.getInstance();
-
-    public FavoritesController() throws IOException {
-    }
 
     /**
      * Inizializza la grafica della lista
      * @author Celestino Resteghini
      */
     @FXML
-    private void initialize() {
+    private void initialize() throws IOException {
         colonnaRistorante.setCellValueFactory(
                 new PropertyValueFactory<>("nome")
         );
@@ -61,113 +55,33 @@ public class FavoritesController {
     }
 
     /**
-     * Si occupa di aggiungere il ristorante passato ai preferiti.
+     * Si occupa di aggiungere la lista di ristoranti preferiti nella TableView.
      * @author Celestino Resteghini
      */
-    public void addFavorite() {
-        preferiti.clear();
-
+    public void addFavorite() throws IOException {
         Session session = Session.getInstance();
         if (session.isGuest()) return;
 
-        String mioUsername = session.getUsername();
-        int idRistorante=0;
+        int idUtente = (int) GestioneRichieste.getInstance().inviaEAttendi("ID", session.getUsername());
 
-        File file = new File("data", "users.csv");
-        if (!file.exists()) return;
+        LinkedList<RistoranteDTO> ristoranti = (LinkedList<RistoranteDTO>) GestioneRichieste.getInstance().inviaEAttendi("VIS-PREF", idUtente);
 
-        try (BufferedReader br = new BufferedReader(new FileReader(file, StandardCharsets.UTF_8))) {
-            String linea = br.readLine();
+        preferiti.clear();
 
-            while ((linea = br.readLine()) != null) {
-                if (linea.isBlank()) continue;
-                String[] parti = linea.contains(";") ? linea.split(";") : linea.split(",");
-
-                if (parti.length >= 0) {
-                    try {
-                        String userN = parti[0].trim();
-                        //Se coincide lo username, prendo i ristoranti preferiti
-                        if (userN.equals(mioUsername)) {
-                            if (parti.length > 8 && !parti[8].isEmpty()) {
-                                String[] s = parti[8].split("-");
-                                for (String st : s) {
-                                    idRistorante = Integer.valueOf(st);
-                                    int id = idRistorante;
-                                    Ristorante r = grist.listaRistoranti.stream().filter(x -> x.getId() == id).findFirst().orElse(null);
-                                    if (r != null)
-                                        preferiti.add(new RestaurantRow(r.getNome(), r.getLuogo().toString(), idRistorante));
-                                }
-                                break;
-                            }
-                        }
-                    } catch (Exception ignored) {}
-                }
+        if (ristoranti != null) {
+            for (RistoranteDTO r : ristoranti) {
+                String luogoFormattato = r.getLuogo().getVia() + ", " + r.getLuogo().getCitta().getNazione();
+                preferiti.add(new RestaurantRow(r.getNome(), luogoFormattato, r.getIdRistorante()));
             }
-        } catch (IOException e) {
-            e.printStackTrace();
         }
     }
 
     /**
-     * Rimuove un ID dalla lista dei preferiti nel file users.csv e riscrive il file.
-     * @author Matteo Franguelli
+     * Metodo per rimuovere un ristorante preferito dal db
+     * @author Celestino Resteghini
      * @param idDaRimuovere
+     * @throws IOException
      */
-    /*private void rimuoviPreferitoDalFile(int idDaRimuovere) {
-        File file = new File("data", "users.csv");
-        if (!file.exists()) return;
-
-        List<String> righeDaSalvare = new LinkedList<>();
-        String mioUsername = Session.getInstance().getUsername();
-        String idString = String.valueOf(idDaRimuovere);
-
-        try (BufferedReader br = new BufferedReader(new FileReader(file, StandardCharsets.UTF_8))) {
-            String linea;
-            while ((linea = br.readLine()) != null) {
-                if (linea.isBlank()) continue;
-                String[] parti = linea.split(";", -1);
-
-                if (parti.length > 0 && parti[0].equals(mioUsername)) {
-
-                    if (parti.length > 8 && !parti[8].isEmpty()) {
-                        String[] preferitiAttuali = parti[8].split("-");
-                        StringBuilder nuoviPreferiti = new StringBuilder();
-                        boolean primo = true;
-
-                        for (String id : preferitiAttuali) {
-                            if (!id.trim().equals(idString)) {
-                                if (!primo) {
-                                    nuoviPreferiti.append("-");
-                                }
-                                nuoviPreferiti.append(id.trim());
-                                primo = false;
-                            }
-                        }
-                        parti[8] = nuoviPreferiti.toString();
-                    }
-
-                    String nuovaRiga = String.join(";", parti);
-                    righeDaSalvare.add(nuovaRiga);
-
-                } else {
-                    righeDaSalvare.add(linea);
-                }
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-            return;
-        }
-
-        try (BufferedWriter bw = new BufferedWriter(new FileWriter(file, StandardCharsets.UTF_8))) {
-            for (String riga : righeDaSalvare) {
-                bw.write(riga);
-                bw.newLine();
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    } TODO DA CANCELLARE */
-
     private void rimuoviPreferito(int idDaRimuovere) throws IOException {
         Session session = Session.getInstance();
         HashMap<String, Integer> id = new HashMap<>();

@@ -29,6 +29,7 @@ public class UtenteDAO {
      */
     public boolean registraUtente(Connection conn, UtenteDTO utente, String passwordHash) {
         String checkEmailSql = "SELECT id_utente FROM UTENTE WHERE email = ?";
+
         try (PreparedStatement psCheck = conn.prepareStatement(checkEmailSql)) {
             psCheck.setString(1, utente.getEmail());
             ResultSet rsCheck = psCheck.executeQuery();
@@ -178,14 +179,19 @@ public class UtenteDAO {
     public int getIdUtenteDaMail(Connection conn, String email)
     {
         String sql = "SELECT id_utente FROM UTENTE WHERE email = ?";
-        try(PreparedStatement ps= conn.prepareStatement(sql); ResultSet rs =ps.executeQuery();) {
-            rs.next();
-            int idUtente = rs.getInt("id_utente");
-            return idUtente;
-        }catch (SQLException e) {
+
+        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setString(1, email.trim());
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getInt("id_utente");
+                }
+            }
+        } catch (SQLException e) {
+            System.err.println("Errore id utente non trovato");
             e.printStackTrace();
-            System.err.println("L'utente non trovato.");
         }
+
         return -1;
     }
 }

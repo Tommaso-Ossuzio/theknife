@@ -9,6 +9,7 @@ import it.uninsubria.dto.RistoratoreDTO;
 
 import java.sql.*;
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
 /**
@@ -68,12 +69,12 @@ public class RistoranteDAO {
         {
             ps.setInt(1, idUtenteCercato);
             ResultSet rs= ps.executeQuery();
-            ArrayList<RistoranteDTO> array=new ArrayList<>();
+            LinkedList<RistoranteDTO> list=new LinkedList<>();
             while (rs.next())
             {
-                array.add(costruisciRistoranteDaResultSet(conn, rs));
+                list.add(costruisciRistoranteDaResultSet(conn, rs));
             }
-            return array;
+            return list;
         }catch (SQLException e)
         {
             e.printStackTrace();
