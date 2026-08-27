@@ -62,6 +62,22 @@ public class GestioneRichieste {
     }
 
     /**
+     * Metodo per l'ivio di un comando e un dato senza attesa della risposta
+     * @author Celestino Resteghini
+     * @param comando
+     * @param dato
+     */
+    public synchronized void inviaSolo(String comando, Object dato) {
+        try {
+            out.writeObject(comando);
+            out.writeObject(dato);
+            out.flush();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
      * Metodo per l'invio di un comando con attesa della risposta
      * @param comando
      * @author Celestino Resteghini

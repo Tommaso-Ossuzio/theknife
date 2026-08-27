@@ -544,7 +544,13 @@ public class SlaveThread extends Thread {
     private void gestisciId() throws IOException, ClassNotFoundException {
         String email = (String) in.readObject();
         System.out.println("ID: ricevuto: " + email.toString());
-        int id = -1; //TODO da sostituire con il metodo
+        int id = -1;
+        try(Connection conn= getConnection())
+        {
+            id = utenteDAO.getIdUtenteDaMail(conn, email);
+        }catch(SQLException e){
+            e.printStackTrace();
+        }
         System.out.println("ID: invio id:" + id);
         out.writeObject(id);
         out.flush();
