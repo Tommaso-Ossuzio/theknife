@@ -188,7 +188,7 @@ public class ImportaDati {
                 ps.setString(1, email);
                 ps.setString(2, "Guida");
                 ps.setString(3, "Michelin");
-                ps.setString(4, "michelin123");
+                ps.setString(4, Utility.calcolaSha256("michelin123"));
                 ps.setBoolean(5, true); // DEVE essere ristoratore per possedere ristoranti
                 ps.setInt(6, idLuogo);
                 ps.executeUpdate();
@@ -415,7 +415,7 @@ public class ImportaDati {
                     //TODO psw da generare l'hash
                     try (PreparedStatement ps = conn.prepareStatement(sqlUser)) {
                         ps.setString(1, email);
-                        ps.setString(2, password);
+                        ps.setString(2, Utility.calcolaSha256(password));
                         ps.setString(3, nome);
                         ps.setString(4, cognome);
                         ps.setBoolean(5, isRisto);
