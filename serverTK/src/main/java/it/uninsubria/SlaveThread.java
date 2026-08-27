@@ -55,6 +55,7 @@ public class SlaveThread extends Thread {
                     case "ELIM-PREF" -> gestisciEliminaPreferito();
                     case "AGG-PREF" -> gestisciAggiungiPreferito();
                     case "MAPS" -> gestisciCoordinateMaps();
+                    case "DOM" -> gestisciDomicilio();
                     case "RIST" -> gestisciRistoranti();
                     case "AGG-RIST" -> gestisciAggiungiRistorante();
                     case "REC-NO-RISP" -> gestisciRecensioniSenzaRisposta();
@@ -371,6 +372,27 @@ public class SlaveThread extends Thread {
 
         System.out.println("MAPS: invio: " + coordinate.toString());
         out.writeObject(coordinate);
+        out.flush();
+    }
+
+    /**
+     * Metodo per inviare il domicilio
+     * @author Celestino Resteghini
+     * @throws IOException
+     * @throws ClassNotFoundException
+     */
+    private void gestisciDomicilio() throws IOException, ClassNotFoundException {
+        String email = (String) in.readObject();
+        System.out.println("DOM: ricevuto: " + email);
+        String citta = "";
+        try (Connection conn = getConnection()) {
+            citta = luogoDAO.getDomicilio(conn, email);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        System.out.println("DOM: invio domicilio: " + citta);
+        out.writeObject(citta);
         out.flush();
     }
 

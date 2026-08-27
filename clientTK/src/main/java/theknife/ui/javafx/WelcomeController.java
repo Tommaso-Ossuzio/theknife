@@ -5,11 +5,13 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
+import theknife.model.GestioneRichieste;
 import theknife.model.GestioneRistoranti;
 import theknife.utilities.Finestre;
 import theknife.utilities.Temi;
 import theknife.utilities.Utility;
 
+import java.io.IOException;
 import java.util.Map;
 
 /**
@@ -94,15 +96,23 @@ public class WelcomeController implements ControllerAutenticazione {
      * porta l'utente alla schermata giusta per il suo ruolo.
      *
      * @author Matteo Franguelli
+     * @author Celestino Resteghini
      */
     @Override
-    public void onLoginSuccess() {
+    public void onLoginSuccess() throws IOException {
         Session sessione = Session.getInstance();
         if (!sessione.isAuthenticated()) return;
 
         if (sessione.isRistoratore()) {
             apriDashboardRistoratore();
         } else {
+            if(sessione.isGuest()){
+                sessione.setCitta(campoCitta.getValue());
+            }else{
+                GestioneRichieste gr = new GestioneRichieste();
+                String risposta = (String) gr.inviaEAttendi("DOM", sessione.getUsername());
+                sessione.setCitta(risposta);
+            }
             apriSchermataPrincipale(sessione.getCitta());
         }
     }

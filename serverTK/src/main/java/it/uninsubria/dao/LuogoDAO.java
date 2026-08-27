@@ -203,4 +203,34 @@ public class LuogoDAO {
 
         return -1;
     }
+
+    /**
+     * Metodo per ottenere il dimicilio di un utente
+     * @author Celestino Resteghini
+     * @param conn
+     * @param email
+     * @return nome della città del domicilio
+     */
+    public String getDomicilio(Connection conn, String email) {
+        String sql = "SELECT C.nome " +
+                "FROM UTENTE U " +
+                "JOIN LUOGO L ON U.id_luogo_vive = L.id " +
+                "JOIN CITTA C ON L.id_citta = C.id_citta " +
+                "WHERE LOWER(U.email) = LOWER(?) " +
+                "LIMIT 1";
+
+        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setString(1, email.trim());
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getString("nome");
+                }
+            }
+        } catch (SQLException e) {
+            System.err.println("Errore nome della citta per email: " + email + " non trovato");
+            e.printStackTrace();
+        }
+
+        return "ERRORE";
+    }
 }
