@@ -129,7 +129,7 @@ public class RegisterController {
 
         //TODO implementare controllo indirizzo mail
 
-        String passwordHashed = calcolaSha256(password);
+        String passwordHashed = Utility.calcolaSha256(password);
 
         Date dataNascita;
 
@@ -189,22 +189,5 @@ public class RegisterController {
     private void chiudiFinestra() {
         Stage stage = (Stage) campoUsername.getScene().getWindow();
         stage.close();
-    }
-
-    /**
-     * Calcola l'hash SHA-256 di una stringa.
-     *
-     * @author Matteo Franguelli
-     */
-    private String calcolaSha256(String input) {
-        try {
-            MessageDigest md = MessageDigest.getInstance("SHA-256");
-            byte[] hash = md.digest(input.getBytes(StandardCharsets.UTF_8));
-            StringBuilder sb = new StringBuilder();
-            for (byte b : hash) sb.append(String.format("%02x", b));
-            return sb.toString();
-        } catch (NoSuchAlgorithmException e) {
-            throw new RuntimeException(e);
-        }
     }
 }

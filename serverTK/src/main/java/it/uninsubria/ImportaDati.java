@@ -55,7 +55,6 @@ public class ImportaDati {
 
             String[] line;
             int count = 0;
-            Utility utility = new Utility();
 
             while ((line = reader.readNext()) != null) {
                 if (line.length < 8)
@@ -88,7 +87,7 @@ public class ImportaDati {
                     prenotazione_online = bookStr.equals("1") || bookStr.equals("true");
                 }
                 // Conversione simboli prezzo (es. €€ -> "tra 35 € e 60 €")
-                fasciaPrezzo = utility.ConvertiStringaPrezzo(fasciaPrezzo);
+                fasciaPrezzo = Utility.ConvertiStringaPrezzo(fasciaPrezzo);
                 fasciaPrezzo= (fasciaPrezzo);
 
                 String telefono = line[7].trim();

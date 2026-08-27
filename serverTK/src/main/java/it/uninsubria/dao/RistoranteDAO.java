@@ -17,8 +17,6 @@ import java.util.List;
  */
 public class RistoranteDAO {
 
-    private static final Utility UTILITY = new Utility();
-
     /**
      * Punto geografico usato come centro della ricerca per vicinanza.
      * Il nome canonico della città serve per includere sempre tutti i
@@ -274,7 +272,7 @@ public class RistoranteDAO {
             return true;
         }
 
-        return UTILITY.checkDistance10KM(
+        return Utility.checkDistance10KM(
                 riferimento.latitudine(),
                 riferimento.longitudine(),
                 rs.getDouble("latitudine_luogo"),

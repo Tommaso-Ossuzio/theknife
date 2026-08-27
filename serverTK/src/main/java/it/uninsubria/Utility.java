@@ -1,5 +1,9 @@
 package it.uninsubria;
 
+import java.nio.charset.StandardCharsets;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+
 import static java.lang.Math.*;
 import static java.lang.Math.atan2;
 import static java.lang.Math.cos;
@@ -16,7 +20,7 @@ import static java.lang.Math.sqrt;
  */
 public class Utility {
 
-    private final double RAGGIOTERRESTRE_KM= 6371;
+    private static final double RAGGIOTERRESTRE_KM= 6371;
     /**
      * Convertitore da prezzo a range di prezzo
      *
@@ -35,7 +39,7 @@ public class Utility {
      * @param prezzo
      * @autor  Celestino Resteghini
      */
-    public String ConvertiPrezzoRange(Double prezzo)
+    public static String ConvertiPrezzoRange(Double prezzo)
     {
         if(prezzo <= 35)
             return "meno di 35 €";
@@ -66,7 +70,7 @@ public class Utility {
      * @param simboli
      * @autor  Celestino Resteghini
      */
-    public String ConvertiStringaPrezzo(String simboli)
+    public static String ConvertiStringaPrezzo(String simboli)
     {
         switch (simboli.length())
         {
@@ -91,7 +95,7 @@ public class Utility {
      * @author Elia Toschi
      */
     //todo da vedere se implementarla
-    public boolean checkDistance10KM(double lat, double longi, double lat2, double longi2)
+    public static boolean checkDistance10KM(double lat, double longi, double lat2, double longi2)
     {
         double lat1Rad = toRadians(lat);
         double long1Rad= toRadians(longi);
@@ -113,5 +117,22 @@ public class Utility {
             return true;
         else
             return false;
+    }
+
+    /**
+     * Calcola l'hash SHA-256 di una stringa.
+     *
+     * @author Matteo Franguelli
+     */
+    public static String calcolaSha256(String input) {
+        try {
+            MessageDigest md = MessageDigest.getInstance("SHA-256");
+            byte[] hash = md.digest(input.getBytes(StandardCharsets.UTF_8));
+            StringBuilder sb = new StringBuilder();
+            for (byte b : hash) sb.append(String.format("%02x", b));
+            return sb.toString();
+        } catch (NoSuchAlgorithmException e) {
+            throw new RuntimeException(e);
+        }
     }
 }

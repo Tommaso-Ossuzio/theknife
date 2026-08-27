@@ -15,6 +15,9 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import theknife.model.GestioneRistoranti;
 
+import java.nio.charset.StandardCharsets;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.Map;
 import java.util.TreeMap;
 
@@ -121,5 +124,22 @@ public class Utility {
 
         cittaDelDatabase = conteggi;
         return cittaDelDatabase;
+    }
+
+    /**
+    * Calcola l'hash SHA-256 di una stringa.
+    *
+    * @author Matteo Franguelli
+    */
+    public static String calcolaSha256(String input) {
+        try {
+            MessageDigest md = MessageDigest.getInstance("SHA-256");
+            byte[] hash = md.digest(input.getBytes(StandardCharsets.UTF_8));
+            StringBuilder sb = new StringBuilder();
+            for (byte b : hash) sb.append(String.format("%02x", b));
+            return sb.toString();
+        } catch (NoSuchAlgorithmException e) {
+            throw new RuntimeException(e);
+        }
     }
 }
