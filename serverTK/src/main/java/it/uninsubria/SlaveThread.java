@@ -60,6 +60,8 @@ public class SlaveThread extends Thread {
                     case "AGG-RIST" -> gestisciAggiungiRistorante();
                     case "REC-NO-RISP" -> gestisciRecensioniSenzaRisposta();
                     case "RISP-REC" -> gestisciRispostaRecensione();
+                    case "CITTA" -> gestisciCitta();
+                    case "CUC" -> gestisciCucine();
                     default -> System.err.println("Comando sconosciuto: " + comando);
                 }
             }
@@ -490,5 +492,29 @@ public class SlaveThread extends Thread {
         } catch (SQLException e) {
             e.printStackTrace();
         }
+    }
+
+    /**
+     * Metodo per ottenere la lista di tutte le città
+     * @author Celestino Resteghini
+     * @throws IOException
+     */
+    private void gestisciCitta() throws IOException {
+        LinkedList<String> citta = new LinkedList<>(); //TODO sostituire lista vuota con lista nomi città
+        System.out.println("CITTA: invio: lista citta");
+        out.writeObject(citta);
+        out.flush();
+    }
+
+    /**
+     * Metodo per ottenere la lista di tutte le cucine
+     * @author Celestino Resteghini
+     * @throws IOException
+     */
+    private void gestisciCucine() throws IOException {
+        LinkedList<String> cucine = new LinkedList<>(); //TODO sostituire lista vuota con lista nomi cucine
+        System.out.println("CUC: invio: lista cucine");
+        out.writeObject(cucine);
+        out.flush();
     }
 }
