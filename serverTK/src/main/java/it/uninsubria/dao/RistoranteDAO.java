@@ -110,6 +110,7 @@ public class RistoranteDAO {
         return null;
     }
 
+    //todo vanno ordinati in ordine alfabetico
     /**
      * Funzione ricerca filtro ristoranti
      * @param conn
@@ -498,5 +499,55 @@ public class RistoranteDAO {
             System.err.println("Errore: Ristorante con questo nome probabilmente già esistente.");
             e.printStackTrace();
         }
+    }
+
+    /**
+     * Restituisce tutte le città presenti nel database
+     * @param conn connessione al database
+     * @return List<String> con tutte le città
+     * @author Elia Toschi
+     */
+    public List<String> getCitta(Connection conn)
+    {
+        ArrayList<String> lista = new ArrayList<>();
+        String sql = "SELECT DISTINCT nome FROM citta ORDER BY nome ASC  ";
+        try(PreparedStatement ps= conn.prepareStatement(sql); ResultSet rs=ps.executeQuery())
+        {
+            while (rs.next()) {
+                lista.add(rs.getString("nome"));
+            }
+
+            return lista;
+
+        }catch (SQLException e) {
+            System.err.println("Errore durante il recupero delle città");
+            e.printStackTrace();
+        }
+        return lista;
+    }
+
+    /**
+     * restituisce tutte le cucine presenti nel database
+     * @param conn connessione al database
+     * @return List<String> con tutte le cucine
+     * @author Elia Toschi
+     */
+    public List<String> getCucine(Connection conn)
+    {
+        ArrayList<String> lista = new ArrayList<>();
+        String sql = "SELECT DISTINCT nome from tipo_cucina ORDER BY nome ASC ";
+        try(PreparedStatement ps= conn.prepareStatement(sql); ResultSet rs=ps.executeQuery())
+        {
+            while (rs.next()) {
+                lista.add(rs.getString("nome"));
+            }
+
+            return lista;
+
+        }catch (SQLException e) {
+            System.err.println("Errore durante il recupero delle cucine");
+            e.printStackTrace();
+        }
+        return lista;
     }
 }

@@ -497,10 +497,19 @@ public class SlaveThread extends Thread {
     /**
      * Metodo per ottenere la lista di tutte le città
      * @author Celestino Resteghini
+     * @author Elia Toschi
      * @throws IOException
      */
     private void gestisciCitta() throws IOException {
-        LinkedList<String> citta = new LinkedList<>(); //TODO sostituire lista vuota con lista nomi città
+        LinkedList<String> citta = null;
+        try(Connection conn= getConnection()) {
+            citta= (LinkedList<String>) ristoranteDAO.getCitta(conn);
+        }catch(SQLException e){
+            e.printStackTrace();
+        }
+        if(citta!=null){
+            citta= new LinkedList<>();
+        }
         System.out.println("CITTA: invio: lista citta");
         out.writeObject(citta);
         out.flush();
@@ -509,10 +518,20 @@ public class SlaveThread extends Thread {
     /**
      * Metodo per ottenere la lista di tutte le cucine
      * @author Celestino Resteghini
+     * @author Elia Toschi
      * @throws IOException
      */
     private void gestisciCucine() throws IOException {
-        LinkedList<String> cucine = new LinkedList<>(); //TODO sostituire lista vuota con lista nomi cucine
+        LinkedList<String> cucine =null;
+        try(Connection conn= getConnection())
+        {
+            cucine =(LinkedList<String>) ristoranteDAO.getCucine(getConnection());
+        }catch(SQLException e){
+            e.printStackTrace();
+        }
+        if(cucine!=null){
+            cucine= new LinkedList<>();
+        }
         System.out.println("CUC: invio: lista cucine");
         out.writeObject(cucine);
         out.flush();
