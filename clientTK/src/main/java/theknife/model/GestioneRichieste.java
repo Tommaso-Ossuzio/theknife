@@ -37,11 +37,13 @@ public class GestioneRichieste {
      */
     public void chiudiConnessione() {
         try {
-            if (out != null) out.close();
-            if (in != null) in.close();
-            if (socket != null && !socket.isClosed()) socket.close();
+            out.writeObject("END");
+            out.flush();
+            socket.close();
+            System.out.println("Connessione col server chiusa");
         } catch (IOException e) {
             e.printStackTrace();
+
         }
     }
 

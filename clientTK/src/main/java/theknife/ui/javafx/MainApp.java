@@ -5,8 +5,10 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.image.Image;
 import javafx.stage.Stage;
+import theknife.model.GestioneRichieste;
 import theknife.utilities.Temi;
 
+import java.io.IOException;
 import java.net.URL;
 import java.awt.Taskbar;
 import javax.imageio.ImageIO;
@@ -72,6 +74,17 @@ public class MainApp extends Application {
 
         finestra.setScene(scena);
         finestra.show();
+
+        finestra.setOnCloseRequest(event -> {
+            try{
+                GestioneRichieste.getInstance().chiudiConnessione();
+            }catch (IOException e)
+            {
+                e.printStackTrace();
+            }
+            javafx.application.Platform.exit();
+            System.exit(0);
+        });
     }
 
     /**
