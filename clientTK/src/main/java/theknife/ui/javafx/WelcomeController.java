@@ -48,7 +48,7 @@ public class WelcomeController implements ControllerAutenticazione {
         bottoneOspite.setDisable(true);
         etichettaStato.setText("Caricamento del catalogo dei ristoranti…");
 
-        caricaCatalogo();
+        caricaTendina();
     }
 
     /**
@@ -57,9 +57,10 @@ public class WelcomeController implements ControllerAutenticazione {
      *
      * @author Matteo Franguelli
      */
-    private void caricaCatalogo() {
+    private void caricaTendina() {
         new Thread(() -> {
-            //gestioneRistoranti.caricaDaCsv();
+            //TODO da sostituire il csv con il comando che creeremo apposta per ottenere la lista dei nomi delle città
+            gestioneRistoranti.caricaDaCsv();
             Map<String, Integer> citta = gestioneRistoranti.getCittaConConteggio();
 
             Platform.runLater(() -> {

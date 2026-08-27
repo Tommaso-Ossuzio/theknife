@@ -93,7 +93,7 @@ public class MainController implements ControllerAutenticazione {
 
         ristoranti.addListener((javafx.collections.ListChangeListener<RistoranteDTO>) c -> aggiornaPaginazione());
 
-        caricaCatalogo();
+        //todo da cancellare caricaCatalogo();
         aggiornaPaginazione();
         aggiornaInterfaccia();
         aggiornaPulsanteTema();
@@ -138,14 +138,14 @@ public class MainController implements ControllerAutenticazione {
     }
 
     /**
-     * Mostra il catalogo dei ristoranti.
+     * Mostra il catalogo dei ristoranti vicini al domicilio.
      * @author Matteo Franguelli
      * @author Celestino Resteghini
      */
     private void caricaCatalogo() {
+        Session session = Session.getInstance();
         applicaFiltro(new FiltroRistoranteDTO(
-                null, null, null, null, null, null));
-        //TODO Gestire il fatto che quando accede l'utente deve vedere i ristoranre vicini al suo luogo di domicilio..
+                session.getCitta(), null, null, null, null, null));
     }
 
     /**

@@ -110,6 +110,7 @@ public class Utility {
      * @author Matteo Franguelli
      */
     private static synchronized Map<String, Integer> cittaDalDatabase() {
+        //TODO Fare un comando ad hoc per ottenere i nomi di tutte le città
         if (cittaDelDatabase != null) return cittaDelDatabase;
 
         Map<String, Integer> conteggi = new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
