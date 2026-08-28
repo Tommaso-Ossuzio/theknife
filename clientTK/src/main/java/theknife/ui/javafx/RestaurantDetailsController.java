@@ -10,18 +10,13 @@ import javafx.scene.control.Label;
 import javafx.scene.web.WebView;
 import javafx.stage.Stage;
 import theknife.model.GestioneRichieste;
-import theknife.model.GestioneRistoranti;
-import theknife.model.Ristorante;
 import theknife.utilities.Etichette;
 
 import java.awt.Desktop;
-import java.io.*;
+import java.io.IOException;
 import java.net.URI;
-import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.LinkedList;
-import java.util.List;
-import java.util.Optional;
 
 /**
  * Controller della finestra dei ristoranti.
@@ -30,6 +25,14 @@ import java.util.Optional;
  * @author Celestino Resteghini
  */
 public class RestaurantDetailsController {
+    /**
+     * Impedisce alle pagine remote di installare cursori basati su immagini.
+     * JavaFX WebKit 21 genera una NPE quando il frame di un cursore CSS custom
+     * non viene decodificato, invece di ripiegare sul cursore standard.
+     */
+    private static final String STILE_CURSORE_WEB_SICURO =
+            "data:text/css;charset=utf-8;base64,KiB7IGN1cnNvcjogYXV0byAhaW1wb3J0YW50OyB9";
+
     @FXML private Label etichettaNome;
     @FXML private Label etichettaIndirizzo;
     @FXML private Label etichettaCitta;
@@ -53,6 +56,13 @@ public class RestaurantDetailsController {
     private  RistoranteDTO ristoranteDTO;
     LinkedList<RistoranteDTO> preferiti;
     int idUtente;
+
+    @FXML
+    private void initialize() {
+        // Il foglio utente ha precedenza anche sui cursor custom dei siti
+        // caricati e lascia WebView interattivo usando soltanto cursori nativi.
+        vistaSito.getEngine().setUserStyleSheetLocation(STILE_CURSORE_WEB_SICURO);
+    }
 
     public void setRestaurantData(RistoranteDTO ristorante) throws IOException {
         this.ristoranteDTO = ristorante;
