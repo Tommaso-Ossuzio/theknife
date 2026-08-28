@@ -1,8 +1,5 @@
 package theknife.utilities;
 
-import it.uninsubria.dto.CittaDTO;
-import it.uninsubria.dto.FiltroRistoranteDTO;
-import it.uninsubria.dto.RistoranteDTO;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -13,13 +10,14 @@ import javafx.scene.control.ComboBox;
 import javafx.scene.control.ListCell;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
-import theknife.model.GestioneRistoranti;
+import theknife.model.GestioneRichieste;
 
+import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.util.Map;
-import java.util.TreeMap;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Utilità condivise fra le schermate.
@@ -27,7 +25,7 @@ import java.util.TreeMap;
  */
 public class Utility {
 
-    private static Map<String, Integer> cittaDelDatabase;
+    private static List<String> cittaDelDatabase;
 
     /**
      * Permette di confermare con il tasto Invio, oltre che con il pulsante.
@@ -70,12 +68,7 @@ public class Utility {
                 @Override
                 protected void updateItem(String nome, boolean vuota) {
                     super.updateItem(nome, vuota);
-                    if (vuota || nome == null) {
-                        setText(null);
-                        return;
-                    }
-                    int quanti = cittaDelDatabase == null ? 0 : cittaDelDatabase.getOrDefault(nome, 0);
-                    setText(nome + "   ·   " + quanti + (quanti == 1 ? " ristorante" : " ristoranti"));
+                    setText(vuota ? null : nome);
                 }
             };
             cella.setPrefWidth(0);
@@ -96,35 +89,45 @@ public class Utility {
             }
         });
 
+        if (cittaDelDatabase != null) {
+            citta.setAll(cittaDelDatabase);
+            return;
+        }
+
         Thread caricamento = new Thread(() -> {
-            Map<String, Integer> disponibili = cittaDalDatabase();
-            Platform.runLater(() -> citta.setAll(disponibili.keySet()));
+            List<String> disponibili = cittaDalDatabase();
+            Platform.runLater(() -> citta.setAll(disponibili));
         }, "citta-database");
         caricamento.setDaemon(true);
         caricamento.start();
     }
 
     /**
-     * Chiede al server tutti i ristoranti e conta quanti ne ha ogni città.
-     * @return le città del database, con quanti ristoranti contengono
+     * Chiede al server l'elenco delle città del database.
+     * @return le città del database, vuoto se il server non risponde
      * @author Matteo Franguelli
      */
-    private static synchronized Map<String, Integer> cittaDalDatabase() {
-        //TODO Fare un comando ad hoc per ottenere i nomi di tutte le città
+    private static synchronized List<String> cittaDalDatabase() {
         if (cittaDelDatabase != null) return cittaDelDatabase;
 
-        Map<String, Integer> conteggi = new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
-        FiltroRistoranteDTO tutti = new FiltroRistoranteDTO(null, null, null, null, null, null);
+        List<String> ricevute = new ArrayList<>();
 
-        for (RistoranteDTO ristorante : GestioneRistoranti.getInstance().filtraRistoranti(tutti)) {
-            CittaDTO citta = ristorante.getLuogo() == null ? null : ristorante.getLuogo().getCitta();
-            if (citta != null && citta.getNome() != null && !citta.getNome().isBlank()) {
-                conteggi.merge(citta.getNome().trim(), 1, Integer::sum);
+        try {
+            Object risposta = GestioneRichieste.getInstance().inviaEAttendi("CITTA");
+
+            if (risposta instanceof List<?> elenco) {
+                for (Object nome : elenco) {
+                    if (nome instanceof String testo && !testo.isBlank()) {
+                        ricevute.add(testo.trim());
+                    }
+                }
             }
+        } catch (IOException e) {
+            e.printStackTrace();
         }
 
-        cittaDelDatabase = conteggi;
-        return cittaDelDatabase;
+        if (!ricevute.isEmpty()) cittaDelDatabase = ricevute;
+        return ricevute;
     }
 
     /**
