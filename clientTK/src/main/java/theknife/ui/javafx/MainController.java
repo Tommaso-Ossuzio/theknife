@@ -60,7 +60,7 @@ public class MainController implements ControllerAutenticazione {
     @FXML private Button bottoneCerca;
 
     @FXML private ComboBox<String> campoLuogo;
-    @FXML private TextField campoCucina;
+    @FXML private ComboBox<String> campoCucina;
 
     // Lista dei ristoranti mostrata dalla UI. I dati arrivano dal server come DTO.
     private final ObservableList<RistoranteDTO> ristoranti = FXCollections.observableArrayList();
@@ -90,6 +90,7 @@ public class MainController implements ControllerAutenticazione {
         inizializzaGriglia();
         Utility.confermaConInvio(bottoneCerca);
         Utility.completamentoCitta(campoLuogo);
+        Utility.completamentoCucina(campoCucina);
 
         ristoranti.addListener((javafx.collections.ListChangeListener<RistoranteDTO>) c -> aggiornaPaginazione());
 
@@ -585,10 +586,16 @@ public class MainController implements ControllerAutenticazione {
     @FXML
     protected void onApplyFilters() {
         String luogo = normalizza(campoLuogo.getEditor().getText());
-        String cucina = normalizza(campoCucina.getText());
+        String cucina = normalizza(campoCucina.getEditor().getText());
         if (luogo == null) {
             mostraErrore("Campo obbligatorio", "Devi inserire una città per effettuare la ricerca.");
             campoLuogo.requestFocus(); // Rimette il cursore nel campo vuoto
+            return;
+        }
+
+        if (cucina != null && !Utility.cucinaEsiste(cucina)) {
+            mostraErrore("Cucina non presente", "Cucina non presente, seleziona un tipo di cucina dall'elenco.");
+            campoCucina.requestFocus();
             return;
         }
 
@@ -603,7 +610,7 @@ public class MainController implements ControllerAutenticazione {
     @FXML
     public void onResetFilters() {
         if (campoLuogo != null) campoLuogo.getEditor().clear();
-        if (campoCucina != null) campoCucina.clear();
+        if (campoCucina != null) campoCucina.getEditor().clear();
 
         caricaCatalogo();
 

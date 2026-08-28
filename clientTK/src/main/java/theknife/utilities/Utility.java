@@ -18,6 +18,7 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Supplier;
 
 /**
  * Utilità condivise fra le schermate.
@@ -26,6 +27,7 @@ import java.util.List;
 public class Utility {
 
     private static List<String> cittaDelDatabase;
+    private static List<String> cucineDelDatabase;
 
     /**
      * Permette di confermare con il tasto Invio, oltre che con il pulsante.
@@ -57,10 +59,30 @@ public class Utility {
      * @author Matteo Franguelli
      */
     public static void completamentoCitta(ComboBox<String> campo) {
+        completamento(campo, cittaDelDatabase, Utility::cittaDalDatabase);
+    }
+
+    /**
+     * Completa il tipo di cucina mentre si scrive, proponendo le cucine del database.
+     * @param campo tendina modificabile in cui si scrive la cucina
+     * @author Matteo Franguelli
+     */
+    public static void completamentoCucina(ComboBox<String> campo) {
+        completamento(campo, cucineDelDatabase, Utility::cucineDalDatabase);
+    }
+
+    /**
+     * Riempie una tendina modificabile e la filtra mentre si scrive.
+     * @param campo tendina da completare
+     * @param giaPronti elenco gia' in cache, null se va ancora chiesto al server
+     * @param caricatore come ottenere l'elenco dal server
+     * @author Matteo Franguelli
+     */
+    private static void completamento(ComboBox<String> campo, List<String> giaPronti, Supplier<List<String>> caricatore) {
         if (campo == null) return;
 
-        ObservableList<String> citta = FXCollections.observableArrayList();
-        FilteredList<String> filtrate = new FilteredList<>(citta, nome -> true);
+        ObservableList<String> valori = FXCollections.observableArrayList();
+        FilteredList<String> filtrate = new FilteredList<>(valori, nome -> true);
         campo.setItems(filtrate);
 
         campo.setCellFactory(lista -> {
@@ -89,15 +111,15 @@ public class Utility {
             }
         });
 
-        if (cittaDelDatabase != null) {
-            citta.setAll(cittaDelDatabase);
+        if (giaPronti != null) {
+            valori.setAll(giaPronti);
             return;
         }
 
         Thread caricamento = new Thread(() -> {
-            List<String> disponibili = cittaDalDatabase();
-            Platform.runLater(() -> citta.setAll(disponibili));
-        }, "citta-database");
+            List<String> disponibili = caricatore.get();
+            Platform.runLater(() -> valori.setAll(disponibili));
+        }, "elenco-database");
         caricamento.setDaemon(true);
         caricamento.start();
     }
@@ -110,10 +132,32 @@ public class Utility {
      * @author Matteo Franguelli
      */
     public static boolean cittaEsiste(String scritta) {
-        if (scritta == null || scritta.isBlank()) return false;
-        if (cittaDelDatabase == null) return true;
+        return esisteNellElenco(cittaDelDatabase, scritta);
+    }
 
-        for (String nome : cittaDelDatabase) {
+    /**
+     * Controlla che la cucina digitata sia una di quelle del database.
+     * Se l'elenco non è ancora arrivato dal server accetta, lasciando la verifica al server.
+     * @param scritta nome digitato dall'utente
+     * @return true se la cucina esiste
+     * @author Matteo Franguelli
+     */
+    public static boolean cucinaEsiste(String scritta) {
+        return esisteNellElenco(cucineDelDatabase, scritta);
+    }
+
+    /**
+     * Cerca un nome in un elenco ignorando maiuscole e spazi.
+     * @param elenco elenco in cui cercare, null se non è ancora arrivato dal server
+     * @param scritta nome digitato dall'utente
+     * @return true se il nome esiste, oppure se l'elenco non è ancora disponibile
+     * @author Matteo Franguelli
+     */
+    private static boolean esisteNellElenco(List<String> elenco, String scritta) {
+        if (scritta == null || scritta.isBlank()) return false;
+        if (elenco == null) return true;
+
+        for (String nome : elenco) {
             if (nome.equalsIgnoreCase(scritta.trim())) return true;
         }
         return false;
@@ -127,15 +171,40 @@ public class Utility {
     private static synchronized List<String> cittaDalDatabase() {
         if (cittaDelDatabase != null) return cittaDelDatabase;
 
-        List<String> ricevute = new ArrayList<>();
+        List<String> ricevute = elencoDalServer("CITTA");
+        if (!ricevute.isEmpty()) cittaDelDatabase = ricevute;
+        return ricevute;
+    }
+
+    /**
+     * Chiede al server l'elenco delle cucine del database, una volta sola.
+     * @return le cucine del database, vuoto se il server non risponde
+     * @author Matteo Franguelli
+     */
+    private static synchronized List<String> cucineDalDatabase() {
+        if (cucineDelDatabase != null) return cucineDelDatabase;
+
+        List<String> ricevute = elencoDalServer("CUC");
+        if (!ricevute.isEmpty()) cucineDelDatabase = ricevute;
+        return ricevute;
+    }
+
+    /**
+     * Chiede al server un elenco di nomi.
+     * @param comando comando del protocollo da inviare
+     * @return i nomi ricevuti, vuoto se il server non risponde
+     * @author Matteo Franguelli
+     */
+    private static List<String> elencoDalServer(String comando) {
+        List<String> ricevuti = new ArrayList<>();
 
         try {
-            Object risposta = GestioneRichieste.getInstance().inviaEAttendi("CITTA");
+            Object risposta = GestioneRichieste.getInstance().inviaEAttendi(comando);
 
             if (risposta instanceof List<?> elenco) {
                 for (Object nome : elenco) {
                     if (nome instanceof String testo && !testo.isBlank()) {
-                        ricevute.add(testo.trim());
+                        ricevuti.add(testo.trim());
                     }
                 }
             }
@@ -143,8 +212,7 @@ public class Utility {
             e.printStackTrace();
         }
 
-        if (!ricevute.isEmpty()) cittaDelDatabase = ricevute;
-        return ricevute;
+        return ricevuti;
     }
 
     /**

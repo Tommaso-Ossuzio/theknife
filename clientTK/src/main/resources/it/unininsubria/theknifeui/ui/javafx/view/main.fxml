@@ -81,9 +81,11 @@
                           promptText="In quale città vuoi mangiare?"
                           maxWidth="Infinity"
                           HBox.hgrow="ALWAYS"/>
-                <TextField fx:id="campoCucina"
-                           promptText="Tipo di cucina (es. Italian)"
-                           HBox.hgrow="ALWAYS"/>
+                <ComboBox fx:id="campoCucina"
+                          editable="true"
+                          promptText="Tipo di cucina (es. Italian)"
+                          maxWidth="Infinity"
+                          HBox.hgrow="ALWAYS"/>
                 <Button fx:id="bottoneCerca" text="Cerca"
                         onAction="#onApplyFilters"
                         styleClass="btn-primary"/>

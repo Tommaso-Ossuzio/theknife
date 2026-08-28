@@ -16,7 +16,7 @@ import theknife.utilities.Utility;
 public class AdvancedFilterController {
 
     @FXML private ComboBox<String> campoLuogo;
-    @FXML private TextField campoCucina;
+    @FXML private ComboBox<String> campoCucina;
     @FXML private ComboBox<String> menuPrezzo;
 
     @FXML private Button star1, star2, star3, star4, star5;
@@ -50,6 +50,7 @@ public class AdvancedFilterController {
         menuPrezzo.getItems().setAll(FASCE_PREZZO);
         Utility.confermaConInvio(bottoneApplica);
         Utility.completamentoCitta(campoLuogo);
+        Utility.completamentoCucina(campoCucina);
     }
 
     /**
@@ -99,11 +100,17 @@ public class AdvancedFilterController {
     @FXML
     private void onApply() {
         String luogo = normalizza(campoLuogo.getEditor().getText());
-        String cucina = normalizza(campoCucina.getText());
+        String cucina = normalizza(campoCucina.getEditor().getText());
 
         if (luogo == null || luogo.isBlank()) {
             mostraErrore("Campo obbligatorio", "Devi inserire una città per effettuare la ricerca.");
             campoLuogo.requestFocus();
+            return;
+        }
+
+        if (cucina != null && !Utility.cucinaEsiste(cucina)) {
+            mostraErrore("Cucina non presente", "Cucina non presente, seleziona un tipo di cucina dall'elenco.");
+            campoCucina.requestFocus();
             return;
         }
 
