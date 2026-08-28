@@ -1,8 +1,7 @@
 package theknife.ui.javafx;
 
 
-import it.uninsubria.dto.CoordinateDTO;
-import it.uninsubria.dto.RistoranteDTO;
+import it.uninsubria.dto.*;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
@@ -23,8 +22,6 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
-
-//TODO da rivedere, vengono usati i file
 
 /**
  * Controller della finestra dei ristoranti.
@@ -50,9 +47,6 @@ public class RestaurantDetailsController {
     @FXML private Button bottoneApriMaps;
     @FXML private Button bottonePreferiti;
 
-    //todo da cancellare private static final String NOME_CARTELLA = "data";
-    //todo da cancellare private static final String NOME_FILE = "users.csv";
-
     private double latitudineLoc;
     private double longitudineLoc;
     private String googleMapsUrl;
@@ -62,9 +56,9 @@ public class RestaurantDetailsController {
 
     public void setRestaurantData(RistoranteDTO ristorante) throws IOException {
         this.ristoranteDTO = ristorante;
-        it.uninsubria.dto.LuogoDTO luogo = ristorante.getLuogo();
-        it.uninsubria.dto.CittaDTO citta = (luogo != null) ? luogo.getCitta() : null;
-        it.uninsubria.dto.CoordinateDTO coord = (luogo != null) ? luogo.getCoordinate() : null;
+        LuogoDTO luogo = ristorante.getLuogo();
+        CittaDTO citta = (luogo != null) ? luogo.getCitta() : null;
+        CoordinateDTO coord = (luogo != null) ? luogo.getCoordinate() : null;
         this.latitudineLoc = (coord != null) ? coord.getLatitudine() : 0.0;
         this.longitudineLoc = (coord != null) ? coord.getLongitudine() : 0.0;
         etichettaNome.setText(valoreNonNullo(ristorante.getNome()));
@@ -107,7 +101,6 @@ public class RestaurantDetailsController {
             mostraMessaggioNessunSito();
         }
 
-//      preparaGoogleMapsUrl();
         aggiornaVisibilitaPreferiti();
     }
 
@@ -170,40 +163,36 @@ public class RestaurantDetailsController {
 
     /**
      * Gestisce l'azione di aggiunta del ristorante corrente alla lista dei preferiti.
-     * Recupera l'ID del ristorante e invoca il salvataggio su file CSV.
-     * Mostra un avviso in caso di successo o errore (ristorante non trovato).
-     *
+     * Recupera l'ID del ristorante e la lista dei ristoranti e nel caso lo aggiunge nel db
+     * Mostra un avviso in caso di successo o errore (ristorante già presente nei preferiti).
      * @author Celestino Resteghini
+     * @author Matteo Franguelli
+     * @throws IOException
      */
     @FXML
     private void onAggiungiAiPreferiti() throws IOException {
-        //todo da cancellare  GestioneRistoranti gr = GestioneRistoranti.getInstance();
-
-        //todo da cancellare Optional<Ristorante> risto = gr.listaRistoranti.stream().filter(x -> x.getNome().equalsIgnoreCase(nomeR) && x.getLuogo().getIndirizzo().equalsIgnoreCase(indirizzoR)).findFirst();
-
         Session session = Session.getInstance();
         idUtente = session.getID();
         preferiti = (LinkedList<RistoranteDTO>) GestioneRichieste.getInstance().inviaEAttendi("VIS-PREF", idUtente);
 
-        /*if (preferiti.contains(ristoranteDTO)) {
-            idRistorante = ristoranteDTO.getIdRistorante();
-        } else {
-            Alert alert = new Alert(Alert.AlertType.WARNING);
-            alert.setTitle("Attenzione");
-            alert.setHeaderText(null);
-            alert.setContentText("Ristorante non trovato.");
-            alert.showAndWait();
-            return;
-        }todo da cancellare */
+        boolean presente = false;
+
+        for (RistoranteDTO r : preferiti) {
+            if(r.getIdRistorante() == ristoranteDTO.getIdRistorante()) {
+                presente = true;
+                break;
+            }
+        }
 
         //se il ristorante è già nei preferiti
-        if(preferiti.contains(ristoranteDTO)){
+        if(presente){
             Alert alert = new Alert(Alert.AlertType.ERROR);
             alert.setTitle("Attenzione");
             alert.setHeaderText(null);
             alert.setContentText("Ristorante già nei preferiti.");
             alert.showAndWait();
         } else {
+            preferiti.add(ristoranteDTO);
             aggiungiRistorante(ristoranteDTO.getIdRistorante());
             Alert a = new Alert(Alert.AlertType.INFORMATION);
             a.setTitle("Preferiti");
@@ -325,89 +314,13 @@ public class RestaurantDetailsController {
         valoreStelle.setText(sb.toString());
     }
 
-    //todo Da cancellare
     /**
-     * Aggiunge l'ID del ristorante alla lista dei preferiti dell'utente nel file CSV.
-     * Legge il file, individua la riga dell'utente loggato, aggiorna la colonna dei preferiti evitando duplicati, e riscrive il file aggiornato.
-     *
-     * @param idRistorante
-     * @return true se l'operazione è andata a buon fine, false se il ristorante era già presente o se c'è stato un errore I/O.
+     * Metodo per salvare un ristorante preferito nel db
+     * @author Matteo Franguelli
      * @author Celestino Resteghini
+     * @param idRistorante
+     * @throws IOException
      */
-    /*private boolean aggiungiRistoranteSuCSV(int idRistorante) {
-        String usernameU = Session.getInstance().getUsername();
-        File fileUtenti = new File(NOME_CARTELLA, NOME_FILE);
-        if (!fileUtenti.exists()) return false;
-        List<String> righe = new LinkedList<>();
-        String primaparte="";
-        String mieiRist="";
-        String idRistorantiPres="";
-
-
-        try (BufferedReader lettore = new BufferedReader(new FileReader(fileUtenti, StandardCharsets.UTF_8))) {
-            String linea;
-
-            while ((linea = lettore.readLine()) != null) {
-                if (linea.isBlank()) continue;
-                String[] parti = linea.split(";");
-
-                // Formato CSV atteso: username;hash;nome;cognome;città;isCliente;isRistoratore;RistorantiPreferiti;MieiRistoranti
-                if (parti.length >= 2) {
-                    if (parti[0].equals(usernameU)) {
-
-                        //Salvo la prima parte della riga
-                        primaparte = parti[0]+";"+parti[1]+";"+parti[2]+";"+parti[3]+";"+parti[4]+";"+parti[5]+";"+parti[6]+";"+parti[7]+";";
-
-                        // Nella colonna Ristoranti preferiti ci sarà il seguente formato: "1-4-5"
-                        if (parti.length > 8 && !parti[8].isEmpty()) {
-                            idRistorantiPres = parti[8].trim();
-                            String[] s1 = parti[8].split("-");
-                            //Controllo se il ristorante era già presente nei preferiti
-                            for(String stringa: s1)
-                                if (idRistorante == Integer.valueOf(stringa)) {
-                                    Alert alert = new Alert(Alert.AlertType.ERROR);
-                                    alert.setTitle("Attenzione");
-                                    alert.setHeaderText(null);
-                                    alert.setContentText("Ristorante già nei preferiti.");
-                                    alert.showAndWait();
-                                    return false;
-                                }
-
-                            //Salvo il nuovo ristorante
-                            idRistorantiPres = idRistorantiPres.trim()+"-"+String.valueOf(idRistorante);
-                            if(parti.length>9)
-                                mieiRist=parti[9];
-                            continue; // SALTA QUESTA RIGA (è quella vecchia)
-                        }
-                        else
-                        {
-                            idRistorantiPres = String.valueOf(idRistorante);
-                            if(parti.length>9)
-                                mieiRist=parti[9];
-                            continue; // SALTA QUESTA RIGA (è quella vecchia)
-                        }
-                    }
-                }
-                righe.add(linea); // Tieni tutte le altre
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        // Aggiungi la NUOVA versione in fondo alla lista
-        String nuovaRiga = primaparte + idRistorantiPres +";"+mieiRist;
-        righe.add(nuovaRiga);
-
-        // Riscrivi il file
-        try (BufferedWriter bw = new BufferedWriter(new FileWriter(fileUtenti, StandardCharsets.UTF_8))) {
-            for (String r : righe) {
-                bw.write(r);
-                bw.newLine();
-            }
-        } catch (IOException e) {}
-        return true;
-    }*/
-
     private void aggiungiRistorante(int idRistorante) throws IOException {
        HashMap<String, Integer> id = new HashMap<>();
        id.put("idUtente", idUtente);
