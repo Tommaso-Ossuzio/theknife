@@ -23,6 +23,12 @@ public class LuogoDTO implements Serializable {
         this.coordinate = coordinate;
     }
 
+    public LuogoDTO(String via, CittaDTO citta, CoordinateDTO coordinate) {
+        this.via = via;
+        this.citta = citta;
+        this.coordinate = coordinate;
+    }
+
     public LuogoDTO(CittaDTO citta) {
         this.citta = citta;
     }

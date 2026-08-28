@@ -17,40 +17,11 @@ import static java.lang.Math.sqrt;
  * Classe che contiene le funzionalità più utili
  *
  * @author Celestino Resteghini
+ * @author Elia Toschi
  */
 public class Utility {
 
     private static final double RAGGIOTERRESTRE_KM= 6371;
-    /**
-     * Convertitore da prezzo a range di prezzo
-     *
-     * come indicato nel sito ufficiale della guida michelin:
-     * € → meno di 35 €
-     * €€ → tra 35 € e 60 €
-     * €€€ → tra 60 € e 100 €
-     * €€€€ → oltre 100 €
-     *
-     * descritti anche nel seguente modo:
-     * € = “per tutte le tasche”
-     * €€ = “costo ragionevole”
-     * €€€ = “occasione speciale”
-     * €€€€ = “piccola follia”
-     *
-     * @param prezzo
-     * @autor  Celestino Resteghini
-     */
-    public static String ConvertiPrezzoRange(Double prezzo)
-    {
-        if(prezzo <= 35)
-            return "meno di 35 €";
-        else if(prezzo > 35 && prezzo <= 60)
-            return "tra 35 € e 60 €";
-        else if(prezzo > 60 && prezzo <= 100)
-            return "tra 60 € e 100 €";
-        else if(prezzo > 100)
-            return "oltre 100 €";
-        return "ERRORE";
-    }
 
     /**
      * Convertitore da simboli a range di prezzo
@@ -94,7 +65,6 @@ public class Utility {
      * @author Celestino Resteghini
      * @author Elia Toschi
      */
-    //todo da vedere se implementarla
     public static boolean checkDistance10KM(double lat, double longi, double lat2, double longi2)
     {
         double lat1Rad = toRadians(lat);

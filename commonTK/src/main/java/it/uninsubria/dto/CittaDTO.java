@@ -23,6 +23,11 @@ public class CittaDTO implements Serializable {
         this.nome = nome;
     }
 
+    public CittaDTO(String nome, String nazione) {
+        this.nome = nome;
+        this.nazione = nazione;
+    }
+
 
     public int getId_citta() {
         return id_citta;

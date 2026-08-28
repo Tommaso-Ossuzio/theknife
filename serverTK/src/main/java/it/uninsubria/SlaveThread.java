@@ -428,21 +428,12 @@ public class SlaveThread extends Thread {
     private void gestisciAggiungiRistorante() throws IOException, ClassNotFoundException {
         RistoranteDTO ristorante = (RistoranteDTO) in.readObject();
         System.out.println("AGG-RIST: ricevuto: " + ristorante.toString());
-        LinkedList<RistoranteDTO> ristoranti =null;
 
         try (Connection conn = getConnection()) {
             ristoranteDAO.inserisciRistorante(conn,ristorante);
-            ristoranti = (LinkedList<RistoranteDTO>) ristoranteDAO.getRistorantiDelRistoratore(conn, ristorante.getRistoratore().getIdUtente());
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        if(ristoranti==null){
-            ristoranti= new LinkedList<>();
-        }
-
-        System.out.println("AGG-RIST: invio: lista ristoranti aggiornata");
-        out.writeObject(ristoranti);
-        out.flush();
     }
 
     /**

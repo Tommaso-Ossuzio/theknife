@@ -5,6 +5,7 @@ import java.io.Serializable;
 /**
  * Rappresenta il DTO delle coordinate
  * @author Elia Toschi
+ * @author Celestino Resteghini
  */
 public class CoordinateDTO implements Serializable {
     private static final long serialVersionUID = 1L;
@@ -15,6 +16,11 @@ public class CoordinateDTO implements Serializable {
 
     public CoordinateDTO(int id_coordinate, double latitudine, double longitudine) {
         this.id_coordinate = id_coordinate;
+        this.latitudine = latitudine;
+        this.longitudine = longitudine;
+    }
+
+    public CoordinateDTO(double latitudine, double longitudine) {
         this.latitudine = latitudine;
         this.longitudine = longitudine;
     }
