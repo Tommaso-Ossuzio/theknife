@@ -3,6 +3,10 @@
     -color-primary-hover:   #085449;
     -color-primary-press:   #063D35;
     -color-primary-soft:    #E3F1EC;
+    -color-primary-text:    #FFFFFF;
+    -color-disabled-bg:     #E8EBE9;
+    -color-disabled-text:   #7D8983;
+    -color-disabled-border: #D1D8D4;
 
     -color-bg:              #F4F6F5;
     -color-surface:         #FFFFFF;
@@ -127,15 +131,19 @@
     -fx-spacing: 8;
 }
 
+.brand-logo {
+    -fx-image: url("../img/logo_theknife-light.png");
+}
+
 .brand-name {
     -fx-font-size: 21px;
     -fx-font-weight: bold;
-    -fx-text-fill: -color-primary;
+    -fx-text-fill: -color-heading;
 }
 
 .user-chip {
-    -fx-background-color: -color-primary-soft;
-    -fx-text-fill: -color-primary;
+    -fx-background-color: -color-primary;
+    -fx-text-fill: -color-primary-text;
     -fx-font-size: 12px;
     -fx-font-weight: bold;
     -fx-background-radius: 999;
@@ -212,7 +220,7 @@
 
 .button {
     -fx-background-color: -color-primary;
-    -fx-text-fill: -color-text-invert;
+    -fx-text-fill: -color-primary-text;
     -fx-font-size: 13px;
     -fx-font-weight: bold;
     -fx-background-radius: 10;
@@ -234,7 +242,7 @@
 
 .btn-primary {
     -fx-background-color: -color-primary;
-    -fx-text-fill: -color-text-invert;
+    -fx-text-fill: -color-primary-text;
 }
 .btn-primary:hover  { -fx-background-color: -color-primary-hover; }
 .btn-primary:pressed { -fx-background-color: -color-primary-press; }
@@ -264,7 +272,7 @@
 }
 .btn-secondary:hover {
     -fx-background-color: -color-surface-alt;
-    -fx-border-color: -color-primary;
+    -fx-border-color: -color-border-strong;
 }
 .btn-secondary:pressed {
     -fx-background-color: -color-border;
@@ -276,8 +284,8 @@
     -fx-font-weight: normal;
 }
 .btn-ghost:hover {
-    -fx-background-color: -color-primary-soft;
-    -fx-text-fill: -color-primary;
+    -fx-background-color: -color-surface-alt;
+    -fx-text-fill: -color-text;
 }
 .btn-ghost:pressed {
     -fx-background-color: -color-border;
@@ -330,9 +338,9 @@
     -fx-border-radius: 10;
 }
 .btn-theme:hover {
-    -fx-background-color: -color-primary-soft;
-    -fx-text-fill: -color-primary;
-    -fx-border-color: -color-primary;
+    -fx-background-color: -color-surface-alt;
+    -fx-text-fill: -color-text;
+    -fx-border-color: -color-border-strong;
 }
 
 .text-field,
@@ -445,6 +453,12 @@
     -fx-border-color: transparent;
     -fx-text-fill: -color-text;
     -fx-prompt-text-fill: -color-text-muted;
+    -fx-font-size: 13px;
+}
+
+.combo-box > .list-cell {
+    -fx-background-color: transparent;
+    -fx-text-fill: -color-text;
     -fx-font-size: 13px;
 }
 
@@ -658,7 +672,7 @@
 
 .pagination .pagination-control .toggle-button:selected {
     -fx-background-color: -color-primary;
-    -fx-text-fill: -color-text-invert;
+    -fx-text-fill: -color-primary-text;
     -fx-border-color: -color-primary;
 }
 
@@ -955,7 +969,7 @@
 }
 .dialog-pane .button-bar .button {
     -fx-background-color: -color-primary;
-    -fx-text-fill: -color-text-invert;
+    -fx-text-fill: -color-primary-text;
 }
 .dialog-pane .button-bar .button:hover {
     -fx-background-color: -color-primary-hover;
@@ -1097,4 +1111,15 @@
 .owner-card-text {
     -fx-spacing: 3;
     -fx-alignment: center-left;
+}
+
+.button:disabled,
+.button:disabled:hover,
+.button:disabled:pressed,
+.button:disabled:focused {
+    -fx-background-color: -color-disabled-bg;
+    -fx-text-fill: -color-disabled-text;
+    -fx-border-color: -color-disabled-border;
+    -fx-opacity: 1;
+    -fx-cursor: default;
 }

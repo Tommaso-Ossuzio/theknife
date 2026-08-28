@@ -58,7 +58,7 @@ public class MainApp extends Application {
 
         // Carichiamo l'icona dell'applicazione
         URL urlIcona = MainApp.class.getResource(
-                "/it/unininsubria/theknifeui/ui/javafx/img/logo_theknife.png");
+                "/it/unininsubria/theknifeui/ui/javafx/img/logo_theknife-light.png");
         if (urlIcona != null) {
             // Icona per la finestra JavaFX
             Image iconaFx = new Image(urlIcona.toExternalForm());

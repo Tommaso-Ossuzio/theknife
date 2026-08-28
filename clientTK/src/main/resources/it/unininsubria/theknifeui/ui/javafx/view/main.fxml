@@ -3,7 +3,6 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.image.ImageView?>
-<?import javafx.scene.image.Image?>
 
 <BorderPane xmlns="http://javafx.com/javafx"
             xmlns:fx="http://javafx.com/fxml"
@@ -17,14 +16,11 @@
 
                 <HBox styleClass="brand">
                     <ImageView fx:id="appLogo"
+                               styleClass="brand-logo"
                                fitHeight="36"
                                preserveRatio="true"
                                smooth="true"
-                               cache="true">
-                        <image>
-                            <Image url="@../img/logo_theknife.png"/>
-                        </image>
-                    </ImageView>
+                               cache="true"/>
                     <Label text="TheKnife" styleClass="brand-name"/>
                 </HBox>
 
