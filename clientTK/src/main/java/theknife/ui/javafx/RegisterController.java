@@ -31,7 +31,7 @@ public class RegisterController {
     @FXML private TextField campoCognome;
     @FXML private TextField campoUsername;
     @FXML private PasswordField campoPassword;
-    @FXML private TextField campoCitta;
+    @FXML private ComboBox<String> campoCitta;
     @FXML private DatePicker campoDataNascita;
 
     @FXML private RadioButton radioCliente;
@@ -66,7 +66,8 @@ public class RegisterController {
         if (radioCliente != null) {
             radioCliente.setSelected(true);
         }
-        Utility.confermaConInvio(bottoneCrea);
+        Utility.completamentoCitta(campoCitta);
+        Utility.confermaConInvio(bottoneCrea, campoCitta);
     }
 
     /**
@@ -110,7 +111,7 @@ public class RegisterController {
         String cognome      = campoCognome.getText();
         String email     = campoUsername.getText();
         String password     = campoPassword.getText();
-        String citta        = campoCitta.getText();
+        String citta        = campoCitta.getEditor().getText();
         LocalDate dataN = campoDataNascita.getValue();
 
         // Il ruolo è esclusivo: uno dei due è sempre e solo vero
@@ -122,7 +123,7 @@ public class RegisterController {
         boolean cognomeVuoto  = segnalaSeVuoto(campoCognome, erroreCognome);
         boolean emailVuota    = segnalaSeVuoto(campoUsername, erroreUsername);
         boolean passwordVuota = segnalaSeVuoto(campoPassword, errorePassword);
-        boolean cittaVuota    = segnalaSeVuoto(campoCitta, erroreCitta);
+        boolean cittaVuota    = segnalaSeVuoto(campoCitta.getEditor(), erroreCitta);
 
         if (nomeVuoto || cognomeVuoto || emailVuota || passwordVuota || cittaVuota) {
             etichettaErrore.setText("");

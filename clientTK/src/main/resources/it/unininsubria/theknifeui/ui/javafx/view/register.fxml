@@ -59,7 +59,7 @@
                 <VBox styleClass="field-group">
                     <Label text="CITTÀ / DOMICILIO *" styleClass="field-label"/>
                     <HBox styleClass="field-row">
-                        <TextField fx:id="campoCitta" promptText="Es. Varese" HBox.hgrow="ALWAYS"/>
+                        <ComboBox fx:id="campoCitta" editable="true" promptText="Es. Varese" HBox.hgrow="ALWAYS"/>
                         <Label fx:id="erroreCitta" styleClass="error-label"/>
                     </HBox>
                 </VBox>
