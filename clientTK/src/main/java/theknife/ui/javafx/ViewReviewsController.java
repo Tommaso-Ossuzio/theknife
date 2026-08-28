@@ -44,6 +44,7 @@ public class ViewReviewsController {
     /**
      * Imposta il ristorante corrente e carica le relative recensioni.
      * @author Matteo Franguelli
+     * @author Michele Viselli
      */
     public void setRestaurant(Ristorante r) {
         impostaRistorante(
@@ -146,6 +147,7 @@ public class ViewReviewsController {
     /**
      * Imposta la grafica personalizzata delle celle della lista recensioni.
      * @author Matteo Franguelli
+     * @author Michele Viselli
      */
     private void impostaGraficaCelle() {
         listaRecensioni.setCellFactory(param -> new ListCell<>() {
