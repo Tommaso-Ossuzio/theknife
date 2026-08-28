@@ -313,13 +313,6 @@ public class SlaveThread extends Thread {
      * @throws ClassNotFoundException
      */
     private void gestisciEliminaPreferito() throws IOException, ClassNotFoundException {
-        /*
-         * Lato client scrivere:
-         * HashMap<String, Integer> id = new HashMap<>();
-         * id.put("idUtente", idUtente);
-         * id.put("idRistorante", idRistorante)
-         * LinkedList<RistoranteDTO> ristoranti = (LinkedList<RistoranteDTO>) GestioneRichieste.getInstance().inviaEAttendi("ELIM-PREF", id);
-         * */
         HashMap<String, Integer> idMap = (HashMap<String, Integer>) in.readObject();
         int idUtente = idMap.get("idUtente");
         int idRistorante = idMap.get("idRistorante");

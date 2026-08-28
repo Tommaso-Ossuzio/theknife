@@ -104,14 +104,15 @@ public class WelcomeController implements ControllerAutenticazione {
         Session sessione = Session.getInstance();
         if (!sessione.isAuthenticated()) return;
 
+        sessione.setID((int) GestioneRichieste.getInstance().inviaEAttendi("ID", sessione.getUsername()));
+
         if (sessione.isRistoratore()) {
             apriDashboardRistoratore();
         } else {
             if(sessione.isGuest()){
                 sessione.setCitta(campoCitta.getValue());
             }else{
-                GestioneRichieste gr= GestioneRichieste.getInstance();
-                String risposta = (String) gr.inviaEAttendi("DOM", sessione.getUsername());
+                String risposta = (String) GestioneRichieste.getInstance().inviaEAttendi("DOM", sessione.getUsername());
                 sessione.setCitta(risposta);
             }
             apriSchermataPrincipale(sessione.getCitta());
@@ -126,7 +127,7 @@ public class WelcomeController implements ControllerAutenticazione {
      * @author Matteo Franguelli
      */
     @FXML
-    private void onOspite() {
+    private void onOspite() throws IOException {
         String scritta = campoCitta.getEditor().getText();
         if (scritta == null || scritta.isBlank()) {
             scritta = campoCitta.getValue();

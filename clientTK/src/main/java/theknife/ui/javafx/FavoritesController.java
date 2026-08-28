@@ -62,7 +62,7 @@ public class FavoritesController {
         Session session = Session.getInstance();
         if (session.isGuest()) return;
 
-        int idUtente = (int) GestioneRichieste.getInstance().inviaEAttendi("ID", session.getUsername());
+        int idUtente = session.getID();
 
         LinkedList<RistoranteDTO> ristoranti = (LinkedList<RistoranteDTO>) GestioneRichieste.getInstance().inviaEAttendi("VIS-PREF", idUtente);
 
@@ -85,7 +85,7 @@ public class FavoritesController {
     private void rimuoviPreferito(int idDaRimuovere) throws IOException {
         Session session = Session.getInstance();
         HashMap<String, Integer> id = new HashMap<>();
-        int idUtente = (int) GestioneRichieste.getInstance().inviaEAttendi("ID", session.getUsername());
+        int idUtente = session.getID();
         id.put("idUtente", idUtente);
         id.put("idRistorante", idDaRimuovere);
         GestioneRichieste.getInstance().inviaSolo("ELIM-PREF", id);

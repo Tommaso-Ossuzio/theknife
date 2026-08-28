@@ -2,6 +2,10 @@ package theknife.ui.javafx;
 
 //TODO da rivedere, non avremo più 4 tipi di utenti, ma solo 3
 
+import theknife.model.GestioneRichieste;
+
+import java.io.IOException;
+
 /**
  * Gestisce lo stato dell'utente attualmente loggato nell'applicazione.
  * È un singleton: esiste una sola Session per tutta l'app.
@@ -31,6 +35,7 @@ public class Session {
     private Role ruolo;
     private boolean permessiCliente;
     private boolean permessiRistoratore;
+    private int id;
 
     /**
      * Costruttore privato: la sessione parte come "ospite" senza permessi.
@@ -64,7 +69,7 @@ public class Session {
      * ma è consigliabile usare setPermessi() subito dopo per precisione.
      * @author Matteo Franguelli
      */
-    public void login(String username, Role ruolo) {
+    public void login(String username, Role ruolo) throws IOException {
         this.username = username;
         this.ruolo = (ruolo == null ? Role.GUEST : ruolo);
 
@@ -124,6 +129,7 @@ public class Session {
         this.permessiCliente = false;
         this.permessiRistoratore = false;
         this.citta=null;
+        this.id = 0;
     }
 
     /**
@@ -183,6 +189,22 @@ public class Session {
     public String getUsername() {
         return username;
     }
+
+    /**
+     * Restituisce l'id dell'utente attualmente loggato
+     * @author Celestino Resteghini
+     * @return id
+     */
+    public int getID() {
+        return id;
+    }
+
+    /**
+     * Imposta il valore dell'id utente attualmente loggato
+     * @author Celestino Resteghini
+     * @param id
+     */
+    public void setID(int id) {this.id = id;}
 
     /**
      * Restituisce il ruolo principale dell'utente.

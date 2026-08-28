@@ -19,15 +19,20 @@ import java.awt.Desktop;
 import java.io.*;
 import java.net.URI;
 import java.nio.charset.StandardCharsets;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
 
 //TODO da rivedere, vengono usati i file
 
+/**
+ * Controller della finestra dei ristoranti.
+ * @author Matteo FRanguelli
+ * @author Elia Toschi
+ * @author Celestino Resteghini
+ */
 public class RestaurantDetailsController {
-
-
     @FXML private Label etichettaNome;
     @FXML private Label etichettaIndirizzo;
     @FXML private Label etichettaCitta;
@@ -45,13 +50,16 @@ public class RestaurantDetailsController {
     @FXML private Button bottoneApriMaps;
     @FXML private Button bottonePreferiti;
 
-    private static final String NOME_CARTELLA = "data";
-    private static final String NOME_FILE = "users.csv";
+    //todo da cancellare private static final String NOME_CARTELLA = "data";
+    //todo da cancellare private static final String NOME_FILE = "users.csv";
 
     private double latitudineLoc;
     private double longitudineLoc;
     private String googleMapsUrl;
-private  RistoranteDTO ristoranteDTO;
+    private  RistoranteDTO ristoranteDTO;
+    LinkedList<RistoranteDTO> preferiti;
+    int idUtente;
+
     public void setRestaurantData(RistoranteDTO ristorante) throws IOException {
         this.ristoranteDTO = ristorante;
         // 1. Estrazione sicura degli oggetti annidati per evitare NullPointerException
@@ -108,6 +116,7 @@ private  RistoranteDTO ristoranteDTO;
             mostraMessaggioNessunSito();
         }
         // 9. Link Esterni e Preferiti
+        //todo per me non va bene qua vanno preparate solo quando si clicca su apri in maps no?
         preparaGoogleMapsUrl();
         aggiornaVisibilitaPreferiti();
     }
@@ -125,12 +134,11 @@ private  RistoranteDTO ristoranteDTO;
         // incluse in LuogoDTO dal DAO e restituite dal server.
         String urlFinale = null;
 
-        GestioneRichieste gs =GestioneRichieste.getInstance();
         Integer id= ristoranteDTO.getIdRistorante();
 
         CoordinateDTO coordinate =(CoordinateDTO) GestioneRichieste.getInstance().inviaEAttendi("MAPS",id);
-       latitudineLoc=coordinate.getLatitudine();
-       longitudineLoc=coordinate.getLongitudine();
+        latitudineLoc=coordinate.getLatitudine();
+        longitudineLoc=coordinate.getLongitudine();
         if (latitudineLoc != 0 && longitudineLoc != 0) {
             // Coordinate precise
            urlFinale = "https://www.google.com/maps?q=" + latitudineLoc + "," + longitudineLoc;
@@ -179,18 +187,17 @@ private  RistoranteDTO ristoranteDTO;
      * @author Celestino Resteghini
      */
     @FXML
-    private void onAggiungiAiPreferiti() {
-        //Prendo id ristorante
-        int idRistorante = 0;
-        String nomeR = etichettaNome.getText();
-        String indirizzoR = etichettaIndirizzo.getText();
+    private void onAggiungiAiPreferiti() throws IOException {
+        //todo da cancellare  GestioneRistoranti gr = GestioneRistoranti.getInstance();
 
-        GestioneRistoranti gr = GestioneRistoranti.getInstance();
+        //todo da cancellare Optional<Ristorante> risto = gr.listaRistoranti.stream().filter(x -> x.getNome().equalsIgnoreCase(nomeR) && x.getLuogo().getIndirizzo().equalsIgnoreCase(indirizzoR)).findFirst();
 
-        Optional<Ristorante> risto = gr.listaRistoranti.stream().filter(x -> x.getNome().equalsIgnoreCase(nomeR) && x.getLuogo().getIndirizzo().equalsIgnoreCase(indirizzoR)).findFirst();
-        if (risto.isPresent())
-        {
-            idRistorante = risto.get().getId();
+        Session session = Session.getInstance();
+        idUtente = session.getID();
+        preferiti = (LinkedList<RistoranteDTO>) GestioneRichieste.getInstance().inviaEAttendi("VIS-PREF", idUtente);
+
+        /*if (preferiti.contains(ristoranteDTO)) {
+            idRistorante = ristoranteDTO.getIdRistorante();
         } else {
             Alert alert = new Alert(Alert.AlertType.WARNING);
             alert.setTitle("Attenzione");
@@ -198,11 +205,17 @@ private  RistoranteDTO ristoranteDTO;
             alert.setContentText("Ristorante non trovato.");
             alert.showAndWait();
             return;
-        }
+        }todo da cancellare */
 
-        //Salvo il ristorante nel file user.csv
-        if(aggiungiRistoranteSuCSV(idRistorante)) {
-            //Confermo L'aggiunta del ristorante
+        //se il ristorante è già nei preferiti
+        if(preferiti.contains(ristoranteDTO)){
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setTitle("Attenzione");
+            alert.setHeaderText(null);
+            alert.setContentText("Ristorante già nei preferiti.");
+            alert.showAndWait();
+        } else {
+            aggiungiRistorante(ristoranteDTO.getIdRistorante());
             Alert a = new Alert(Alert.AlertType.INFORMATION);
             a.setTitle("Preferiti");
             a.setHeaderText(null);
@@ -332,7 +345,7 @@ private  RistoranteDTO ristoranteDTO;
      * @return true se l'operazione è andata a buon fine, false se il ristorante era già presente o se c'è stato un errore I/O.
      * @author Celestino Resteghini
      */
-    private boolean aggiungiRistoranteSuCSV(int idRistorante) {
+    /*private boolean aggiungiRistoranteSuCSV(int idRistorante) {
         String usernameU = Session.getInstance().getUsername();
         File fileUtenti = new File(NOME_CARTELLA, NOME_FILE);
         if (!fileUtenti.exists()) return false;
@@ -404,5 +417,12 @@ private  RistoranteDTO ristoranteDTO;
             }
         } catch (IOException e) {}
         return true;
+    }*/
+
+    private void aggiungiRistorante(int idRistorante) throws IOException {
+       HashMap<String, Integer> id = new HashMap<>();
+       id.put("idUtente", idUtente);
+       id.put("idRistorante", idRistorante);
+       GestioneRichieste.getInstance().inviaSolo("AGG-PREF", idUtente);
     }
 }

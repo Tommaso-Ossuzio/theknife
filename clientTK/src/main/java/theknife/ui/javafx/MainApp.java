@@ -76,12 +76,13 @@ public class MainApp extends Application {
         finestra.show();
 
         finestra.setOnCloseRequest(event -> {
-            try{
-                GestioneRichieste.getInstance().chiudiConnessione();
-            }catch (IOException e)
-            {
-                e.printStackTrace();
-            }
+            //try{
+                //TODO credo sia il punto sbagliato, perchè il programma crhusha
+                //GestioneRichieste.getInstance().chiudiConnessione();
+            //}catch (IOException e)
+            //{
+            //    e.printStackTrace();
+            //}
             javafx.application.Platform.exit();
             System.exit(0);
         });

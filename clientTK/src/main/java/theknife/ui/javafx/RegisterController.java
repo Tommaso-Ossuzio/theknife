@@ -139,9 +139,9 @@ public class RegisterController {
         } else {
             dataNascita = Date.from(dataN.atStartOfDay(ZoneId.systemDefault()).toInstant());
         }
-        GestioneRichieste gr = GestioneRichieste.getInstance();
+
         UtenteDTO utente = new UtenteDTO(nome,cognome,email,dataNascita, new LuogoDTO(new CittaDTO(citta)), passwordHashed);
-        Boolean risposta = (Boolean) gr.inviaEAttendi("REG",utente);
+        Boolean risposta = (Boolean) GestioneRichieste.getInstance().inviaEAttendi("REG",utente);
 
         // true se la registrazione è andata a buon fine
         if(risposta) {
