@@ -8,6 +8,8 @@ import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.ListCell;
+import javafx.scene.control.TextField;
+import javafx.scene.control.skin.ComboBoxListViewSkin;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import theknife.model.GestioneRichieste;
@@ -97,18 +99,39 @@ public class Utility {
             return cella;
         });
 
+        boolean[] inCorso = {false};
+
         campo.getEditor().textProperty().addListener((osservato, precedente, digitato) -> {
+            if (inCorso[0]) return;
+
             String scelta = campo.getSelectionModel().getSelectedItem();
             if (scelta != null && scelta.equals(digitato)) return;
 
-            String ricerca = digitato == null ? "" : digitato.trim().toLowerCase();
-            filtrate.setPredicate(nome -> ricerca.isEmpty() || nome.toLowerCase().startsWith(ricerca));
+            Platform.runLater(() -> {
+                if (inCorso[0]) return;
+                inCorso[0] = true;
 
-            if (!ricerca.isEmpty() && !filtrate.isEmpty() && campo.isFocused()) {
-                campo.show();
-            } else {
-                campo.hide();
-            }
+                String scritto = campo.getEditor().getText() == null ? "" : campo.getEditor().getText();
+                int cursore = campo.getEditor().getCaretPosition();
+                String ricerca = scritto.trim().toLowerCase();
+
+                filtrate.setPredicate(nome -> ricerca.isEmpty() || nome.toLowerCase().startsWith(ricerca));
+
+                boolean daMostrare = !ricerca.isEmpty() && !filtrate.isEmpty() && campo.isFocused();
+                if (daMostrare && !campo.isShowing()) {
+                    campo.show();
+                    spazioNonSceglie(campo);
+                } else if (!daMostrare && campo.isShowing()) {
+                    campo.hide();
+                }
+
+                if (!scritto.equals(campo.getEditor().getText())) {
+                    campo.getEditor().setText(scritto);
+                    campo.getEditor().positionCaret(Math.min(cursore, scritto.length()));
+                }
+
+                inCorso[0] = false;
+            });
         });
 
         if (giaPronti != null) {
@@ -122,6 +145,31 @@ public class Utility {
         }, "elenco-database");
         caricamento.setDaemon(true);
         caricamento.start();
+    }
+
+    /**
+     * Fa in modo che la barra spaziatrice scriva uno spazio invece di scegliere la voce
+     * evidenziata: la lista del popup sta in un'altra scena e interpreta SPACE come Invio.
+     * @param campo tendina da correggere
+     * @author Matteo Franguelli
+     */
+    private static void spazioNonSceglie(ComboBox<String> campo) {
+        if (!(campo.getSkin() instanceof ComboBoxListViewSkin<?> tendina)) return;
+
+        Node lista = tendina.getPopupContent();
+        if (lista == null || lista.getProperties().containsKey("spazio-corretto")) return;
+
+        lista.getProperties().put("spazio-corretto", Boolean.TRUE);
+
+        lista.addEventFilter(KeyEvent.ANY, evento -> {
+            if (evento.getCode() != KeyCode.SPACE && !" ".equals(evento.getCharacter())) return;
+
+            if (evento.getEventType() == KeyEvent.KEY_PRESSED) {
+                TextField editor = campo.getEditor();
+                editor.insertText(editor.getCaretPosition(), " ");
+            }
+            evento.consume();
+        });
     }
 
     /**
