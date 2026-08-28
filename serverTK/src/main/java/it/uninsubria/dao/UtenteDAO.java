@@ -33,6 +33,11 @@ public class UtenteDAO {
             return false;
         }
 
+        if (!UtenteDTO.dataNascitaValida(utente.getDataNascita())) {
+            System.err.println("Registrazione bloccata: Data di nascita non valida!");
+            return false;
+        }
+
         String checkEmailSql = "SELECT id_utente FROM UTENTE WHERE email = ?";
 
         try (PreparedStatement psCheck = conn.prepareStatement(checkEmailSql)) {

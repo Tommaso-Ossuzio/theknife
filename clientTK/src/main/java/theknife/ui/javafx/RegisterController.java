@@ -43,6 +43,7 @@ public class RegisterController {
     @FXML private Label erroreUsername;
     @FXML private Label errorePassword;
     @FXML private Label erroreCitta;
+    @FXML private Label erroreDataNascita;
     @FXML private Button bottoneCrea;
 
     private ControllerAutenticazione controllerPrincipale;
@@ -143,6 +144,13 @@ public class RegisterController {
         } else {
             dataNascita = Date.from(dataN.atStartOfDay(ZoneId.systemDefault()).toInstant());
         }
+
+        if (!UtenteDTO.dataNascitaValida(dataNascita)) {
+            erroreDataNascita.setText("Data non valida");
+            etichettaErrore.setText("");
+            return;
+        }
+        erroreDataNascita.setText("");
 
         UtenteDTO utente = new UtenteDTO(nome,cognome,email,dataNascita, new LuogoDTO(new CittaDTO(citta)), passwordHashed);
         Boolean risposta = (Boolean) GestioneRichieste.getInstance().inviaEAttendi("REG",utente);

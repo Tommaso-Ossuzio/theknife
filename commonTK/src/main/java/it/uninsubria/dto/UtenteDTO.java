@@ -1,6 +1,10 @@
 package it.uninsubria.dto;
 
 import java.io.Serializable;
+import java.time.Instant;
+import java.time.LocalDate;
+import java.time.Period;
+import java.time.ZoneId;
 import java.util.Date;
 import java.util.regex.Pattern;
 
@@ -12,6 +16,8 @@ public class UtenteDTO implements Serializable {
     private static final long serialVersionUID = 1L;
 
     private static final Pattern FORMATO_EMAIL = Pattern.compile("^[^@\\s]+@[^@\\s]+\\.[^@\\s]+$");
+    private static final int ETA_MINIMA = 14;
+    private static final int ETA_MASSIMA = 120;
 
     private int idUtente;
     private String nome;
@@ -94,6 +100,27 @@ public class UtenteDTO implements Serializable {
 
     public void setDataNascita(Date dataNascita) {
         this.dataNascita = dataNascita;
+    }
+
+    /**
+     * Controlla che la data di nascita sia plausibile: non nel futuro e con
+     * un'eta' compresa fra 14 e 120 anni. La data e' facoltativa, quindi null
+     * e' accettato.
+     * @param dataNascita data da controllare
+     * @return true se la data e' accettabile
+     * @author Matteo Franguelli
+     */
+    public static boolean dataNascitaValida(Date dataNascita) {
+        if (dataNascita == null) return true;
+
+        LocalDate nascita = Instant.ofEpochMilli(dataNascita.getTime())
+                .atZone(ZoneId.systemDefault()).toLocalDate();
+        LocalDate oggi = LocalDate.now();
+
+        if (nascita.isAfter(oggi)) return false;
+
+        int anni = Period.between(nascita, oggi).getYears();
+        return anni >= ETA_MINIMA && anni <= ETA_MASSIMA;
     }
 
     public LuogoDTO getLuogo() {
