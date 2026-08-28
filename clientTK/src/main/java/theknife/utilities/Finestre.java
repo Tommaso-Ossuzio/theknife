@@ -1,8 +1,12 @@
 package theknife.utilities;
 
 import javafx.fxml.FXMLLoader;
+import javafx.geometry.Rectangle2D;
+import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.layout.Region;
 import javafx.stage.Modality;
+import javafx.stage.Screen;
 import javafx.stage.Stage;
 
 import java.io.IOException;
@@ -17,6 +21,10 @@ public final class Finestre {
 
     /** Cartella delle viste dentro le risorse. */
     private static final String CARTELLA_VISTE = "/it/unininsubria/theknifeui/ui/javafx/view/";
+
+    /** Schermo per cui sono state disegnate le misure delle viste. */
+    private static final double LARGHEZZA_PROGETTO = 1920;
+    private static final double ALTEZZA_PROGETTO = 1080;
 
     /** Classe di sole utilità: non va istanziata. */
     private Finestre() {
@@ -42,7 +50,8 @@ public final class Finestre {
 
         try {
             FXMLLoader caricatore = new FXMLLoader(urlFxml);
-            Scene scena = new Scene(caricatore.load());
+            Parent radice = caricatore.load();
+            Scene scena = new Scene(radice);
 
             Temi.registra(scena);
 
@@ -50,6 +59,10 @@ public final class Finestre {
             finestra.setScene(scena);
             finestra.setTitle(titolo);
             finestra.initModality(Modality.APPLICATION_MODAL);
+
+            if (radice instanceof Region area) {
+                adattaAlloSchermo(finestra, area);
+            }
 
             if (configuraController != null) {
                 T controller = caricatore.getController();
@@ -61,6 +74,34 @@ public final class Finestre {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    /**
+     * Ingrandisce la finestra in proporzione allo schermo, partendo dalle misure
+     * con cui la vista è stata disegnata: sotto quelle misure non si scende mai,
+     * perché il contenuto verrebbe tagliato. Le misure sono quelle del contenuto,
+     * alla cornice della finestra pensa {@link Stage#sizeToScene()}.
+     *
+     * @param finestra finestra da ridimensionare
+     * @param radice   radice della vista, con le misure di progetto
+     * @author Matteo Franguelli
+     */
+    public static void adattaAlloSchermo(Stage finestra, Region radice) {
+        if (finestra == null || radice == null) return;
+        if (radice.getPrefWidth() <= 0 || radice.getPrefHeight() <= 0) return;
+
+        Rectangle2D schermo = Screen.getPrimary().getVisualBounds();
+        double fattore = Math.max(1, Math.min(schermo.getWidth() / LARGHEZZA_PROGETTO,
+                schermo.getHeight() / ALTEZZA_PROGETTO));
+
+        radice.setPrefWidth(radice.getPrefWidth() * fattore);
+        radice.setPrefHeight(radice.getPrefHeight() * fattore);
+        finestra.sizeToScene();
+
+        if (finestra.getWidth() > schermo.getWidth()) finestra.setWidth(schermo.getWidth());
+        if (finestra.getHeight() > schermo.getHeight()) finestra.setHeight(schermo.getHeight());
+
+        finestra.centerOnScreen();
     }
 
     /**

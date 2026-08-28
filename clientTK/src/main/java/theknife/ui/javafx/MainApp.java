@@ -2,10 +2,13 @@ package theknife.ui.javafx;
 
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.layout.Region;
 import javafx.scene.image.Image;
 import javafx.stage.Stage;
 import theknife.model.GestioneRichieste;
+import theknife.utilities.Finestre;
 import theknife.utilities.Temi;
 
 import java.io.IOException;
@@ -46,7 +49,8 @@ public class MainApp extends Application {
         }
 
         FXMLLoader caricatore = new FXMLLoader(urlFxml);
-        Scene scena = new Scene(caricatore.load(),1200, 768);
+        Parent radice = caricatore.load();
+        Scene scena = new Scene(radice, 1200, 768);
 
         Temi.registra(scena);
 
@@ -73,6 +77,9 @@ public class MainApp extends Application {
         }
 
         finestra.setScene(scena);
+        if (radice instanceof Region area) {
+            Finestre.adattaAlloSchermo(finestra, area);
+        }
         finestra.show();
 
         finestra.setOnCloseRequest(event -> {

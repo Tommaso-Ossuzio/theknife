@@ -9,7 +9,8 @@
             xmlns:fx="http://javafx.com/fxml"
             fx:controller="theknife.ui.javafx.WelcomeController"
             stylesheets="@style.css"
-            styleClass="app-root">
+            styleClass="app-root"
+            prefWidth="1200" prefHeight="768">
 
     <top>
         <VBox styleClass="top-bar">
