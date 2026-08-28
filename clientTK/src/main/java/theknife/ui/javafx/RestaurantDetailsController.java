@@ -137,8 +137,10 @@ public class RestaurantDetailsController {
         Integer id= ristoranteDTO.getIdRistorante();
 
         CoordinateDTO coordinate =(CoordinateDTO) GestioneRichieste.getInstance().inviaEAttendi("MAPS",id);
-        latitudineLoc=coordinate.getLatitudine();
-        longitudineLoc=coordinate.getLongitudine();
+        if (coordinate != null) {
+            latitudineLoc=coordinate.getLatitudine();
+            longitudineLoc=coordinate.getLongitudine();
+        }
         if (latitudineLoc != 0 && longitudineLoc != 0) {
             // Coordinate precise
            urlFinale = "https://www.google.com/maps?q=" + latitudineLoc + "," + longitudineLoc;
@@ -423,6 +425,6 @@ public class RestaurantDetailsController {
        HashMap<String, Integer> id = new HashMap<>();
        id.put("idUtente", idUtente);
        id.put("idRistorante", idRistorante);
-       GestioneRichieste.getInstance().inviaSolo("AGG-PREF", idUtente);
+       GestioneRichieste.getInstance().inviaSolo("AGG-PREF", id);
     }
 }
