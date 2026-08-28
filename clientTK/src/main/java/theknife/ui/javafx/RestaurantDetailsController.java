@@ -62,21 +62,16 @@ public class RestaurantDetailsController {
 
     public void setRestaurantData(RistoranteDTO ristorante) throws IOException {
         this.ristoranteDTO = ristorante;
-        // 1. Estrazione sicura degli oggetti annidati per evitare NullPointerException
         it.uninsubria.dto.LuogoDTO luogo = ristorante.getLuogo();
         it.uninsubria.dto.CittaDTO citta = (luogo != null) ? luogo.getCitta() : null;
         it.uninsubria.dto.CoordinateDTO coord = (luogo != null) ? luogo.getCoordinate() : null;
-        // 2. Assegnazione sicura coordinate
         this.latitudineLoc = (coord != null) ? coord.getLatitudine() : 0.0;
         this.longitudineLoc = (coord != null) ? coord.getLongitudine() : 0.0;
-        // 3. Assegnazione testi base
         etichettaNome.setText(valoreNonNullo(ristorante.getNome()));
 
         String via = (luogo != null) ? luogo.getVia() : null;
         etichettaIndirizzo.setText(valoreNonNullo(via));
-        // 4. Formattazione Città in totale sicurezza
         if (citta != null) {
-            // Presumo che citta.getNome() ti dia il nome in stringa, altrimenti puoi lasciare citta.toString()
             String nomeCitta = citta.getNome();
             String nazione = citta.getNazione();
 
@@ -86,9 +81,8 @@ public class RestaurantDetailsController {
                 etichettaCitta.setText(valoreNonNullo(nomeCitta));
             }
         } else {
-            etichettaCitta.setText("-"); // Se non c'è la città, stampiamo un trattino
+            etichettaCitta.setText("-");
         }
-        // 5. Prezzo, Telefono, Delivery, Prenotazione
         String prezzoVisualizzato = Etichette.formattaFasciaPrezzo(ristorante.getFasciaPrezzo());
         valorePrezzo.setText(prezzoVisualizzato.isBlank() ? "-" : prezzoVisualizzato);
 
@@ -96,15 +90,12 @@ public class RestaurantDetailsController {
 
         valoreConsegna.setText(ristorante.isDelivery() ? "Disponibile" : "No");
         valorePrenotazione.setText(ristorante.isPrenotazioneOnline() ? "Disponibile" : "No");
-        // 6. Formattazione pulita per le Cucine (evita le parentesi quadre di Java)
         if (ristorante.getCucine() != null && !ristorante.getCucine().isEmpty()) {
             valoreCucina.setText(String.join(", ", ristorante.getCucine()));
         } else {
             valoreCucina.setText("-");
         }
-        // 7. Stelle Michelin
         mostraStelleMichelin(ristorante.getStelleMichelin());
-        // 8. Gestione Sito Web (WebView)
         if (ristorante.getSitoWeb() != null && !ristorante.getSitoWeb().isBlank() && !ristorante.getSitoWeb().equalsIgnoreCase("null")) {
             linkSitoWeb.setText(ristorante.getSitoWeb());
             linkSitoWeb.setDisable(false);
@@ -115,24 +106,19 @@ public class RestaurantDetailsController {
             linkSitoWeb.setDisable(true);
             mostraMessaggioNessunSito();
         }
-        // 9. Link Esterni e Preferiti
-        //todo per me non va bene qua vanno preparate solo quando si clicca su apri in maps no?
-        preparaGoogleMapsUrl();
+
+//      preparaGoogleMapsUrl();
         aggiornaVisibilitaPreferiti();
     }
 
     /**
      * Costruisce l'URL per Google Maps utilizzando le coordinate di latitudine e longitudine
      * del ristorante.
-     *
      * @author Matteo Franguelli
+     * @author Elia Toschi
      */
     private void preparaGoogleMapsUrl() throws IOException {
-        // Il flusso FILTRO non restituisce ancora le coordinate: in quel caso
-        // l'URL deve rimanere null, così il pulsante Maps viene disabilitato.
-        // TODO: valorizzare nuovamente l'URL quando le coordinate saranno
-        // incluse in LuogoDTO dal DAO e restituite dal server.
-        String urlFinale = null;
+               String urlFinale = null;
 
         Integer id= ristoranteDTO.getIdRistorante();
 
@@ -159,11 +145,12 @@ public class RestaurantDetailsController {
     /**
      * Gestisce l'evento di click sul pulsante "Apri in Maps".
      * Apre il link generato nel browser predefinito del sistema.
-     *
-     * @author Matteo Franguelli
+     *@author Matteo Franguelli
+     * @author Elia Toschi
      */
     @FXML
-    private void onApriMaps() {
+    private void onApriMaps() throws IOException {
+        preparaGoogleMapsUrl();
         if (googleMapsUrl != null) apriNelBrowser(googleMapsUrl);
     }
 
