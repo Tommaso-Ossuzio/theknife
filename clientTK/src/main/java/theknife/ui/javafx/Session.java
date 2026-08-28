@@ -72,6 +72,10 @@ public class Session {
     public void login(String username, Role ruolo) throws IOException {
         this.username = username;
         this.ruolo = (ruolo == null ? Role.GUEST : ruolo);
+        // Città e ID appartengono all'utente precedente (o alla precedente
+        // sessione guest): non devono sopravvivere a un nuovo accesso.
+        this.citta = null;
+        this.id = 0;
 
         // Imposta permessi di default in base al ruolo semplice
         // (Verranno sovrascritti se si usa setPermessi)
@@ -83,6 +87,30 @@ public class Session {
             this.permessiRistoratore = false;
         } else if (this.ruolo == Role.RISTORATORE) {
             this.permessiRistoratore = true;
+        }
+    }
+
+    /**
+     * Ricarica dal server i dati della sessione legati all'utente autenticato.
+     * Va chiamato dopo login o registrazione, prima di aggiornare la GUI.
+     *
+     * @throws IOException se non è possibile inizializzare la connessione
+     */
+    public void aggiornaDatiUtente() throws IOException {
+        if (!isAuthenticated() || username == null || username.isBlank()) return;
+
+        GestioneRichieste richieste = GestioneRichieste.getInstance();
+
+        Object rispostaId = richieste.inviaEAttendi("ID", username);
+        this.id = rispostaId instanceof Integer idUtente ? idUtente : 0;
+
+        Object rispostaDomicilio = richieste.inviaEAttendi("DOM", username);
+        if (rispostaDomicilio instanceof String domicilio
+                && !domicilio.isBlank()
+                && !domicilio.equalsIgnoreCase("ERRORE")) {
+            this.citta = domicilio.trim();
+        } else {
+            this.citta = null;
         }
     }
 

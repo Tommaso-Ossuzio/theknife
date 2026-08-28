@@ -5,7 +5,6 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
-import theknife.model.GestioneRichieste;
 import theknife.model.GestioneRistoranti;
 import theknife.utilities.Finestre;
 import theknife.utilities.Temi;
@@ -104,17 +103,11 @@ public class WelcomeController implements ControllerAutenticazione {
         Session sessione = Session.getInstance();
         if (!sessione.isAuthenticated()) return;
 
-        sessione.setID((int) GestioneRichieste.getInstance().inviaEAttendi("ID", sessione.getUsername()));
+        sessione.aggiornaDatiUtente();
 
         if (sessione.isRistoratore()) {
             apriDashboardRistoratore();
         } else {
-            if(sessione.isGuest()){
-                sessione.setCitta(campoCitta.getValue());
-            }else{
-                String risposta = (String) GestioneRichieste.getInstance().inviaEAttendi("DOM", sessione.getUsername());
-                sessione.setCitta(risposta);
-            }
             apriSchermataPrincipale(sessione.getCitta());
         }
     }

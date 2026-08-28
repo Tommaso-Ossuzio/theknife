@@ -16,13 +16,13 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.TilePane;
 import javafx.scene.layout.VBox;
-import theknife.model.GestioneFile;
 import theknife.model.GestioneRistoranti;
 import theknife.utilities.Etichette;
 import theknife.utilities.Finestre;
 import theknife.utilities.Temi;
 import theknife.utilities.Utility;
 
+import java.io.IOException;
 import java.util.List;
 
 //TODO da rivedere, vengono usati i file
@@ -479,8 +479,9 @@ public class MainController implements ControllerAutenticazione {
      * @author Matteo Franguelli
      */
     @Override
-    public void onLoginSuccess() {
+    public void onLoginSuccess() throws IOException {
         Session session = Session.getInstance();
+        session.aggiornaDatiUtente();
 
         if (session.isRistoratore()) {
             Finestre.cambiaVista(paginazione.getScene(), "dashboard.fxml");
@@ -489,16 +490,16 @@ public class MainController implements ControllerAutenticazione {
 
         aggiornaInterfaccia();
         if (session.isAuthenticated()) {
-
-            String cittaUtente = GestioneFile.recuperaCittaUtente(session.getUsername());
+            String cittaUtente = session.getCitta();
             if (cittaUtente != null && !cittaUtente.isBlank()) {
-                session.setCitta(cittaUtente);
-
                 if (campoLuogo != null) {
                     campoLuogo.getEditor().setText(cittaUtente);
                     onApplyFilters();
                     System.out.println("Filtro applicato automaticamente per città: " + cittaUtente);
                 }
+            } else {
+                mostraErrore("Domicilio non disponibile",
+                        "Non è stato possibile recuperare la città associata all'account.");
             }
         }
     }
