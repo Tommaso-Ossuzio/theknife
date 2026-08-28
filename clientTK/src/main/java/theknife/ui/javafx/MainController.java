@@ -16,13 +16,14 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.TilePane;
 import javafx.scene.layout.VBox;
-import theknife.model.GestioneRistoranti;
+import theknife.model.GestioneRichieste;
 import theknife.utilities.Etichette;
 import theknife.utilities.Finestre;
 import theknife.utilities.Temi;
 import theknife.utilities.Utility;
 
 import java.io.IOException;
+import java.util.LinkedList;
 import java.util.List;
 
 //TODO da rivedere, vengono usati i file
@@ -65,7 +66,6 @@ public class MainController implements ControllerAutenticazione {
 
     // Lista dei ristoranti mostrata dalla UI. I dati arrivano dal server come DTO.
     private final ObservableList<RistoranteDTO> ristoranti = FXCollections.observableArrayList();
-    GestioneRistoranti gr = GestioneRistoranti.getInstance();
 
     /** Quante card mostrare in ogni pagina della griglia. */
     private static final int RISTORANTI_PER_PAGINA = 12;
@@ -160,7 +160,7 @@ public class MainController implements ControllerAutenticazione {
      * Applica un filtro ricevuto dalla schermata principale o dal filtro
      * avanzato.
      *
-     * <p>{@link GestioneRistoranti#filtraRistoranti(FiltroRistoranteDTO)} è
+     * <p>{@link #filtraRistoranti(FiltroRistoranteDTO)} è
      * bloccante perché attende la risposta della socket. Per questo motivo la
      * chiamata viene eseguita dentro un {@link Task}; gli aggiornamenti della
      * lista e della paginazione avvengono poi sul thread JavaFX tramite gli
@@ -181,7 +181,7 @@ public class MainController implements ControllerAutenticazione {
         Task<List<RistoranteDTO>> richiesta = new Task<>() {
             @Override
             protected List<RistoranteDTO> call() {
-                return gr.filtraRistoranti(filtro);
+                return filtraRistoranti(filtro);
             }
         };
 
@@ -204,6 +204,42 @@ public class MainController implements ControllerAutenticazione {
         Thread thread = new Thread(richiesta, "filtro-ristoranti");
         thread.setDaemon(true);
         thread.start();
+    }
+
+    /**
+     * Invia al server i criteri del filtro e restituisce i ristoranti ricevuti.
+     * Il metodo viene eseguito dal {@link Task} creato in
+     * {@link #applicaFiltro(FiltroRistoranteDTO)}, quindi non blocca il thread
+     * JavaFX.
+     *
+     * @param filtro criteri della ricerca
+     * @return ristoranti filtrati, oppure una lista vuota se la risposta non è
+     *         disponibile o la connessione al server fallisce
+     */
+    private LinkedList<RistoranteDTO> filtraRistoranti(FiltroRistoranteDTO filtro) {
+        if (filtro == null) {
+            throw new IllegalArgumentException("Il filtro dei ristoranti non può essere null");
+        }
+
+        try {
+            Object risposta = GestioneRichieste.getInstance()
+                    .inviaEAttendi("FILTRO", filtro);
+
+            if (risposta instanceof List<?> elementi) {
+                LinkedList<RistoranteDTO> risultato = new LinkedList<>();
+
+                for (Object elemento : elementi) {
+                    if (elemento instanceof RistoranteDTO ristorante) {
+                        risultato.add(ristorante);
+                    }
+                }
+                return risultato;
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        return new LinkedList<>();
     }
 
     /* =========================================================
