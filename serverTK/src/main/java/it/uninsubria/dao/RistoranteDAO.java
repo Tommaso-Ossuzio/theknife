@@ -12,8 +12,9 @@ import java.util.LinkedList;
 import java.util.List;
 
 /**
- *  RistoranteDAO rappresenta il punto di accesso al database per le informazioni dei ristoranti
- *  * @author Elia Toschi
+ * RistoranteDAO rappresenta il punto di accesso al database per le informazioni dei ristoranti
+ * @author Elia Toschi
+ * @author Celestino Resteghini
  */
 public class RistoranteDAO {
 
@@ -461,9 +462,12 @@ public class RistoranteDAO {
      * @author Elia Toschi
      * @author Celestino Resteghini
      */
-    public void inserisciRistorante(Connection conn, RistoranteDTO ristorante) {
+    public void inserisciRistorante(Connection conn, RistoranteDTO ristorante) throws SQLException {
         LuogoDAO luogoDAO = new LuogoDAO();
         int idLuogo = luogoDAO.inserisciLuogoCompleto(conn, ristorante.getLuogo());
+        for (String cucina : ristorante.getCucine()) {
+            inserisciTipoCucina(conn, cucina);
+        }
 
         String sql = "INSERT INTO RISTORANTE (nome, telefono, sito_web, delivery, prenotazione_online, fascia_prezzo, id_utente, id_luogo, stelle_michelin) " +
                 "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
@@ -548,5 +552,22 @@ public class RistoranteDAO {
             e.printStackTrace();
         }
         return lista;
+    }
+
+    /**
+     * Inserisce una nuova tipologia di cucina (es. "Italiana", "Pizza") nel database.
+     * Ignora l'operazione se la tipologia è già registrata.
+     * @param conn La connessione al database
+     * @param nome Il nome della tipologia di cucina
+     * @throws SQLException In caso di errore durante l'esecuzione della query
+     * @author Elia Toschi
+     * @author Celestino Resteghini
+     */
+    private static void inserisciTipoCucina(Connection conn, String nome) throws SQLException {
+        String sql = "INSERT INTO TIPO_CUCINA (nome) VALUES (?) ON CONFLICT (nome) DO NOTHING";
+        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setString(1, nome);
+            ps.executeUpdate();
+        }
     }
 }

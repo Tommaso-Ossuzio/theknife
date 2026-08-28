@@ -11,6 +11,7 @@ import java.util.regex.Pattern;
 /**
  * Rappresenta il modello degli utenti. Contiene il luogoDTO della sua residenza
  * @author Elia Toschi
+ * @author Celestino Resteghini
  */
 public class UtenteDTO implements Serializable {
     private static final long serialVersionUID = 1L;
@@ -46,6 +47,10 @@ public class UtenteDTO implements Serializable {
         this.dataNascita = dataNascita;
         this.luogo = luogo;
         this.password = password;
+    }
+
+    public UtenteDTO(int idUtente) {
+        this.idUtente = idUtente;
     }
 
     public String getPassword() {

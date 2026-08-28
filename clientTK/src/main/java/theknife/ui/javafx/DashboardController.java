@@ -1,7 +1,6 @@
 package theknife.ui.javafx;
 
 import it.uninsubria.dto.RistoranteDTO;
-import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
@@ -17,7 +16,6 @@ import theknife.utilities.Temi;
 
 import java.io.IOException;
 import java.util.LinkedList;
-import java.util.List;
 import java.util.Locale;
 
 
@@ -113,7 +111,7 @@ public class DashboardController {
             double media = r.getMediaStelle();
 
             totaleRecensioni += quante;
-            totaleSenzaRisposta += r.getNumeroRecensioniSenzaRisposta(); //gestioneRecensioni.getSenzaRisposta(r.getId());
+            totaleSenzaRisposta += r.getNumeroRecensioniSenzaRisposta();
 
             if (quante > 0 && media > 0) {
                 sommaVoti += media * quante;
@@ -133,7 +131,7 @@ public class DashboardController {
             coloraRiquadroMedia(-1);
         }
 
-        // Quando non c'è nulla da evadere il riquadro non invita più a cliccare
+        // Quando non ci sono recensioni senza risposta il riquadro viene disattivato
         boolean cSonoRispostePendenti = totaleSenzaRisposta > 0;
         tileSenzaRisposta.setDisable(!cSonoRispostePendenti);
 
@@ -258,7 +256,6 @@ public class DashboardController {
     @FXML
     private void onAggiungiRistorante() throws IOException {
         Finestre.apriModale("add_restaurant.fxml", "Nuovo ristorante");
-        //TODO mettere comando AGG-RIST
         aggiornaTutto();
     }
 
