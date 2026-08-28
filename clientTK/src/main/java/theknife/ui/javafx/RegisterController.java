@@ -128,7 +128,11 @@ public class RegisterController {
             return;
         }
 
-        //TODO implementare controllo indirizzo mail
+        if (!UtenteDTO.emailValida(email)) {
+            erroreUsername.setText("Email non valida");
+            etichettaErrore.setText("");
+            return;
+        }
 
         String passwordHashed = Utility.calcolaSha256(password);
 

@@ -2,6 +2,7 @@ package it.uninsubria.dto;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.regex.Pattern;
 
 /**
  * Rappresenta il modello degli utenti. Contiene il luogoDTO della sua residenza
@@ -9,6 +10,8 @@ import java.util.Date;
  */
 public class UtenteDTO implements Serializable {
     private static final long serialVersionUID = 1L;
+
+    private static final Pattern FORMATO_EMAIL = Pattern.compile("^[^@\\s]+@[^@\\s]+\\.[^@\\s]+$");
 
     private int idUtente;
     private String nome;
@@ -73,6 +76,16 @@ public class UtenteDTO implements Serializable {
 
     public void setEmail(String email) {
         this.email = email;
+    }
+
+    /**
+     * Controlla che l'email abbia la forma qualcosa@qualcosa.qualcosa.
+     * @param email indirizzo da controllare
+     * @return true se il formato e' valido
+     * @author Matteo Franguelli
+     */
+    public static boolean emailValida(String email) {
+        return email != null && FORMATO_EMAIL.matcher(email.trim()).matches();
     }
 
     public Date getDataNascita() {

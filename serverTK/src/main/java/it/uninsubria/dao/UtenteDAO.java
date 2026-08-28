@@ -28,6 +28,11 @@ public class UtenteDAO {
      * @author Elia Toschi
      */
     public boolean registraUtente(Connection conn, UtenteDTO utente, String passwordHash) {
+        if (!UtenteDTO.emailValida(utente.getEmail())) {
+            System.err.println("Registrazione bloccata: Email non valida!");
+            return false;
+        }
+
         String checkEmailSql = "SELECT id_utente FROM UTENTE WHERE email = ?";
 
         try (PreparedStatement psCheck = conn.prepareStatement(checkEmailSql)) {
