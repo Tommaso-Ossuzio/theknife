@@ -8,7 +8,6 @@ import it.uninsubria.dto.RistoranteDTO;
 import it.uninsubria.dto.RistoratoreDTO;
 
 import java.sql.*;
-import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -40,7 +39,7 @@ public class RistoranteDAO {
         {
             ps.setString(1, "%"+nomeCercato+"%");
             ResultSet rs=ps.executeQuery();
-            ArrayList<RistoranteDTO> array = new ArrayList<>();
+            LinkedList<RistoranteDTO> array = new LinkedList<>();
 
             while(rs.next())
             {
@@ -96,7 +95,7 @@ public class RistoranteDAO {
         {
             ps.setInt(1, idRistorante);
             ResultSet rs=ps.executeQuery();
-            ArrayList<String> array=new ArrayList<>();
+            LinkedList<String> array=new LinkedList<>();
 
             while(rs.next())
             {
@@ -131,7 +130,7 @@ public class RistoranteDAO {
         if (luogoRichiesto != null) {
             riferimento = trovaRiferimentoRicerca(conn, luogoRichiesto);
             if (riferimento == null) {
-                return new ArrayList<>();
+                return new LinkedList<>();
             }
         }
 
@@ -165,7 +164,7 @@ public class RistoranteDAO {
                         "GROUP BY REC.id_ristorante" +
                         ") ST ON ST.id_ristorante = R.id_ristorante " +
                         "WHERE 1=1 ");
-        List<Object> parametri = new ArrayList<>();
+        List<Object> parametri = new LinkedList<>();
 
         if (filtro.getCucina() != null && !filtro.getCucina().trim().isEmpty()) {
             sql.append("AND EXISTS (" +
@@ -204,7 +203,7 @@ public class RistoranteDAO {
             }
 
             try (ResultSet rs = ps.executeQuery()) {
-                List<RistoranteDTO> risultato = new ArrayList<>();
+                List<RistoranteDTO> risultato = new LinkedList<>();
                 while (rs.next()) {
                     if (riferimento == null || appartieneAllaRicercaGeografica(rs, riferimento)) {
                         risultato.add(costruisciRistoranteFiltratoDaResultSet(rs));
@@ -215,7 +214,7 @@ public class RistoranteDAO {
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        return new ArrayList<>();
+        return new LinkedList<>();
     }
 
     /**
@@ -336,7 +335,7 @@ public class RistoranteDAO {
      */
     private List<String> estraiCucine(ResultSet rs) throws SQLException {
         Array arrayCucine = rs.getArray("cucine");
-        List<String> cucine = new ArrayList<>();
+        List<String> cucine = new LinkedList<>();
 
         if (arrayCucine == null) {
             return cucine;
@@ -439,7 +438,7 @@ public class RistoranteDAO {
      */
     public List<RistoranteDTO> getRistorantiDelRistoratore(Connection conn, int idRistoratore) {
         String sql = "SELECT * FROM RISTORANTE WHERE id_utente = ?";
-        ArrayList<RistoranteDTO> lista = new ArrayList<>();
+        LinkedList<RistoranteDTO> lista = new LinkedList<>();
 
         try (PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setInt(1, idRistoratore);
@@ -509,7 +508,7 @@ public class RistoranteDAO {
      */
     public List<String> getCitta(Connection conn)
     {
-        ArrayList<String> lista = new ArrayList<>();
+        LinkedList<String> lista = new LinkedList<>();
         String sql = "SELECT DISTINCT nome FROM citta ORDER BY nome ASC  ";
         try(PreparedStatement ps= conn.prepareStatement(sql); ResultSet rs=ps.executeQuery())
         {
@@ -534,7 +533,7 @@ public class RistoranteDAO {
      */
     public List<String> getCucine(Connection conn)
     {
-        ArrayList<String> lista = new ArrayList<>();
+        LinkedList<String> lista = new LinkedList<>();
         String sql = "SELECT DISTINCT nome from tipo_cucina ORDER BY nome ASC ";
         try(PreparedStatement ps= conn.prepareStatement(sql); ResultSet rs=ps.executeQuery())
         {

@@ -1,14 +1,8 @@
 package it.uninsubria.dao;
 
-import it.uninsubria.dto.RistoranteDTO;
-
 import java.sql.Connection;
 import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
-
-import java.util.List;
 
 /**
  * L'intefaccia per accedere ai dati del database dei ristoranti preferiti

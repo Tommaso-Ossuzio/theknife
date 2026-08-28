@@ -1,9 +1,6 @@
 package it.uninsubria.dao;
 
-import it.uninsubria.dto.RecensioneDTO;
-import it.uninsubria.dto.RispostaDTO;
-import it.uninsubria.dto.RistoratoreDTO;
-import it.uninsubria.dto.UtenteDTO;
+import it.uninsubria.dto.*;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -11,7 +8,7 @@ import java.sql.ResultSet;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
 /**
@@ -27,7 +24,7 @@ public class RecensioneDAO {
      */
     public List<RecensioneDTO> getRecensioniPerRistorante(Connection conn, int idRistorante) {
         String sql = "SELECT * FROM RECENSIONE WHERE id_ristorante = ? ORDER BY data_ora DESC";
-        ArrayList<RecensioneDTO> listaRecensioni = new ArrayList<>();
+        LinkedList<RecensioneDTO> listaRecensioni = new LinkedList<>();
 
         try (PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setInt(1, idRistorante);
@@ -173,7 +170,7 @@ public class RecensioneDAO {
      */
     public List<RecensioneDTO> getRecensioniDaUtente(Connection conn, int idUtente) {
         String sql = "SELECT * FROM RECENSIONE WHERE id_utente = ? ORDER BY data_ora DESC";
-        ArrayList<RecensioneDTO> listaRecensioni = new ArrayList<>();
+        LinkedList<RecensioneDTO> listaRecensioni = new LinkedList<>();
 
         try (PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setInt(1, idUtente);
@@ -220,7 +217,7 @@ public class RecensioneDAO {
                 "WHERE RIST.id_utente = ? AND RISP.id_recensione IS NULL " +
                 "ORDER BY REC.data_ora DESC";
 
-        ArrayList<RecensioneDTO> lista = new ArrayList<>();
+        LinkedList<RecensioneDTO> lista = new LinkedList<>();
 
         try (PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setInt(1, idRistoratore);
