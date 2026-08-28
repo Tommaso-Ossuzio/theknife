@@ -136,6 +136,13 @@ public class RegisterController {
             return;
         }
 
+        if (!Utility.cittaEsiste(citta)) {
+            erroreCitta.setText("Luogo non presente");
+            etichettaErrore.setText("Luogo non presente, seleziona una città dall'elenco.");
+            campoCitta.requestFocus();
+            return;
+        }
+
         String passwordHashed = Utility.calcolaSha256(password);
 
         Date dataNascita;

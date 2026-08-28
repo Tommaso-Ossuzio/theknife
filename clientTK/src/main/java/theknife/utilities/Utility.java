@@ -103,6 +103,23 @@ public class Utility {
     }
 
     /**
+     * Controlla che il luogo digitato sia una delle città del database.
+     * Se l'elenco non è ancora arrivato dal server accetta, lasciando la verifica al server.
+     * @param scritta nome digitato dall'utente
+     * @return true se la città esiste
+     * @author Matteo Franguelli
+     */
+    public static boolean cittaEsiste(String scritta) {
+        if (scritta == null || scritta.isBlank()) return false;
+        if (cittaDelDatabase == null) return true;
+
+        for (String nome : cittaDelDatabase) {
+            if (nome.equalsIgnoreCase(scritta.trim())) return true;
+        }
+        return false;
+    }
+
+    /**
      * Chiede al server l'elenco delle città del database.
      * @return le città del database, vuoto se il server non risponde
      * @author Matteo Franguelli
