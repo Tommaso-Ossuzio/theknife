@@ -37,6 +37,15 @@ public class AddRestaurantController {
 
     // Etichetta per mostrare i messaggi di errore all’utente
     @FXML private Label etichettaErrore;
+    @FXML private Label erroreNome;
+    @FXML private Label erroreNazione;
+    @FXML private Label erroreCitta;
+    @FXML private Label erroreIndirizzo;
+    @FXML private Label erroreLatitudine;
+    @FXML private Label erroreLongitudine;
+    @FXML private Label erroreTelefono;
+    @FXML private Label errorePrezzo;
+    @FXML private Label erroreTipoCucina;
     @FXML private Button bottoneSalva;
 
     // Riferimento al controller principale della finestra principale
@@ -72,6 +81,31 @@ public class AddRestaurantController {
      */
     @FXML
     private void onSalva() {
+        boolean nomeVuoto        = segnalaSeVuoto(campoNome, erroreNome);
+        boolean nazioneVuota     = segnalaSeVuoto(campoNazione, erroreNazione);
+        boolean cittaVuota       = segnalaSeVuoto(campoCitta, erroreCitta);
+        boolean indirizzoVuoto   = segnalaSeVuoto(campoIndirizzo, erroreIndirizzo);
+        boolean latitudineVuota  = segnalaSeVuoto(campoLatitudine, erroreLatitudine);
+        boolean longitudineVuota = segnalaSeVuoto(campoLongitudine, erroreLongitudine);
+        boolean telefonoVuoto    = segnalaSeVuoto(campoTelefono, erroreTelefono);
+        boolean prezzoVuoto      = segnalaSeVuoto(campoPrezzo, errorePrezzo);
+        boolean cucinaVuota      = segnalaSeVuoto(campoTipoCucina, erroreTipoCucina);
+
+        if (nomeVuoto || nazioneVuota || cittaVuota || indirizzoVuoto || latitudineVuota
+                || longitudineVuota || telefonoVuoto || prezzoVuoto || cucinaVuota) {
+            etichettaErrore.setText("");
+            return;
+        }
+
+        boolean latitudineErrata  = segnalaSeNonNumerico(campoLatitudine, erroreLatitudine);
+        boolean longitudineErrata = segnalaSeNonNumerico(campoLongitudine, erroreLongitudine);
+        boolean prezzoErrato      = segnalaSeNonNumerico(campoPrezzo, errorePrezzo);
+
+        if (latitudineErrata || longitudineErrata || prezzoErrato) {
+            etichettaErrore.setText("");
+            return;
+        }
+
         MainController controller = new MainController();
         String nome = campoNome.getText();
         String nazione = campoNazione.getText();
@@ -112,12 +146,6 @@ public class AddRestaurantController {
             p="€€€";
         else if(prezzo > 100)
             p="€€€€";
-
-        // Controllo base: il nome del ristorante è obbligatorio
-        if (nome == null || nome.isBlank()) {
-            etichettaErrore.setText("Il nome è obbligatorio.");
-            return;
-        }
 
         // Verifica cartella
         File cartellaDoc = new File(NOME_CARTELLA);
@@ -174,6 +202,37 @@ public class AddRestaurantController {
             controllerPrincipale.onResetFilters();
         }
         chiudiFinestra();
+    }
+
+    /**
+     * Scrive "Obbligatorio" di fianco al campo se è rimasto vuoto.
+     * @param campo campo obbligatorio da controllare
+     * @param errore etichetta accanto al campo
+     * @return true se il campo è vuoto
+     * @author Matteo Franguelli
+     */
+    private boolean segnalaSeVuoto(TextField campo, Label errore) {
+        boolean vuoto = campo.getText() == null || campo.getText().isBlank();
+        errore.setText(vuoto ? "Obbligatorio" : "");
+        return vuoto;
+    }
+
+    /**
+     * Scrive "Numero non valido" di fianco al campo se non contiene un numero.
+     * @param campo campo numerico da controllare
+     * @param errore etichetta accanto al campo
+     * @return true se il valore non è un numero
+     * @author Matteo Franguelli
+     */
+    private boolean segnalaSeNonNumerico(TextField campo, Label errore) {
+        try {
+            Double.parseDouble(campo.getText().trim());
+            errore.setText("");
+            return false;
+        } catch (NumberFormatException e) {
+            errore.setText("Numero non valido");
+            return true;
+        }
     }
 
     /**

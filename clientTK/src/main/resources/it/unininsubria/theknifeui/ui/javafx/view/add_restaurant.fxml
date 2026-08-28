@@ -24,37 +24,53 @@
 
                 <VBox styleClass="field-group">
                     <Label text="NOME *" styleClass="field-label"/>
-                    <TextField fx:id="campoNome" promptText="Nome ristorante"/>
+                    <HBox styleClass="field-row">
+                        <TextField fx:id="campoNome" promptText="Nome ristorante" HBox.hgrow="ALWAYS"/>
+                        <Label fx:id="erroreNome" styleClass="error-label"/>
+                    </HBox>
                 </VBox>
-
-                <!-- TODO mettere tutti i campi obbligatori, e gestirli a dovere -->
 
                 <Label text="Dove si trova" styleClass="section-title"/>
 
                 <HBox styleClass="card-line">
                     <VBox styleClass="field-group" HBox.hgrow="ALWAYS">
-                        <Label text="NAZIONE" styleClass="field-label"/>
-                        <TextField fx:id="campoNazione" promptText="es. Italia"/>
+                        <Label text="NAZIONE *" styleClass="field-label"/>
+                        <HBox styleClass="field-row">
+                            <TextField fx:id="campoNazione" promptText="es. Italia" HBox.hgrow="ALWAYS"/>
+                            <Label fx:id="erroreNazione" styleClass="error-label"/>
+                        </HBox>
                     </VBox>
                     <VBox styleClass="field-group" HBox.hgrow="ALWAYS">
-                        <Label text="CITTÀ" styleClass="field-label"/>
-                        <TextField fx:id="campoCitta" promptText="es. Milano"/>
+                        <Label text="CITTÀ *" styleClass="field-label"/>
+                        <HBox styleClass="field-row">
+                            <TextField fx:id="campoCitta" promptText="es. Milano" HBox.hgrow="ALWAYS"/>
+                            <Label fx:id="erroreCitta" styleClass="error-label"/>
+                        </HBox>
                     </VBox>
                 </HBox>
 
                 <VBox styleClass="field-group">
-                    <Label text="INDIRIZZO" styleClass="field-label"/>
-                    <TextField fx:id="campoIndirizzo" promptText="Via..."/>
+                    <Label text="INDIRIZZO *" styleClass="field-label"/>
+                    <HBox styleClass="field-row">
+                        <TextField fx:id="campoIndirizzo" promptText="Via..." HBox.hgrow="ALWAYS"/>
+                        <Label fx:id="erroreIndirizzo" styleClass="error-label"/>
+                    </HBox>
                 </VBox>
 
                 <HBox styleClass="card-line">
                     <VBox styleClass="field-group" HBox.hgrow="ALWAYS">
-                        <Label text="LATITUDINE" styleClass="field-label"/>
-                        <TextField fx:id="campoLatitudine" promptText="45.46"/>
+                        <Label text="LATITUDINE *" styleClass="field-label"/>
+                        <HBox styleClass="field-row">
+                            <TextField fx:id="campoLatitudine" promptText="45.46" HBox.hgrow="ALWAYS"/>
+                            <Label fx:id="erroreLatitudine" styleClass="error-label"/>
+                        </HBox>
                     </VBox>
                     <VBox styleClass="field-group" HBox.hgrow="ALWAYS">
-                        <Label text="LONGITUDINE" styleClass="field-label"/>
-                        <TextField fx:id="campoLongitudine" promptText="9.18"/>
+                        <Label text="LONGITUDINE *" styleClass="field-label"/>
+                        <HBox styleClass="field-row">
+                            <TextField fx:id="campoLongitudine" promptText="9.18" HBox.hgrow="ALWAYS"/>
+                            <Label fx:id="erroreLongitudine" styleClass="error-label"/>
+                        </HBox>
                     </VBox>
                 </HBox>
 
@@ -63,18 +79,27 @@
                 <Label text="Dettagli e contatti" styleClass="section-title"/>
 
                 <VBox styleClass="field-group">
-                    <Label text="NUMERO DI TELEFONO" styleClass="field-label"/>
-                    <TextField fx:id="campoTelefono" promptText="es. +39..."/>
+                    <Label text="NUMERO DI TELEFONO *" styleClass="field-label"/>
+                    <HBox styleClass="field-row">
+                        <TextField fx:id="campoTelefono" promptText="es. +39..." HBox.hgrow="ALWAYS"/>
+                        <Label fx:id="erroreTelefono" styleClass="error-label"/>
+                    </HBox>
                 </VBox>
 
                 <HBox styleClass="card-line">
                     <VBox styleClass="field-group" HBox.hgrow="ALWAYS">
-                        <Label text="PREZZO MEDIO (€)" styleClass="field-label"/>
-                        <TextField fx:id="campoPrezzo" promptText="es. 60"/>
+                        <Label text="PREZZO MEDIO (€) *" styleClass="field-label"/>
+                        <HBox styleClass="field-row">
+                            <TextField fx:id="campoPrezzo" promptText="es. 60" HBox.hgrow="ALWAYS"/>
+                            <Label fx:id="errorePrezzo" styleClass="error-label"/>
+                        </HBox>
                     </VBox>
                     <VBox styleClass="field-group" HBox.hgrow="ALWAYS">
-                        <Label text="TIPO DI CUCINA" styleClass="field-label"/>
-                        <TextField fx:id="campoTipoCucina" promptText="Italian, Gourmet..."/>
+                        <Label text="TIPO DI CUCINA *" styleClass="field-label"/>
+                        <HBox styleClass="field-row">
+                            <TextField fx:id="campoTipoCucina" promptText="Italian, Gourmet..." HBox.hgrow="ALWAYS"/>
+                            <Label fx:id="erroreTipoCucina" styleClass="error-label"/>
+                        </HBox>
                     </VBox>
                 </HBox>
 
