@@ -16,13 +16,14 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.TilePane;
 import javafx.scene.layout.VBox;
-import theknife.model.GestioneFile;
-import theknife.model.GestioneRistoranti;
+import theknife.model.GestioneRichieste;
 import theknife.utilities.Etichette;
 import theknife.utilities.Finestre;
 import theknife.utilities.Temi;
 import theknife.utilities.Utility;
 
+import java.io.IOException;
+import java.util.LinkedList;
 import java.util.List;
 
 //TODO da rivedere, vengono usati i file
@@ -38,6 +39,7 @@ import java.util.List;
  * @author Matteo Franguelli
  * @author Elia Toschi
  * @author Tommaso Ossuzio
+ * @author Michele Viselli
  * @version 2
  */
 public class MainController implements ControllerAutenticazione {
@@ -64,7 +66,6 @@ public class MainController implements ControllerAutenticazione {
 
     // Lista dei ristoranti mostrata dalla UI. I dati arrivano dal server come DTO.
     private final ObservableList<RistoranteDTO> ristoranti = FXCollections.observableArrayList();
-    GestioneRistoranti gr = GestioneRistoranti.getInstance();
 
     /** Quante card mostrare in ogni pagina della griglia. */
     private static final int RISTORANTI_PER_PAGINA = 12;
@@ -84,6 +85,7 @@ public class MainController implements ControllerAutenticazione {
      * - Imposta come la lista deve mostrare i ristoranti
      * - Imposta i pulsanti in base al ruolo (default: Ospite)
      * @author Matteo Franguelli
+     * @author Michele Viselli
      */
     @FXML
     private void initialize() {
@@ -158,7 +160,7 @@ public class MainController implements ControllerAutenticazione {
      * Applica un filtro ricevuto dalla schermata principale o dal filtro
      * avanzato.
      *
-     * <p>{@link GestioneRistoranti#filtraRistoranti(FiltroRistoranteDTO)} è
+     * <p>{@link #filtraRistoranti(FiltroRistoranteDTO)} è
      * bloccante perché attende la risposta della socket. Per questo motivo la
      * chiamata viene eseguita dentro un {@link Task}; gli aggiornamenti della
      * lista e della paginazione avvengono poi sul thread JavaFX tramite gli
@@ -179,7 +181,7 @@ public class MainController implements ControllerAutenticazione {
         Task<List<RistoranteDTO>> richiesta = new Task<>() {
             @Override
             protected List<RistoranteDTO> call() {
-                return gr.filtraRistoranti(filtro);
+                return filtraRistoranti(filtro);
             }
         };
 
@@ -202,6 +204,42 @@ public class MainController implements ControllerAutenticazione {
         Thread thread = new Thread(richiesta, "filtro-ristoranti");
         thread.setDaemon(true);
         thread.start();
+    }
+
+    /**
+     * Invia al server i criteri del filtro e restituisce i ristoranti ricevuti.
+     * Il metodo viene eseguito dal {@link Task} creato in
+     * {@link #applicaFiltro(FiltroRistoranteDTO)}, quindi non blocca il thread
+     * JavaFX.
+     *
+     * @param filtro criteri della ricerca
+     * @return ristoranti filtrati, oppure una lista vuota se la risposta non è
+     *         disponibile o la connessione al server fallisce
+     */
+    private LinkedList<RistoranteDTO> filtraRistoranti(FiltroRistoranteDTO filtro) {
+        if (filtro == null) {
+            throw new IllegalArgumentException("Il filtro dei ristoranti non può essere null");
+        }
+
+        try {
+            Object risposta = GestioneRichieste.getInstance()
+                    .inviaEAttendi("FILTRO", filtro);
+
+            if (risposta instanceof List<?> elementi) {
+                LinkedList<RistoranteDTO> risultato = new LinkedList<>();
+
+                for (Object elemento : elementi) {
+                    if (elemento instanceof RistoranteDTO ristorante) {
+                        risultato.add(ristorante);
+                    }
+                }
+                return risultato;
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        return new LinkedList<>();
     }
 
     /* =========================================================
@@ -282,6 +320,7 @@ public class MainController implements ControllerAutenticazione {
      * badge del tipo di cucina e dei servizi, link al sito.
      * Un click seleziona la card, il doppio click apre i dettagli.
      * @author Matteo Franguelli
+     * @author Michele Viselli
      */
     private Node creaCard(RistoranteDTO r) {
         VBox card = new VBox();
@@ -477,10 +516,12 @@ public class MainController implements ControllerAutenticazione {
      * Metodo chiamato sia da login che da register, permette l'aggiornamento dell'interfaccia
      * basandosi sulla Session
      * @author Matteo Franguelli
+     * @author Michele Viselli
      */
     @Override
-    public void onLoginSuccess() {
+    public void onLoginSuccess() throws IOException {
         Session session = Session.getInstance();
+        session.aggiornaDatiUtente();
 
         if (session.isRistoratore()) {
             Finestre.cambiaVista(paginazione.getScene(), "dashboard.fxml");
@@ -489,16 +530,16 @@ public class MainController implements ControllerAutenticazione {
 
         aggiornaInterfaccia();
         if (session.isAuthenticated()) {
-
-            String cittaUtente = GestioneFile.recuperaCittaUtente(session.getUsername());
+            String cittaUtente = session.getCitta();
             if (cittaUtente != null && !cittaUtente.isBlank()) {
-                session.setCitta(cittaUtente);
-
                 if (campoLuogo != null) {
                     campoLuogo.getEditor().setText(cittaUtente);
                     onApplyFilters();
                     System.out.println("Filtro applicato automaticamente per città: " + cittaUtente);
                 }
+            } else {
+                mostraErrore("Domicilio non disponibile",
+                        "Non è stato possibile recuperare la città associata all'account.");
             }
         }
     }
