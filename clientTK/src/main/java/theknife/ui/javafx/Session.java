@@ -68,6 +68,7 @@ public class Session {
      * I permessi specifici vengono resettati in base al ruolo,
      * ma è consigliabile usare setPermessi() subito dopo per precisione.
      * @author Matteo Franguelli
+     * @author Michele Viselli
      */
     public void login(String username, Role ruolo) throws IOException {
         this.username = username;
@@ -95,6 +96,7 @@ public class Session {
      * Va chiamato dopo login o registrazione, prima di aggiornare la GUI.
      *
      * @throws IOException se non è possibile inizializzare la connessione
+     * @author Michele Viselli
      */
     public void aggiornaDatiUtente() throws IOException {
         if (!isAuthenticated() || username == null || username.isBlank()) return;

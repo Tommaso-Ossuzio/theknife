@@ -97,6 +97,7 @@ public class WelcomeController implements ControllerAutenticazione {
      *
      * @author Matteo Franguelli
      * @author Celestino Resteghini
+     * @author Michele Viselli
      */
     @Override
     public void onLoginSuccess() throws IOException {

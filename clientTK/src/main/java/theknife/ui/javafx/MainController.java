@@ -38,6 +38,7 @@ import java.util.List;
  * @author Matteo Franguelli
  * @author Elia Toschi
  * @author Tommaso Ossuzio
+ * @author Michele Viselli
  * @version 2
  */
 public class MainController implements ControllerAutenticazione {
@@ -84,6 +85,7 @@ public class MainController implements ControllerAutenticazione {
      * - Imposta come la lista deve mostrare i ristoranti
      * - Imposta i pulsanti in base al ruolo (default: Ospite)
      * @author Matteo Franguelli
+     * @author Michele Viselli
      */
     @FXML
     private void initialize() {
@@ -282,6 +284,7 @@ public class MainController implements ControllerAutenticazione {
      * badge del tipo di cucina e dei servizi, link al sito.
      * Un click seleziona la card, il doppio click apre i dettagli.
      * @author Matteo Franguelli
+     * @author Michele Viselli
      */
     private Node creaCard(RistoranteDTO r) {
         VBox card = new VBox();
@@ -477,6 +480,7 @@ public class MainController implements ControllerAutenticazione {
      * Metodo chiamato sia da login che da register, permette l'aggiornamento dell'interfaccia
      * basandosi sulla Session
      * @author Matteo Franguelli
+     * @author Michele Viselli
      */
     @Override
     public void onLoginSuccess() throws IOException {

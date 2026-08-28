@@ -151,6 +151,7 @@ public class AddReviewController {
      * Aggiunge e sceive la recensione su file
      * @author Elia Toschi
      * @author Matteo Franguelli
+     * @author Michele Viselli
      */
     @FXML
     private void onCreate() {

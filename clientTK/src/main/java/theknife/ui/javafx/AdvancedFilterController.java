@@ -96,6 +96,7 @@ public class AdvancedFilterController {
      * per verificare se rispetta i parametri.
      * @author Matteo Franguelli
      * @author Celestino Resteghini
+     * @author Michele Viselli
      */
     @FXML
     private void onApply() {
