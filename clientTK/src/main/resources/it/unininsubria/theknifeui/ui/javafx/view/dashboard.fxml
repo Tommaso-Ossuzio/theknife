@@ -64,7 +64,7 @@
 
                     <VBox fx:id="tileSenzaRisposta"
                           styleClass="stat-tile,stat-tile-action"
-                          onMouseClicked="#onRecensioniDaEvadere"
+                          onMouseClicked="#onRecensioniSenzaRisposta"
                           HBox.hgrow="ALWAYS">
                         <Label fx:id="valoreSenzaRisposta" text="—" styleClass="stat-value"/>
                         <Label text="Senza risposta" styleClass="stat-label"/>

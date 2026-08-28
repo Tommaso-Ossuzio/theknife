@@ -1,5 +1,6 @@
 package theknife.ui.javafx;
 
+import it.uninsubria.dto.RistoranteDTO;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
@@ -9,22 +10,20 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
-import theknife.model.GestioneFile;
-import theknife.model.GestioneRecensioni;
-import theknife.model.GestioneRistoranti;
-import theknife.model.Ristorante;
+import theknife.model.*;
 import theknife.utilities.Etichette;
 import theknife.utilities.Finestre;
 import theknife.utilities.Temi;
 
+import java.io.IOException;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 
-//TODO da rivedere, vengono usati i file
 
 /**
  * Controller della dashboard del ristoratore.
+ * @author Celestino Resteghini
  * @author Matteo Franguelli
  */
 public class DashboardController {
@@ -42,11 +41,8 @@ public class DashboardController {
     @FXML private VBox contenitoreRistoranti;
     @FXML private VBox statoVuoto;
 
-    private final GestioneRistoranti gestioneRistoranti = GestioneRistoranti.getInstance();
-    private final GestioneRecensioni gestioneRecensioni = GestioneRecensioni.getInstance();
-
     /** Ristoranti di cui l'utente collegato è proprietario. */
-    private List<Ristorante> mieiRistoranti = new LinkedList<>();
+    private LinkedList<RistoranteDTO> mieiRistoranti = new LinkedList<>();
 
     /**
      * Le classi che colorano il riquadro della media, tenute qui per poterle
@@ -61,23 +57,17 @@ public class DashboardController {
 
     /**
      * Prepara la dashboard con i dati del ristoratore collegato.
+     * @author Celestino Resteghini
      * @author Matteo Franguelli
      */
     @FXML
-    private void initialize() {
+    private void initialize() throws IOException {
         aggiornaPulsanteTema();
 
         Session sessione = Session.getInstance();
         etichettaUtente.setText("Ristoratore: " + (sessione.getUsername() == null ? "" : sessione.getUsername()));
 
-        if (gestioneRistoranti.isCaricato()) {
-            aggiornaTutto();
-        } else {
-            new Thread(() -> {
-                gestioneRistoranti.caricaDaCsv();
-                Platform.runLater(this::aggiornaTutto);
-            }).start();
-        }
+        aggiornaTutto();
     }
 
     /**
@@ -86,30 +76,31 @@ public class DashboardController {
      *
      * @author Matteo Franguelli
      */
-    private void aggiornaTutto() {
+    private void aggiornaTutto() throws IOException {
         caricaMieiRistoranti();
         aggiornaNumeri();
         costruisciElenco();
     }
 
     /**
-     * Recupera dal file degli utenti i ristoranti posseduti.
+     * Recupera dal db i ristoranti posseduti.
+     * @author Celestino Resteghini
      * @author Matteo Franguelli
      */
-    private void caricaMieiRistoranti() {
+    private void caricaMieiRistoranti() throws IOException {
         mieiRistoranti = new LinkedList<>();
 
-        String username = Session.getInstance().getUsername();
+        Session sessione = Session.getInstance();
+
+        String username = sessione.getUsername();
         if (username == null) return;
 
-        for (Integer id : GestioneFile.recuperaIdRistorantiUtente(username)) {
-            Ristorante r = gestioneRistoranti.getRistorante(id);
-            if (r != null) mieiRistoranti.add(r);
-        }
+        mieiRistoranti = (LinkedList<RistoranteDTO>) GestioneRichieste.getInstance().inviaEAttendi("RIST",sessione.getID());
     }
 
     /**
      * Calcola e mostra i quattro numeri in evidenza.
+     * @author Celestino Resteghini
      * @author Matteo Franguelli
      */
     private void aggiornaNumeri() {
@@ -117,12 +108,12 @@ public class DashboardController {
         int totaleSenzaRisposta = 0;
         double sommaVoti = 0;
 
-        for (Ristorante r : mieiRistoranti) {
-            int quante = gestioneRecensioni.getConteggio(r.getId());
-            double media = gestioneRecensioni.getMedia(r.getId());
+        for (RistoranteDTO r : mieiRistoranti) {
+            int quante = r.getNumeroRecensioni();
+            double media = r.getMediaStelle();
 
             totaleRecensioni += quante;
-            totaleSenzaRisposta += gestioneRecensioni.getSenzaRisposta(r.getId());
+            totaleSenzaRisposta += r.getNumeroRecensioniSenzaRisposta(); //gestioneRecensioni.getSenzaRisposta(r.getId());
 
             if (quante > 0 && media > 0) {
                 sommaVoti += media * quante;
@@ -173,6 +164,7 @@ public class DashboardController {
 
     /**
      * Ricostruisce l'elenco dei propri ristoranti, uno per riga.
+     * @author Celestino Resteghini
      * @author Matteo Franguelli
      */
     private void costruisciElenco() {
@@ -184,7 +176,7 @@ public class DashboardController {
         contenitoreRistoranti.setVisible(!vuoto);
         contenitoreRistoranti.setManaged(!vuoto);
 
-        for (Ristorante r : mieiRistoranti) {
+        for (RistoranteDTO r : mieiRistoranti) {
             contenitoreRistoranti.getChildren().add(creaRiga(r));
         }
     }
@@ -194,13 +186,14 @@ public class DashboardController {
      * riconoscimenti a destra. Cliccandola si aprono le sue recensioni.
      *
      * @param r ristorante da rappresentare
+     * @author Celestino Resteghini
      * @author Matteo Franguelli
      */
-    private HBox creaRiga(Ristorante r) {
+    private HBox creaRiga(RistoranteDTO r) {
         Label nome = new Label(r.getNome() == null ? "" : r.getNome());
         nome.getStyleClass().add("restaurant-name");
 
-        String citta = r.getLuogo() == null ? "" : r.getLuogo().getCitta();
+        String citta = r.getLuogo() == null ? "" : r.getLuogo().getCitta().getNome();
         Label luogo = new Label(citta == null ? "" : citta);
         luogo.getStyleClass().add("card-line-text");
 
@@ -217,14 +210,20 @@ public class DashboardController {
         Label michelin = Etichette.creaBadgeMichelin(r);
         if (michelin != null) badge.getChildren().add(michelin);
 
-        int daEvadere = gestioneRecensioni.getSenzaRisposta(r.getId());
-        if (daEvadere > 0) {
-            badge.getChildren().add(Etichette.creaBadge(daEvadere + " da rispondere", "tag-todo"));
+        int senzaRisposta = r.getNumeroRecensioniSenzaRisposta();
+        if (senzaRisposta > 0) {
+            badge.getChildren().add(Etichette.creaBadge(senzaRisposta + " da rispondere", "tag-todo"));
         }
 
         HBox riga = new HBox(testi, spaziatore, badge);
         riga.getStyleClass().add("owner-card");
-        riga.setOnMouseClicked(evento -> apriRecensioniDi(r));
+        riga.setOnMouseClicked(evento -> {
+            try {
+                apriRecensioniDi(r);
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        });
 
         riga.setAccessibleText("Ristorante " + r.getNome() + ", apri le recensioni");
 
@@ -235,7 +234,7 @@ public class DashboardController {
      * Apre le recensioni di un singolo ristorante gestito.
      * @author Matteo Franguelli
      */
-    private void apriRecensioniDi(Ristorante r) {
+    private void apriRecensioniDi(RistoranteDTO r) throws IOException {
         Finestre.apriModale("view_reviews.fxml", "Recensioni di " + r.getNome(),
                 (ViewReviewsController ctrl) -> ctrl.setRestaurant(r));
         aggiornaTutto();
@@ -246,8 +245,9 @@ public class DashboardController {
      * @author Matteo Franguelli
      */
     @FXML
-    private void onRecensioniDaEvadere() {
+    private void onRecensioniSenzaRisposta() throws IOException {
         Finestre.apriModale("reply_review.fxml", "Recensioni a cui rispondere");
+        //TODO mettere comando REC-NO-RISP e gestire RISP-REC
         aggiornaTutto();
     }
 
@@ -256,8 +256,9 @@ public class DashboardController {
      * @author Matteo Franguelli
      */
     @FXML
-    private void onAggiungiRistorante() {
+    private void onAggiungiRistorante() throws IOException {
         Finestre.apriModale("add_restaurant.fxml", "Nuovo ristorante");
+        //TODO mettere comando AGG-RIST
         aggiornaTutto();
     }
 
