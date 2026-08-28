@@ -144,9 +144,14 @@ public class MainController implements ControllerAutenticazione {
      * @author Celestino Resteghini
      */
     private void caricaCatalogo() {
-        Session session = Session.getInstance();
-        applicaFiltro(new FiltroRistoranteDTO(
-                session.getCitta(), null, null, null, null, null));
+        String citta = Session.getInstance().getCitta();
+
+        if (citta == null || citta.isBlank()) {
+            mostraErrore("Città non impostata", "Indica una città per vedere i ristoranti.");
+            return;
+        }
+
+        applicaFiltro(new FiltroRistoranteDTO(citta, null, null, null, null, null));
     }
 
     /**
@@ -609,8 +614,10 @@ public class MainController implements ControllerAutenticazione {
      */
     @FXML
     public void onResetFilters() {
-        if (campoLuogo != null) campoLuogo.getEditor().clear();
+        String citta = Session.getInstance().getCitta();
+
         if (campoCucina != null) campoCucina.getEditor().clear();
+        if (campoLuogo != null) campoLuogo.getEditor().setText(citta == null ? "" : citta);
 
         caricaCatalogo();
 
