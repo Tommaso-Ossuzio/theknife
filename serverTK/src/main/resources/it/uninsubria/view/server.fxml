@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
+
+<BorderPane xmlns="http://javafx.com/javafx"
+            xmlns:fx="http://javafx.com/fxml"
+            fx:controller="it.uninsubria.ServerController"
+            stylesheets="@style.css"
+            styleClass="dialog-root"
+            prefWidth="640" prefHeight="560">
+
+    <top>
+        <VBox styleClass="dialog-header">
+            <Label text="Server TheKnife" styleClass="page-title"/>
+            <Label fx:id="etichettaStato" styleClass="subtitle"
+                   text="Indica l'host e le credenziali del database dbTK"/>
+        </VBox>
+    </top>
+
+    <center>
+        <StackPane>
+            <VBox fx:id="riquadroForm" styleClass="form-body">
+
+                <VBox styleClass="field-group">
+                    <Label text="HOST DEL DATABASE" styleClass="field-label"/>
+                    <TextField fx:id="campoHost" text="localhost" promptText="Indirizzo del server PostgreSQL"/>
+                </VBox>
+
+                <VBox styleClass="field-group">
+                    <Label text="PORTA" styleClass="field-label"/>
+                    <TextField fx:id="campoPorta" text="5432" promptText="5432"/>
+                </VBox>
+
+                <VBox styleClass="field-group">
+                    <Label text="UTENTE" styleClass="field-label"/>
+                    <TextField fx:id="campoUtente" text="postgres" promptText="Nome utente del database"/>
+                </VBox>
+
+                <VBox styleClass="field-group">
+                    <Label text="PASSWORD" styleClass="field-label"/>
+                    <PasswordField fx:id="campoPassword" promptText="Password del database"/>
+                </VBox>
+
+                <Label fx:id="etichettaErrore" styleClass="error-label" wrapText="true"/>
+
+                <Pane VBox.vgrow="ALWAYS"/>
+            </VBox>
+
+            <VBox fx:id="riquadroLog" styleClass="form-body" visible="false" managed="false">
+                <ScrollPane fx:id="pannelloLog" styleClass="log-pane" fitToWidth="true" VBox.vgrow="ALWAYS">
+                    <TextFlow fx:id="flussoLog" styleClass="log-flow"/>
+                </ScrollPane>
+            </VBox>
+        </StackPane>
+    </center>
+
+    <bottom>
+        <HBox styleClass="dialog-footer">
+            <Button fx:id="bottoneAvvia" text="Avvia server"
+                    onAction="#onAvvia"
+                    defaultButton="true"
+                    styleClass="btn-primary"/>
+        </HBox>
+    </bottom>
+</BorderPane>

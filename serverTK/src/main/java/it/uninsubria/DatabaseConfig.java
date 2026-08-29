@@ -46,6 +46,16 @@ public class DatabaseConfig {
         }
     }
 
+    /**
+     * Imposta le credenziali indicate all'avvio del server.
+     * @author Elia Toschi
+     */
+    public static void configura(String host, String porta, String utente, String password) {
+        props.setProperty("db.url.default", "jdbc:postgresql://" + host + ":" + porta + "/postgres");
+        props.setProperty("db.user", utente);
+        props.setProperty("db.password", password);
+    }
+
     // --- GETTERS PER LE CREDENZIALI ---
 
     public static String getDefaultUrl() {

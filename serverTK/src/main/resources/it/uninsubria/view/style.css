@@ -1,0 +1,157 @@
+.root {
+    -color-primary:         #0B6B5B;
+    -color-primary-hover:   #085449;
+    -color-primary-press:   #063D35;
+    -color-primary-text:    #FFFFFF;
+
+    -color-bg:              #F4F6F5;
+    -color-surface:         #FFFFFF;
+    -color-surface-alt:     #F0F2EF;
+
+    -color-border:          #E1E5E1;
+    -color-border-strong:   #C9D0CB;
+
+    -color-text:            #0E1A17;
+    -color-heading:         #08463C;
+    -color-text-muted:      #4F5F5A;
+
+    -color-danger:          #B02B2B;
+
+    -fx-accent:             -color-primary;
+    -fx-focus-color:        -color-primary;
+    -fx-faint-focus-color:  transparent;
+}
+
+.root {
+    -fx-font-family: "Segoe UI", "Inter", "Helvetica Neue", Arial, sans-serif;
+    -fx-font-size: 14px;
+    -fx-text-fill: -color-text;
+    -fx-background-color: -color-bg;
+}
+
+.dialog-root {
+    -fx-background-color: -color-surface;
+}
+
+.label {
+    -fx-text-fill: -color-text;
+}
+
+.page-title {
+    -fx-font-size: 24px;
+    -fx-font-weight: bold;
+    -fx-text-fill: -color-heading;
+}
+
+.subtitle {
+    -fx-font-size: 13px;
+    -fx-text-fill: -color-text-muted;
+}
+
+.field-label {
+    -fx-font-size: 12px;
+    -fx-font-weight: bold;
+    -fx-text-fill: -color-text-muted;
+}
+
+.error-label {
+    -fx-font-size: 13px;
+    -fx-font-weight: bold;
+    -fx-text-fill: -color-danger;
+}
+
+.form-body {
+    -fx-background-color: -color-surface;
+    -fx-spacing: 14;
+    -fx-padding: 22;
+}
+
+.field-group {
+    -fx-spacing: 5;
+}
+
+.field-row {
+    -fx-spacing: 10;
+    -fx-alignment: center-left;
+}
+
+.dialog-header {
+    -fx-background-color: -color-surface;
+    -fx-border-color: -color-border;
+    -fx-border-width: 0 0 1 0;
+    -fx-padding: 20 22 18 22;
+    -fx-spacing: 4;
+}
+
+.dialog-footer {
+    -fx-background-color: -color-surface-alt;
+    -fx-border-color: -color-border;
+    -fx-border-width: 1 0 0 0;
+    -fx-padding: 14 22 14 22;
+    -fx-spacing: 10;
+    -fx-alignment: center-right;
+}
+
+.button {
+    -fx-background-color: -color-primary;
+    -fx-text-fill: -color-primary-text;
+    -fx-font-size: 13px;
+    -fx-font-weight: bold;
+    -fx-background-radius: 10;
+    -fx-border-radius: 10;
+    -fx-border-color: transparent;
+    -fx-padding: 8 16 8 16;
+    -fx-cursor: hand;
+}
+.button:hover {
+    -fx-background-color: -color-primary-hover;
+}
+.button:pressed {
+    -fx-background-color: -color-primary-press;
+}
+.button:disabled {
+    -fx-opacity: 0.45;
+    -fx-cursor: default;
+}
+
+.btn-primary {
+    -fx-background-color: -color-primary;
+    -fx-text-fill: -color-primary-text;
+}
+.btn-primary:hover  { -fx-background-color: -color-primary-hover; }
+.btn-primary:pressed { -fx-background-color: -color-primary-press; }
+
+.text-field,
+.password-field,
+.text-area {
+    -fx-background-color: -color-surface;
+    -fx-text-fill: -color-text;
+    -fx-prompt-text-fill: -color-text-muted;
+    -fx-border-color: -color-border-strong;
+    -fx-border-width: 1;
+    -fx-border-radius: 10;
+    -fx-background-radius: 10;
+    -fx-padding: 8 12 8 12;
+    -fx-font-size: 13px;
+}
+
+.text-field:focused,
+.password-field:focused,
+.text-area:focused {
+    -fx-border-color: -color-primary;
+    -fx-border-width: 1.5;
+}
+
+.text-area {
+    -fx-padding: 4;
+}
+
+.log-area {
+    -fx-font-family: "Consolas", "Menlo", monospace;
+    -fx-font-size: 12px;
+}
+.text-area .content {
+    -fx-background-color: -color-surface;
+    -fx-background-radius: 8;
+    -fx-padding: 8 10 8 10;
+}
