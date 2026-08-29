@@ -52,7 +52,7 @@ CREATE TABLE UTENTE (
 
 CREATE TABLE RISTORANTE (
     id_ristorante SERIAL NOT NULL,
-    nome VARCHAR(100) NOT NULL UNIQUE,
+    nome VARCHAR(100) NOT NULL ,
     telefono VARCHAR(50),
     sito_web VARCHAR(255),
     delivery BOOLEAN NOT NULL,
