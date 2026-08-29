@@ -5,13 +5,12 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
-import theknife.model.GestioneRistoranti;
 import theknife.utilities.Finestre;
 import theknife.utilities.Temi;
 import theknife.utilities.Utility;
 
 import java.io.IOException;
-import java.util.Map;
+import java.util.List;
 
 /**
  * Controller della schermata di benvenuto.
@@ -25,10 +24,8 @@ public class WelcomeController implements ControllerAutenticazione {
     @FXML private Label etichettaStato;
     @FXML private Label etichettaErrore;
 
-    /** Città disponibili, con quanti ristoranti contengono. */
-    private Map<String, Integer> cittaDisponibili;
-
-    private final GestioneRistoranti gestioneRistoranti = GestioneRistoranti.getInstance();
+    /** Città disponibili nel database. */
+    private List<String> cittaDisponibili;
 
     /**
      * Prepara la schermata e avvia la lettura del catalogo.
@@ -51,16 +48,14 @@ public class WelcomeController implements ControllerAutenticazione {
     }
 
     /**
-     * Legge il catalogo in un thread separato e, al termine, riempie la
-     * tendina delle città sul thread grafico.
+     * Chiede le città al server in un thread separato e, al termine, abilita
+     * l'ingresso come ospite sul thread grafico.
      *
      * @author Matteo Franguelli
      */
     private void caricaTendina() {
         new Thread(() -> {
-            //TODO da sostituire il csv con il comando che creeremo apposta per ottenere la lista dei nomi delle città
-            gestioneRistoranti.caricaDaCsv();
-            Map<String, Integer> citta = gestioneRistoranti.getCittaConConteggio();
+            List<String> citta = Utility.elencoCitta();
 
             Platform.runLater(() -> {
                 cittaDisponibili = citta;
@@ -150,16 +145,16 @@ public class WelcomeController implements ControllerAutenticazione {
     }
 
     /**
-     * Cerca una città nel catalogo ignorando maiuscole e minuscole e
-     * restituisce il nome esatto con cui è scritta nel file.
+     * Cerca una città fra quelle del database ignorando maiuscole e minuscole e
+     * restituisce il nome esatto con cui è scritta.
      *
-     * @return il nome della città, oppure null se non esiste nel catalogo
+     * @return il nome della città, oppure null se non esiste nel database
      * @author Matteo Franguelli
      */
     private String trovaCitta(String scritta) {
         if (cittaDisponibili == null) return null;
 
-        for (String citta : cittaDisponibili.keySet()) {
+        for (String citta : cittaDisponibili) {
             if (citta.equalsIgnoreCase(scritta)) return citta;
         }
         return null;

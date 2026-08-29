@@ -174,6 +174,24 @@ public class Utility {
     }
 
     /**
+     * Restituisce le città del database, chiedendole al server se non sono già arrivate.
+     * @return le città del database, vuoto se il server non risponde
+     * @author Matteo Franguelli
+     */
+    public static List<String> elencoCitta() {
+        return cittaDalDatabase();
+    }
+
+    /**
+     * Dimentica gli elenchi ricevuti dal server, così vengono richiesti di nuovo.
+     * @author Matteo Franguelli
+     */
+    public static synchronized void svuotaElenchi() {
+        cittaDelDatabase = null;
+        cucineDelDatabase = null;
+    }
+
+    /**
      * Controlla che il luogo digitato sia una delle città del database.
      * Se l'elenco non è ancora arrivato dal server accetta, lasciando la verifica al server.
      * @param scritta nome digitato dall'utente

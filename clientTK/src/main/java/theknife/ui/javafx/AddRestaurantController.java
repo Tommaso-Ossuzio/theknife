@@ -116,6 +116,7 @@ public class AddRestaurantController {
 
         RistoranteDTO nuovoRistorante = new RistoranteDTO(nome, nazione, citta, indirizzo, lat, longi, numTel, prezzo, cucine, sito, delivery, booking, stelle, ristoratore);
         GestioneRichieste.getInstance().inviaSolo("AGG-RIST",nuovoRistorante);
+        Utility.svuotaElenchi();
 
         // Avviso l'utente del successo
         Alert a = new Alert(Alert.AlertType.INFORMATION);
