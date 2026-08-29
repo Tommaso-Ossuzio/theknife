@@ -1,17 +1,16 @@
 package theknife.ui.javafx;
 
+import it.uninsubria.dto.RecensioneDTO;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
-import theknife.model.GestioneFile;
-import theknife.model.GestioneRistoranti;
-import theknife.model.Recensione;
-import theknife.model.Ristorante;
+import theknife.model.*;
 import theknife.utilities.Finestre;
 
-import java.util.List;
+import java.io.IOException;
+import java.util.LinkedList;
 
 //TODO da rivedere
 
@@ -37,7 +36,7 @@ public class MyReviewsController {
      * @author Matteo Franguelli
      */
     @FXML
-    private void initialize() {
+    private void initialize() throws IOException {
         colonnaRistorante.setCellValueFactory(new PropertyValueFactory<>("restaurant"));
         colonnaVoto.setCellValueFactory(new PropertyValueFactory<>("rating"));
         colonnaTesto.setCellValueFactory(new PropertyValueFactory<>("text"));
@@ -67,7 +66,11 @@ public class MyReviewsController {
             modifyItem.setOnAction(event -> {
                 ReviewRow riga = row.getItem();
                 if (riga != null) {
-                    apriModificaRecensione(riga);
+                    try {
+                        apriModificaRecensione(riga);
+                    } catch (IOException e) {
+                        throw new RuntimeException(e);
+                    }
                 }
             });
 
@@ -94,7 +97,7 @@ public class MyReviewsController {
      *
      * @author Matteo Franguelli
      */
-    private void apriModificaRecensione(ReviewRow riga) {
+    private void apriModificaRecensione(ReviewRow riga) throws IOException {
         GestioneRistoranti gr = GestioneRistoranti.getInstance();
         Ristorante r = gr.getRistorante(riga.getRawRestaurantId());
 
@@ -143,46 +146,32 @@ public class MyReviewsController {
         );
     }
     /**
-     * Carica dal file tutte le recensioni dell'utente corrente.
+     * Carica dal server tutte le recensioni dell'utente corrente.
      *
      * @author Matteo Franguelli
+     * @author Michele Viselli
      */
-    private void caricaLeMieRecensioni() {
+    private void caricaLeMieRecensioni() throws IOException {
         dati.clear();
         Session session = Session.getInstance();
         if (session.isGuest()) return;
 
         int mioId = session.getID();
-        List<Recensione> tutteLeRecensioni = GestioneFile.leggiRecensioni();
+        LinkedList<RecensioneDTO> recensioni = (LinkedList<RecensioneDTO>) GestioneRichieste
+                .getInstance()
+                .inviaEAttendi("VIS-REC", session.getID());
 
-        for (Recensione r : tutteLeRecensioni) {
+        for (RecensioneDTO r : recensioni) {
             if (r.getIdUtente() == mioId) {
-                String nomeRistorante = trovaNomeRistorante(r.get_id_Ristorante());
-                dati.add(new ReviewRow(nomeRistorante, r.getNumeroStelle(), r.getText(), r.get_id_Ristorante()));
+                String nomeRistorante = r.getNomeRistorante();
+                if (nomeRistorante == null || nomeRistorante.isBlank()) {
+                    nomeRistorante = "Sconosciuto (ID " + r.getIdRistorante() + ")";
+                }
+                dati.add(new ReviewRow(nomeRistorante, r.getNumeroStelle(), r.getTesto(), r.getIdRistorante()));
             }
         }
     }
-    /**
-     * Restituisce il nome del ristorante dato il suo id.
-     * @param idRistorante
-     * @author Matteo Franguelli
-     */
-    private String trovaNomeRistorante(int idRistorante) {
-        GestioneRistoranti gr = GestioneRistoranti.getInstance();
-        for (Ristorante r : gr.getListaRistoranti()) {
-            if (r.getId() == idRistorante) return r.getNome();
-        }
-        return "Ristorante ID: " + idRistorante;
-    }
-    /**
-     * Pulisce una stringa da caratteri non desiderati.
-     * @param s
-     * @author Matteo Franguelli
-     */
-    private String pulisci(String s) {
-        if (s == null) return "";
-        return s.trim().replace(";", "").replace("\"", "");
-    }
+
     /**
      * Aggiorna la visibilità della tabella e del messaggio di lista vuota.
      *

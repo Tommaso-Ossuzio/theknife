@@ -169,9 +169,16 @@ public class RecensioneDAO {
      * @param idUtente
      * @return Lista di RecensioneDTO
      * @author Elia Toschi
-     */
+    */
     public List<RecensioneDTO> getRecensioniDaUtente(Connection conn, int idUtente) {
-        String sql = "SELECT * FROM RECENSIONE WHERE id_utente = ? ORDER BY data_ora DESC";
+        String sql = """
+                SELECT REC.*, RIST.nome AS nome_ristorante
+                FROM RECENSIONE REC
+                JOIN RISTORANTE RIST
+                    ON RIST.id_ristorante = REC.id_ristorante
+                WHERE REC.id_utente = ?
+                ORDER BY REC.data_ora DESC
+                """;
         LinkedList<RecensioneDTO> listaRecensioni = new LinkedList<>();
 
         try (PreparedStatement ps = conn.prepareStatement(sql)) {
@@ -194,7 +201,8 @@ public class RecensioneDAO {
 
                 RispostaDTO risposta = getRispostaPerRecensione(conn, idRecensione);
 
-                RecensioneDTO recensione = new RecensioneDTO(testo, numeroStelle, data, ora, idUtente, idRistorante, risposta);
+                RecensioneDTO recensione = new RecensioneDTO(idRistorante, testo, numeroStelle, data, ora, idUtente, risposta, idRecensione);
+                recensione.setNomeRistorante(rs.getString("nome_ristorante"));
                 listaRecensioni.add(recensione);
             }
 
