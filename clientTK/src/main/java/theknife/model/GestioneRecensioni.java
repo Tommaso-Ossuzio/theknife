@@ -83,38 +83,7 @@ public class GestioneRecensioni {
      */
     public LinkedList<Recensione> getRecensioni() { return recensioni; }
 
-    /**
-     * Richiede al server le recensioni associate a un ristorante.
-     *
-     * <p>Il metodo è bloccante perché attende la risposta della socket; deve
-     * quindi essere richiamato da un thread diverso da quello JavaFX.</p>
-     *
-     * @param idRistorante identificativo del ristorante
-     * @return recensioni ricevute dal server, oppure una lista vuota se la
-     *         risposta non è disponibile o la connessione fallisce
-     * @author Michele Viselli
-     */
-    public LinkedList<RecensioneDTO> getRecensioniPerRistorante(int idRistorante) {
-        try {
-            Object risposta = GestioneRichieste.getInstance()
-                    .inviaEAttendi("REC", idRistorante);
 
-            if (risposta instanceof List<?>) {
-                LinkedList<RecensioneDTO> risultato = new LinkedList<>();
-
-                for (Object elemento : (List<?>) risposta) {
-                    if (elemento instanceof RecensioneDTO) {
-                        risultato.add((RecensioneDTO) elemento);
-                    }
-                }
-                return risultato;
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        return new LinkedList<>();
-    }
 
 
     /* =========================================================

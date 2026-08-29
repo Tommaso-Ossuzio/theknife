@@ -716,7 +716,13 @@ public class MainController implements ControllerAutenticazione {
         }
 
         Finestre.apriModale("view_reviews.fxml", "Recensioni",
-                (ViewReviewsController ctrl) -> ctrl.setRestaurant(selezionato));
+                (ViewReviewsController ctrl) -> {
+                    try {
+                        ctrl.setRestaurant(selezionato);
+                    } catch (IOException e) {
+                        throw new RuntimeException(e);
+                    }
+                });
     }
 
 
