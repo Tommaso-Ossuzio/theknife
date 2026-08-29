@@ -233,9 +233,9 @@ public class DashboardController {
      * @author Matteo Franguelli
      */
     private void apriRecensioniDi(RistoranteDTO r) throws IOException {
+        aggiornaTutto();
         Finestre.apriModale("view_reviews.fxml", "Recensioni di " + r.getNome(),
                 (ViewReviewsController ctrl) -> ctrl.setRestaurant(r));
-        aggiornaTutto();
     }
 
     /**
@@ -245,7 +245,7 @@ public class DashboardController {
     @FXML
     private void onRecensioniSenzaRisposta() throws IOException {
         Finestre.apriModale("reply_review.fxml", "Recensioni a cui rispondere");
-        //aggiornaTutto();
+        aggiornaTutto();
     }
 
     /**
@@ -255,7 +255,7 @@ public class DashboardController {
     @FXML
     private void onAggiungiRistorante() throws IOException {
         Finestre.apriModale("add_restaurant.fxml", "Nuovo ristorante");
-        //aggiornaTutto();
+        aggiornaTutto();
     }
 
     /**

@@ -1,7 +1,9 @@
 package theknife.ui.javafx;
 
 import it.uninsubria.dto.RecensioneDTO;
+import it.uninsubria.dto.RispostaDTO;
 import it.uninsubria.dto.RistoranteDTO;
+import it.uninsubria.dto.RistoratoreDTO;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.layout.VBox;
@@ -111,7 +113,11 @@ public class ReplyReviewsController {
                             return;
                         }
 
-                        rispondiRecensione(lblRistorante,lblTesto,areaRisposta,r);
+                        try {
+                            rispondiRecensione(r, testoRisposta);
+                        } catch (IOException ex) {
+                            throw new RuntimeException(ex);
+                        }
 
                         // stampa per toschi
                         System.out.println("--------------------------------------------------");
@@ -155,111 +161,17 @@ public class ReplyReviewsController {
     }
 
     /**
-     * permette di scrivere la risposta ad una recensione
-     * @param rist
-     * @param text
-     * @param reply
-     * @param rec
+     * Aggiunge nel db la risposta alla recensione e toglie quest'ultima dalla lista delle recensioni senza risposta
      * @author Elia Toschi
+     * @author Celestino Resteghini
+     * @param rec
+     * @param testo
+     * @throws IOException
      */
-    public void rispondiRecensione(Label rist, Label text, TextArea reply, RecensioneDTO rec) {
-        //TODO aggiungere RISP-REC e poi gestire la cancellazione nella lista
-        /*GestioneRistoranti gr = GestioneRistoranti.getInstance();
-        File fileRecensioni = new File(NOME_CARTELLA, NOME_FILE_RECENSIONI);
-        if (!fileRecensioni.exists()) {
-            System.err.println("File utenti non trovato ");
-            return;
-        }
-
-        int targetStelle = rec.getNumeroStelle();
-        String targetTesto = rec.getText();
-        int targetIdUtente = rec.getIdUtente();
-        int targetIdRist = rec.get_id_Ristorante();
-        Date targetData = rec.getData();
-        String nuovaRisposta = reply.getText().replace(";", ",").replace("\n", " ");
-
-        LinkedList<Recensione> lista = new LinkedList<>();
-        String header = "";
-
-        try (BufferedReader br = new BufferedReader(new FileReader(fileRecensioni, StandardCharsets.UTF_8))) {
-            header = br.readLine();
-            String linea;
-
-            while ((linea = br.readLine()) != null) {
-                if (linea.isBlank()) continue;
-
-                String[] parti = linea.split(";");
-
-                if (parti.length > 4) {
-                    int currentStelle = Integer.parseInt(parti[0].trim());
-                    String currentTesto = parti[1].trim();
-                    LocalDateTime ldt = LocalDateTime.parse(parti[2].trim());
-                    Date currentData = Date.from(ldt.atZone(ZoneId.systemDefault()).toInstant());
-                    int currentIdUtente = Integer.parseInt(parti[3].trim());
-                    int currentIdRistorante = Integer.parseInt(parti[4].trim());
-
-                    if (currentStelle == targetStelle &&
-                            currentTesto.equals(targetTesto) &&
-                            currentIdUtente == targetIdUtente &&
-                            currentIdRistorante == targetIdRist) {
-
-                        if (targetData == null) targetData = currentData;
-                        continue;
-                    }
-
-                    Recensione rec_temp = new Recensione(currentStelle, currentTesto, currentIdUtente, currentIdRistorante);
-                    rec_temp.setData(currentData);
-
-                    String usernameRist= Session.getInstance().getUsername();
-                    int idRistoratore=GestioneFile.recuperaId(usernameRist);
-                    if (parti.length > 5 && !parti[5].isBlank()) {
-                        rec_temp.setRisposta(new Risposta(idRistoratore,parti[5].trim()));
-                    }
-                    lista.add(rec_temp);
-                }
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-            return;
-        }
-
-        String usernameRist= Session.getInstance().getUsername();
-
-        int idRistoratore=GestioneFile.recuperaId(usernameRist);
-
-        Recensione recensioneModificata = new Recensione(targetStelle, targetTesto, targetIdUtente, targetIdRist);
-        recensioneModificata.setData(targetData != null ? targetData : new Date());
-        recensioneModificata.setRisposta(new Risposta(idRistoratore,  nuovaRisposta));
-        lista.add(recensioneModificata);
-
-
-        try (BufferedWriter bw = new BufferedWriter(new FileWriter(fileRecensioni, false))) {
-            if (header != null && !header.isBlank()) {
-                bw.write(header);
-                bw.newLine();
-            }
-
-            for (Recensione r : lista) {
-                LocalDateTime ldt = r.getData().toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime();
-
-                String stringaRisposta = "";
-
-                if (r.getRisposta() != null && r.getRisposta().getTextString() != null) {
-                    stringaRisposta = r.getRisposta().getTextString();
-                }
-                bw.write(r.getNumeroStelle() + ";" +
-                        r.getText() + ";" +
-                        ldt.toString() + ";" +
-                        r.getIdUtente() + ";" +
-                        r.get_id_Ristorante() + ";" +
-                        stringaRisposta);
-                bw.newLine();
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        GestioneRecensioni.getInstance().ricaricaIndice();*/
+    public void rispondiRecensione(RecensioneDTO rec, String testo) throws IOException {
+        RispostaDTO risposta = new RispostaDTO(testo, rec.getIdRecensione(), new RistoratoreDTO(rec.getIdUtente()));
+        GestioneRichieste.getInstance().inviaSolo("RISP-REC", risposta);
+        listaRecensioni.getItems().remove(rec);
     }
 }
 
