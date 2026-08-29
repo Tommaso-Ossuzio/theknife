@@ -60,10 +60,6 @@ public final class Finestre {
             finestra.setTitle(titolo);
             finestra.initModality(Modality.APPLICATION_MODAL);
 
-            if (radice instanceof Region area) {
-                adattaAlloSchermo(finestra, area);
-            }
-
             if (configuraController != null) {
                 T controller = caricatore.getController();
                 configuraController.accept(controller);
@@ -76,33 +72,6 @@ public final class Finestre {
         }
     }
 
-    /**
-     * Ingrandisce la finestra in proporzione allo schermo, partendo dalle misure
-     * con cui la vista è stata disegnata: sotto quelle misure non si scende mai,
-     * perché il contenuto verrebbe tagliato. Le misure sono quelle del contenuto,
-     * alla cornice della finestra pensa {@link Stage#sizeToScene()}.
-     *
-     * @param finestra finestra da ridimensionare
-     * @param radice   radice della vista, con le misure di progetto
-     * @author Matteo Franguelli
-     */
-    public static void adattaAlloSchermo(Stage finestra, Region radice) {
-        if (finestra == null || radice == null) return;
-        if (radice.getPrefWidth() <= 0 || radice.getPrefHeight() <= 0) return;
-
-        Rectangle2D schermo = Screen.getPrimary().getVisualBounds();
-        double fattore = Math.max(1, Math.min(schermo.getWidth() / LARGHEZZA_PROGETTO,
-                schermo.getHeight() / ALTEZZA_PROGETTO));
-
-        radice.setPrefWidth(radice.getPrefWidth() * fattore);
-        radice.setPrefHeight(radice.getPrefHeight() * fattore);
-        finestra.sizeToScene();
-
-        if (finestra.getWidth() > schermo.getWidth()) finestra.setWidth(schermo.getWidth());
-        if (finestra.getHeight() > schermo.getHeight()) finestra.setHeight(schermo.getHeight());
-
-        finestra.centerOnScreen();
-    }
 
     /**
      * Apre una finestra modale che non ha bisogno di configurare il controller.

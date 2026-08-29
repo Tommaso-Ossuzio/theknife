@@ -2,10 +2,12 @@ package theknife.ui.javafx;
 
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
+import javafx.geometry.Rectangle2D;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.layout.Region;
 import javafx.scene.image.Image;
+import javafx.stage.Screen;
 import javafx.stage.Stage;
 import theknife.model.GestioneRichieste;
 import theknife.utilities.Finestre;
@@ -50,11 +52,19 @@ public class MainApp extends Application {
 
         FXMLLoader caricatore = new FXMLLoader(urlFxml);
         Parent radice = caricatore.load();
-        Scene scena = new Scene(radice, 1200, 768);
+
+        Rectangle2D schermo = Screen.getPrimary().getVisualBounds();
+        double larghezzaDinamica= schermo.getWidth()*0.94;
+        double altezzaDinamica= schermo.getHeight()*0.91;
+
+
+        Scene scena = new Scene(radice, larghezzaDinamica, altezzaDinamica);
 
         Temi.registra(scena);
 
         finestra.setTitle("TheKnife");
+
+        finestra.centerOnScreen();
 
         // Carichiamo l'icona dell'applicazione
         URL urlIcona = MainApp.class.getResource(
@@ -77,9 +87,6 @@ public class MainApp extends Application {
         }
 
         finestra.setScene(scena);
-        if (radice instanceof Region area) {
-            Finestre.adattaAlloSchermo(finestra, area);
-        }
         finestra.show();
 
         finestra.setOnCloseRequest(event -> {
