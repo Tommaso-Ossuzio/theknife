@@ -14,6 +14,8 @@ import java.util.List;
 /**
  * Thread che si occupa di gestire le rischieste degli utenti
  * @author Celestino Resteghini
+ * @author Elia Toschi
+ * @author Michele Viselli
  */
 public class SlaveThread extends Thread {
     private Socket socket;
@@ -170,10 +172,10 @@ public class SlaveThread extends Thread {
 
     /**
      * Metodo per ottenere la lista di recensioni relativa ad un ristorante
-     * @author Celestino Resteghini
-     * @author Elia Toschi
      * @throws IOException
      * @throws ClassNotFoundException
+     * @author Celestino Resteghini
+     * @author Elia Toschi
      */
     private void gestisciRecensioni() throws IOException, ClassNotFoundException {
         int idRistorante = (int) in.readObject();
@@ -195,10 +197,10 @@ public class SlaveThread extends Thread {
 
     /**
      * Metodo per aggiungere una recensione
-     * @author Celestino Resteghini
-     * @author Elia Toschi
      * @throws IOException
      * @throws ClassNotFoundException
+     * @author Celestino Resteghini
+     * @author Elia Toschi
      */
     private void gestisciAggiuntaRecensione() throws IOException, ClassNotFoundException {
         RecensioneDTO recensione = (RecensioneDTO) in.readObject();
@@ -213,10 +215,10 @@ public class SlaveThread extends Thread {
 
     /**
      * Metodo per ottenere la lista di recensioni scritte da un determinato utente
-     * @author Celestino Resteghini
-     * @author Elia Toschi
      * @throws IOException
      * @throws ClassNotFoundException
+     * @author Celestino Resteghini
+     * @author Elia Toschi
      */
     private void gestisciVisualizzaRecensioni() throws IOException, ClassNotFoundException {
         int idUtente = (int) in.readObject();
@@ -242,23 +244,17 @@ public class SlaveThread extends Thread {
      * @author Elia Toschi
      * @throws IOException
      * @throws ClassNotFoundException
+     * @author Celestino Resteghini
+     * @author Elia Toschi
      */
     private void gestisciModificaRecensione() throws IOException, ClassNotFoundException {
         RecensioneDTO recensione = (RecensioneDTO) in.readObject();
         System.out.println("MOD-REC: ricevuto: " + recensione.toString());
-        LinkedList<RecensioneDTO> recensioni = null;
         try (Connection conn = getConnection()) {
             recensioneDAO.modificaRecensione(conn,recensione);
-            recensioni = (LinkedList<RecensioneDTO>) recensioneDAO.getRecensioniDaUtente(conn,recensione.getIdUtente());
         } catch (SQLException e) {
             e.printStackTrace();
-
         }
-        if(recensioni == null)
-            recensioni = new LinkedList<>();
-        System.out.println("MOD-REC: invio: lista recensioni");
-        out.writeObject(recensioni);
-        out.flush();
     }
 
     /**

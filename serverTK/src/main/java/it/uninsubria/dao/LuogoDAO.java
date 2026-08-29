@@ -95,7 +95,6 @@ public class LuogoDAO {
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        // Inseriamo la città
         String sqlInsert = "INSERT INTO CITTA (nome, nome_nazione) VALUES (?, ?)";
         try (PreparedStatement psInsert = conn.prepareStatement(sqlInsert, Statement.RETURN_GENERATED_KEYS)) {
             psInsert.setString(1, citta.getNome());
@@ -121,11 +120,11 @@ public class LuogoDAO {
      * @author Elia Toschi
      */
     public int inserisciLuogoCompleto(Connection conn, LuogoDTO luogo) {
-        //Creaiamo città e coordinate
+        // città e coordinate
         int idCitta = inserisciCitta(conn, luogo.getCitta());
         int idCoordinate = inserisciCoordinate(conn, luogo.getCoordinate());
 
-        // inseriamo il luogo
+        //luogo
         String sql = "INSERT INTO LUOGO (via, id_citta, id_coordinate) VALUES (?, ?, ?)";
         try (PreparedStatement ps = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
             ps.setString(1, luogo.getVia());

@@ -49,7 +49,7 @@ public class ImportaDati {
         }
 
         try (CSVReader reader = new CSVReader(new InputStreamReader(is, java.nio.charset.StandardCharsets.UTF_8))) {
-            String[] header = reader.readNext(); // Salta l'intestazione delle colonne
+            String[] header = reader.readNext();
             if (header == null)
                 return;
 
@@ -104,7 +104,7 @@ public class ImportaDati {
                     lon = Double.parseDouble(line[5]);
                     lat = Double.parseDouble(line[6]);
                 } catch (NumberFormatException e) {
-                    continue; // Salta il record se le coordinate sono corrotte o assenti
+                    continue;
                 }
 
                 // Limitiamo la lunghezza dei campi per rispettare i VARCHAR(100) del database
@@ -148,7 +148,6 @@ public class ImportaDati {
                     }
 
                 } catch (SQLException e) {
-                    // Ignora in caso di duplicati o errori minori
                 }
             }
             System.out.println("Importazione completata con successo! Ristoranti totali inseriti: " + count);
@@ -373,7 +372,7 @@ public class ImportaDati {
 
     /**
      * Prende gli utenti dal file users.csv e li importa nel db
-     * @param conn
+     * @param conn connessione al db
      * @author Elia Toschi
      */
     private static void importaUtenti(Connection conn) {
@@ -412,7 +411,6 @@ public class ImportaDati {
                     int idLuogo = inserisciLuogo(conn, "Via Roma 1", idCitta, idCoord);
                     String sqlUser = "INSERT INTO UTENTE (email, password, nome, cognome, is_ristoratore, id_luogo_vive, data_nascita) VALUES (?, ?, ?, ?, ?, ?, ?) ON CONFLICT (email) DO NOTHING RETURNING id_utente";
                     int idUtenteCreato = -1;
-                    //TODO psw da generare l'hash
                     try (PreparedStatement ps = conn.prepareStatement(sqlUser)) {
                         ps.setString(1, email);
                         ps.setString(2, Utility.calcolaSha256(password));
@@ -465,7 +463,7 @@ public class ImportaDati {
 
     /**
      * Prende le recensioni e le recensioni nel file recensioni.csv
-     * @param conn
+     * @param conn connessione al db
      * @author Elia Toschi
      */
     private static void importaRecensioni(Connection conn) {

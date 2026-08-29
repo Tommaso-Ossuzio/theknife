@@ -340,7 +340,7 @@ public class MainController implements ControllerAutenticazione {
             card.getChildren().add(creaRigaCard("📍", indirizzo));
         }
 
-        String prezzo = Etichette.formattaFasciaPrezzo(r.getFasciaPrezzo());
+        String prezzo = valoreNonNullo(r.getFasciaPrezzo());
         if (!prezzo.isBlank()) {
             card.getChildren().add(creaRigaCard("💰", prezzo));
         }
@@ -547,6 +547,7 @@ public class MainController implements ControllerAutenticazione {
     /**
      * Si occupa di mostrare la finestra per effettuare il login.
      * @author Matteo Franguelli
+     * @author Michele Viselli
      */
     @FXML
     private void onShowLogin() {
@@ -690,7 +691,8 @@ public class MainController implements ControllerAutenticazione {
      */
     @FXML
     private void onShowMyReviews() {
-        Finestre.apriModale("my_reviews.fxml", "Le mie recensioni");
+        Finestre.apriModale("my_reviews.fxml", "Le mie recensioni",
+                (MyReviewsController ctrl) -> ctrl.setRistoranti(ristoranti));
 
         aggiornaPaginazione();
     }

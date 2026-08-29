@@ -171,18 +171,4 @@ public class GestioneRecensioni {
         int[] valori = indice.get(idRistorante);
         return valori == null ? 0 : valori[CONTEGGIO];
     }
-
-    /**
-     * Restituisce quante recensioni di un ristorante attendono ancora
-     * una risposta del ristoratore.
-     *
-     * @param idRistorante id del ristorante
-     * @author Matteo Franguelli
-     */
-    public synchronized int getSenzaRisposta(int idRistorante) {
-        assicuraIndice();
-        int[] valori = indice.get(idRistorante);
-        return valori == null ? 0 : valori[SENZA_RISPOSTA];
-    }
-
 }

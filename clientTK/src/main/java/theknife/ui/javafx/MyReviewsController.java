@@ -1,17 +1,17 @@
 package theknife.ui.javafx;
 
+import it.uninsubria.dto.RecensioneDTO;
+import it.uninsubria.dto.RistoranteDTO;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
-import theknife.model.GestioneFile;
-import theknife.model.GestioneRistoranti;
-import theknife.model.Recensione;
-import theknife.model.Ristorante;
+import theknife.model.*;
 import theknife.utilities.Finestre;
 
-import java.util.List;
+import java.io.IOException;
+import java.util.LinkedList;
 
 //TODO da rivedere
 
@@ -20,6 +20,8 @@ import java.util.List;
  * delle recensioni scritte dall'utente corrente.
  *
  * @author Matteo Franguelli
+ * @author Michele Viselli
+ * @author Celestino Resteghini
  */
 public class MyReviewsController {
 
@@ -30,6 +32,11 @@ public class MyReviewsController {
     @FXML private Label etichettaVuota;
 
     private final ObservableList<ReviewRow> dati = FXCollections.observableArrayList();
+    private ObservableList<RistoranteDTO> ristoranti;
+
+    public void setRistoranti(ObservableList<RistoranteDTO> ristoranti) {
+        this.ristoranti = ristoranti;
+    }
 
     /**
      * Inizializza la tabella, il menu contestuale e carica le recensioni.
@@ -37,7 +44,7 @@ public class MyReviewsController {
      * @author Matteo Franguelli
      */
     @FXML
-    private void initialize() {
+    private void initialize() throws IOException {
         colonnaRistorante.setCellValueFactory(new PropertyValueFactory<>("restaurant"));
         colonnaVoto.setCellValueFactory(new PropertyValueFactory<>("rating"));
         colonnaTesto.setCellValueFactory(new PropertyValueFactory<>("text"));
@@ -67,7 +74,11 @@ public class MyReviewsController {
             modifyItem.setOnAction(event -> {
                 ReviewRow riga = row.getItem();
                 if (riga != null) {
-                    apriModificaRecensione(riga);
+                    try {
+                        apriModificaRecensione(riga);
+                    } catch (IOException e) {
+                        throw new RuntimeException(e);
+                    }
                 }
             });
 
@@ -91,17 +102,20 @@ public class MyReviewsController {
     }
     /**
      * Apre la finestra di modifica per la recensione selezionata.
-     *
+     * @author Celestino Resteghini
      * @author Matteo Franguelli
+     * @author Michele Viselli
      */
-    private void apriModificaRecensione(ReviewRow riga) {
-        GestioneRistoranti gr = GestioneRistoranti.getInstance();
-        Ristorante r = gr.getRistorante(riga.getRawRestaurantId());
+    private void apriModificaRecensione(ReviewRow riga) throws IOException {
+        RistoranteDTO ristorante = ristoranti == null ? null : ristoranti.stream()
+                .filter(r -> r.getIdRistorante() == riga.getRawRestaurantId())
+                .findFirst()
+                .orElse(null);
 
         Finestre.apriModale("add_review.fxml", "Modifica Recensione",
                 (AddReviewController ctrl) -> {
-                    ctrl.setRestaurant(r);
-                    if (r != null) ctrl.setRestaurantName(r.getNome());
+                    ctrl.setRestaurant(ristorante);
+                    ctrl.setRestaurantName(riga.getRestaurant());
                     ctrl.setDatiPerModifica(riga);
                 });
 
@@ -134,7 +148,7 @@ public class MyReviewsController {
      */
     private void rimuoviRecensioneDalFile(ReviewRow riga) {
         Session session = Session.getInstance();
-        int mioId = GestioneFile.recuperaId(session.getUsername());
+        int mioId = session.getID();
         GestioneFile.rimuoviRecensione(
                 mioId,
                 riga.getRawRestaurantId(),
@@ -143,46 +157,31 @@ public class MyReviewsController {
         );
     }
     /**
-     * Carica dal file tutte le recensioni dell'utente corrente.
+     * Carica dal server tutte le recensioni dell'utente corrente.
      *
      * @author Matteo Franguelli
+     * @author Michele Viselli
+     * @author Celestino Resteghini
      */
-    private void caricaLeMieRecensioni() {
+    private void caricaLeMieRecensioni() throws IOException {
         dati.clear();
         Session session = Session.getInstance();
         if (session.isGuest()) return;
 
-        int mioId = GestioneFile.recuperaId(session.getUsername());
-        List<Recensione> tutteLeRecensioni = GestioneFile.leggiRecensioni();
+        int mioId = session.getID();
+        LinkedList<RecensioneDTO> recensioni = (LinkedList<RecensioneDTO>) GestioneRichieste.getInstance().inviaEAttendi("VIS-REC", session.getID());
 
-        for (Recensione r : tutteLeRecensioni) {
+        for (RecensioneDTO r : recensioni) {
             if (r.getIdUtente() == mioId) {
-                String nomeRistorante = trovaNomeRistorante(r.get_id_Ristorante());
-                dati.add(new ReviewRow(nomeRistorante, r.getNumeroStelle(), r.getText(), r.get_id_Ristorante()));
+                String nomeRistorante = r.getNomeRistorante();
+                if (nomeRistorante == null || nomeRistorante.isBlank()) {
+                    nomeRistorante = "Sconosciuto (ID " + r.getIdRistorante() + ")";
+                }
+                dati.add(new ReviewRow(nomeRistorante, r.getNumeroStelle(), r.getTesto(), r.getIdRistorante(), r.getIdRecensione()));
             }
         }
     }
-    /**
-     * Restituisce il nome del ristorante dato il suo id.
-     * @param idRistorante
-     * @author Matteo Franguelli
-     */
-    private String trovaNomeRistorante(int idRistorante) {
-        GestioneRistoranti gr = GestioneRistoranti.getInstance();
-        for (Ristorante r : gr.getListaRistoranti()) {
-            if (r.getId() == idRistorante) return r.getNome();
-        }
-        return "Ristorante ID: " + idRistorante;
-    }
-    /**
-     * Pulisce una stringa da caratteri non desiderati.
-     * @param s
-     * @author Matteo Franguelli
-     */
-    private String pulisci(String s) {
-        if (s == null) return "";
-        return s.trim().replace(";", "").replace("\"", "");
-    }
+
     /**
      * Aggiorna la visibilità della tabella e del messaggio di lista vuota.
      *
@@ -204,14 +203,17 @@ public class MyReviewsController {
         private final int rating;
         private final String text;
         private final int rawRestaurantId; // Serve per l'eliminazione
+        private final int rawRecensioneId; //Serve per la modifica
 
-        public ReviewRow(String restaurant, int rating, String text, int rawRestaurantId) {
+        public ReviewRow(String restaurant, int rating, String text, int rawRestaurantId, int rawRecensioneId) {
             this.restaurant = restaurant;
             this.rating = rating;
             this.text = text;
             this.rawRestaurantId = rawRestaurantId;
+            this.rawRecensioneId = rawRecensioneId;
         }
 
+        public int getRawRecensioneId() { return rawRecensioneId; }
         public String getRestaurant() { return restaurant; }
         public int getRating() { return rating; }
         public String getText() { return text; }

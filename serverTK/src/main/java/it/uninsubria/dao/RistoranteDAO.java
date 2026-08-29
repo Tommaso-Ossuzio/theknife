@@ -22,6 +22,7 @@ public class RistoranteDAO {
      * Punto geografico usato come centro della ricerca per vicinanza.
      * Il nome canonico della città serve per includere sempre tutti i
      * ristoranti della città richiesta, anche se uno fosse oltre il raggio.
+     * @author Michele Viselli
      */
     private record RiferimentoRicerca(String citta, double latitudine, double longitudine) { }
 
@@ -31,6 +32,7 @@ public class RistoranteDAO {
      * @param nomeCercato
      * @return List<RistoranteDTO>
      * @author Elia Toschi
+     * @author Celestino Resteghini
      */
     public List<RistoranteDTO> cercaPerNome(Connection conn, String nomeCercato)
     {
@@ -61,6 +63,7 @@ public class RistoranteDAO {
      * @param idUtenteCercato
      * @return List<RistoranteDTO>
      * @author Elia Toschi
+     * @author Celestino Resteghini
      */
     public List<RistoranteDTO> getRistorantiPreferiti(Connection conn, int idUtenteCercato)
     {
@@ -88,6 +91,7 @@ public class RistoranteDAO {
      * @param idRistorante
      * @return List<String>
      * @author Elia Toschi
+     * @author Celestino Resteghini
      */
     private List<String> getCucinePerRistorante(Connection conn, int idRistorante)
     {
@@ -292,7 +296,7 @@ public class RistoranteDAO {
     /**
      * Crea un ristorante dopo aver fatto un filtro
      * @param rs
-     * @return
+     * @return RistoranteDTO
      * @throws SQLException
      * @author Michele Viselli
      */
@@ -360,9 +364,9 @@ public class RistoranteDAO {
 
     /**
      * Il metodo crea un ristorante dal ResultSet ottenuto dall'interrogazione del database
-     * @param conn
+     * @param conn connessione al db
      * @param rs ResultSet
-     * @return
+     * @return RistoranteDTO
      * @throws SQLException
      * @author Elia Toschi
      */
@@ -398,8 +402,8 @@ public class RistoranteDAO {
 
     /**
      * Il metodo calcola le statistiche delle recensioni (media stelle, totale recensioni e recensioni senza risposta
-     * @param conn
-     * @param idRistorante
+     * @param conn connesione al db
+     * @param idRistorante int
      * @return double[] con i valori ordinati in [media, totale, senza_risposta]
      * @author Elia Toschi
      */
@@ -436,6 +440,7 @@ public class RistoranteDAO {
      * @param conn
      * @param idRistoratore
      * @return Lista di RistoranteDTO
+     * @author Elia Toschi
      */
     public List<RistoranteDTO> getRistorantiDelRistoratore(Connection conn, int idRistoratore) {
         String sql = "SELECT * FROM RISTORANTE WHERE id_utente = ?";

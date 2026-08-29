@@ -511,6 +511,34 @@
     -fx-padding: 6 10 6 10;
 }
 
+.context-menu {
+    -fx-background-color: -color-surface;
+    -fx-background-radius: 8;
+    -fx-border-color: -color-border;
+    -fx-border-radius: 8;
+    -fx-padding: 4;
+    -fx-effect: dropshadow(gaussian, -color-shadow-strong, 10, 0.0, 0, 3);
+}
+
+.context-menu .menu-item {
+    -fx-background-color: transparent;
+    -fx-padding: 8 12 8 12;
+}
+
+.context-menu .menu-item .label {
+    -fx-text-fill: -color-text;
+}
+
+.context-menu .menu-item:focused,
+.context-menu .menu-item:hover {
+    -fx-background-color: -color-primary-soft;
+}
+
+.context-menu .menu-item:focused .label,
+.context-menu .menu-item:hover .label {
+    -fx-text-fill: -color-text;
+}
+
 .card-grid {
     -fx-background-color: transparent;
     -fx-hgap: 14;

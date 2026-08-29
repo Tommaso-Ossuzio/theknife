@@ -14,9 +14,10 @@ import java.util.Date;
 /**
  * L'utenteDAO rappresenta il punto di accesso al database per le informazioni degli utenti
  * @author Elia Toschi
+ * @author Celestino Resteghini
+ * @author Matteo Franguelli
  */
 public class UtenteDAO {
-
 
     /**
      * Registra l'utente nel db e crea le tabelle necessarie
@@ -52,9 +53,6 @@ public class UtenteDAO {
             return false;
         }
 
-        //TODO a sto punto invece di inserie sempre un luogo nuovo a prescindere, bisogna fare un metodo per ottenre
-        // l'id della città indicata dall'utente,  se non si trova tocca inserirne una nuova
-        // con via inventata e coordinate da capire dove le pijamo eh???
         LuogoDAO luogoDAO = new LuogoDAO();
         int idLuogo = luogoDAO.getIdLuogoByCitta(conn, utente.getLuogo().getCitta().getNome());
 
@@ -88,7 +86,7 @@ public class UtenteDAO {
 
     /**
      * Accede al db e controlla le credenziali
-     * @param conn
+     * @param conn connessione al db
      * @param credenziali AuthDTO
      * @return true se successo o false se credenziali errate
      * @author Elia Toschi

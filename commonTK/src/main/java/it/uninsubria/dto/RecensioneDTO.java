@@ -18,6 +18,7 @@ public class RecensioneDTO implements Serializable {
     private int idUtente;
     private RispostaDTO risposta;
     private int idRecensione ;
+    private String nomeRistorante;
 
     public RecensioneDTO( String testo, int numeroStelle, String data, String ora, int idUtente,int idRistorante, RispostaDTO risposta) {
         this.idRistorante = idRistorante;
@@ -41,12 +42,35 @@ public class RecensioneDTO implements Serializable {
         this.idRecensione = idRecensione;
     }
 
+    public RecensioneDTO(String testo, int numeroStelle, int idUtente, int idRistorante){
+        this.testo = testo;
+        this.numeroStelle = numeroStelle;
+        this.idUtente = idUtente;
+        this.idRistorante = idRistorante;
+    }
+
+    public RecensioneDTO(int idRecensione, String testo, int numeroStelle, int idUtente)
+    {
+        this.idUtente = idUtente;
+        this.idRecensione = idRecensione;
+        this.testo = testo;
+        this.numeroStelle = numeroStelle;
+    }
+
     public int getIdRecensione() {
         return idRecensione;
     }
 
     public void setIdRecensione(int idRecensione) {
         this.idRecensione = idRecensione;
+    }
+
+    public String getNomeRistorante() {
+        return nomeRistorante;
+    }
+
+    public void setNomeRistorante(String nomeRistorante) {
+        this.nomeRistorante = nomeRistorante;
     }
 
     public void setIdUtente(int idUtente) {
