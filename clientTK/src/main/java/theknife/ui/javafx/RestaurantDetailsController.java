@@ -2,6 +2,8 @@ package theknife.ui.javafx;
 
 
 import it.uninsubria.dto.*;
+import javafx.application.Platform;
+import javafx.concurrent.Worker;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
@@ -62,6 +64,12 @@ public class RestaurantDetailsController {
         // Il foglio utente ha precedenza anche sui cursor custom dei siti
         // caricati e lascia WebView interattivo usando soltanto cursori nativi.
         vistaSito.getEngine().setUserStyleSheetLocation(STILE_CURSORE_WEB_SICURO);
+        vistaSito.getEngine().getLoadWorker().stateProperty().addListener(
+                (osservato, precedente, corrente) -> {
+                    if (corrente == Worker.State.FAILED) {
+                        Platform.runLater(this::mostraMessaggioSitoNonDisponibile);
+                    }
+                });
     }
 
     public void setRestaurantData(RistoranteDTO ristorante) throws IOException {
@@ -235,7 +243,11 @@ public class RestaurantDetailsController {
             if (!url.startsWith("http://") && !url.startsWith("https://")) {
                 url = "http://" + url;
             }
-            vistaSito.getEngine().load(url);
+            try {
+                vistaSito.getEngine().load(url);
+            } catch (IllegalArgumentException e) {
+                mostraMessaggioSitoNonDisponibile();
+            }
         }
     }
 
@@ -251,6 +263,26 @@ public class RestaurantDetailsController {
                       <body>
                         <h2>Nessun sito web disponibile</h2>
                         <p>Questo ristorante non ha un sito web specificato.</p>
+                      </body>
+                    </html>
+                    """;
+            vistaSito.getEngine().loadContent(html);
+        }
+    }
+
+    /**
+     * Visualizza un messaggio HTML quando il sito specificato non puo' essere
+     * caricato nella WebView.
+     *
+     * @author Michele Viselli
+     */
+    private void mostraMessaggioSitoNonDisponibile() {
+        if (vistaSito != null) {
+            String html = """
+                    <html>
+                      <body>
+                        <h2>Sito web non disponibile</h2>
+                        <p>Non è stato possibile caricare il sito del ristorante.</p>
                       </body>
                     </html>
                     """;
