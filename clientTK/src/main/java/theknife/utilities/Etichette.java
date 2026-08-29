@@ -2,7 +2,6 @@ package theknife.utilities;
 
 import it.uninsubria.dto.RistoranteDTO;
 import javafx.scene.control.Label;
-import theknife.model.Ristorante;
 
 import java.util.Locale;
 
@@ -30,18 +29,6 @@ public final class Etichette {
             etichetta.getStyleClass().add(classeAggiuntiva);
         }
         return etichetta;
-    }
-
-    /**
-     * Crea il badge con la media delle recensioni di un ristorante.
-     * @param r ristorante di cui mostrare la media
-     * @author Matteo Franguelli
-     */
-    public static Label creaBadgeMedia(Ristorante r) {
-        double media = r.getMediaStelle();
-        int recensioni = r.getNumRecensioni();
-
-        return creaBadgeMedia(media, recensioni);
     }
 
     /**
@@ -77,18 +64,6 @@ public final class Etichette {
         else                 classe = "tag-rating-low";
 
         return creaBadge(testo, classe);
-    }
-
-    /**
-     * Crea il badge delle stelle Michelin, oppure null se il ristorante
-     * non ne ha: i ristoranti senza stelle non mostrano alcun badge.
-     *
-     * @param r ristorante di cui mostrare il riconoscimento
-     * @author Matteo Franguelli
-     */
-    public static Label creaBadgeMichelin(Ristorante r) {
-        if (r.getAward() <= 0) return null;
-        return creaBadge("★ " + (int) r.getAward() + " Michelin", "tag-michelin");
     }
 
     /**

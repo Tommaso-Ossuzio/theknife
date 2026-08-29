@@ -5,18 +5,13 @@ import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import theknife.model.GestioneRichieste;
-import theknife.model.GestioneRistoranti;
-import theknife.model.Luogo;
-import theknife.model.Ristorante;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 
 import java.io.*;
-import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.LinkedList;
-import java.util.List;
 
 /**
  * Classe che si occupa della gestione dei ristoranti preferiti.
