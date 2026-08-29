@@ -135,28 +135,65 @@ public class AddReviewController {
      */
     @FXML
     private void onCreate() throws IOException {
+        String testo = areaRecensione.getText() != null ? areaRecensione.getText().trim() : "";
+        if (testo.isBlank()) {
+            if (etichettaErrore != null) {
+                etichettaErrore.setText("Inserisci un testo per la recensione.");
+            }
+            return;
+        }
+
         Session sessione = Session.getInstance();
-
-        String testo = areaRecensione.getText();
-        int numeroStelle = votoSelezionato;
         int idUtente = sessione.getID();
-        int idRistorante = ristoranteDTODestinazione.getIdRistorante();
+        int numeroStelle = votoSelezionato;
 
-        RecensioneDTO recensioneDTO = new RecensioneDTO(testo, numeroStelle, idUtente, idRistorante);
-        GestioneRichieste.getInstance().inviaSolo("AGG-REC", recensioneDTO);
+        if (modalitaModifica) {
+            int idRecensione = recensioneOriginale.getRawRecensioneId();
+            RecensioneDTO recensioneDTO = new RecensioneDTO(idRecensione, testo, numeroStelle, idUtente);
+            GestioneRichieste.getInstance().inviaSolo("MOD-REC", recensioneDTO);
 
-        int numeroRecensioniAttuale = ristoranteDTODestinazione.getNumeroRecensioni() == null
-                ? 0
-                : ristoranteDTODestinazione.getNumeroRecensioni();
-        double mediaAttuale = ristoranteDTODestinazione.getMediaStelle() == null
-                ? 0.0
-                : ristoranteDTODestinazione.getMediaStelle();
-        int nuovoNumeroRecensioni = numeroRecensioniAttuale + 1;
-        double nuovaMedia = (mediaAttuale * numeroRecensioniAttuale + numeroStelle)
-                / nuovoNumeroRecensioni;
+            //TODO qua bisogna aggiornare la grafica solo della card ma mi servono getNumeroRecensioni e getMediaStelle
 
-        ristoranteDTODestinazione.setNumeroRecensioni(nuovoNumeroRecensioni);
-        ristoranteDTODestinazione.setMediaStelle(nuovaMedia);
+            if (ristoranteDTODestinazione != null) {
+                int vecchiVoto = recensioneOriginale.getRating();
+                int nuovoVoto = numeroStelle;
+                int delta = nuovoVoto - vecchiVoto; // Differenza di punti (es. da 3 a 5 stelle = +2)
+
+                int numRec = ristoranteDTODestinazione.getNumeroRecensioni() == null ? 1 : ristoranteDTODestinazione.getNumeroRecensioni();
+                double mediaVecchia = ristoranteDTODestinazione.getMediaStelle() == null ? 0.0 : ristoranteDTODestinazione.getMediaStelle();
+
+                double nuovaMedia = ((mediaVecchia * numRec) + delta) / numRec;
+
+                ristoranteDTODestinazione.setMediaStelle(nuovaMedia);
+            }
+
+        } else {
+            //crea nuova recensione
+            int idRistorante = ristoranteDTODestinazione.getIdRistorante();
+
+            RecensioneDTO recensioneDTO = new RecensioneDTO(testo, numeroStelle, idUtente, idRistorante);
+            GestioneRichieste.getInstance().inviaSolo("AGG-REC", recensioneDTO);
+
+            int numeroRecensioniAttuale = ristoranteDTODestinazione.getNumeroRecensioni() == null
+                    ? 0
+                    : ristoranteDTODestinazione.getNumeroRecensioni();
+            double mediaAttuale = ristoranteDTODestinazione.getMediaStelle() == null
+                    ? 0.0
+                    : ristoranteDTODestinazione.getMediaStelle();
+            int nuovoNumeroRecensioni = numeroRecensioniAttuale + 1;
+            double nuovaMedia = (mediaAttuale * numeroRecensioniAttuale + numeroStelle)
+                    / nuovoNumeroRecensioni;
+
+            ristoranteDTODestinazione.setNumeroRecensioni(nuovoNumeroRecensioni);
+            ristoranteDTODestinazione.setMediaStelle(nuovaMedia);
+
+            if (ristoranteDTODestinazione == null) {
+                if (etichettaErrore != null) {
+                    etichettaErrore.setText("Nessun ristorante selezionato.");
+                }
+                return;
+            }
+        }
 
         chiudiFinestra();
     }
@@ -169,12 +206,10 @@ public class AddReviewController {
         this.modalitaModifica = true;
         this.recensioneOriginale = recensioneVecchia;
 
-        // Riempi i campi con i dati vecchi
         areaRecensione.setText(recensioneVecchia.getText());
         votoSelezionato = recensioneVecchia.getRating();
         aggiornaGraficaStelle();
 
-        // Cambia titolo
         if (etichettaTitolo != null) etichettaTitolo.setText("Modifica recensione");
     }
 }
