@@ -340,7 +340,7 @@ public class MainController implements ControllerAutenticazione {
             card.getChildren().add(creaRigaCard("📍", indirizzo));
         }
 
-        String prezzo = Etichette.formattaFasciaPrezzo(r.getFasciaPrezzo());
+        String prezzo = valoreNonNullo(r.getFasciaPrezzo());
         if (!prezzo.isBlank()) {
             card.getChildren().add(creaRigaCard("💰", prezzo));
         }
