@@ -13,8 +13,6 @@ import theknife.utilities.Finestre;
 import java.io.IOException;
 import java.util.LinkedList;
 
-//TODO da rivedere
-
 /**
  * Controller che gestisce la visualizzazione e la gestione
  * delle recensioni scritte dall'utente corrente.
@@ -86,7 +84,11 @@ public class MyReviewsController {
             deleteItem.setOnAction(event -> {
                 ReviewRow rigaSelezionata = row.getItem();
                 if (rigaSelezionata != null) {
-                    chiediConfermaEdElimina(rigaSelezionata);
+                    try {
+                        chiediConfermaEdElimina(rigaSelezionata);
+                    } catch (IOException e) {
+                        throw new RuntimeException(e);
+                    }
                 }
             });
             contextMenu.getItems().addAll(modifyItem, deleteItem);
@@ -126,36 +128,20 @@ public class MyReviewsController {
      *
      * @author Matteo Franguelli
      */
-    private void chiediConfermaEdElimina(ReviewRow riga) {
+    private void chiediConfermaEdElimina(ReviewRow riga) throws IOException {
         Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
         alert.setTitle("Elimina Recensione");
         alert.setHeaderText("Sei sicuro di voler eliminare questa recensione?");
         alert.setContentText("L'operazione e' irreversibile.");
 
         if (alert.showAndWait().orElse(ButtonType.CANCEL) == ButtonType.OK) {
-            dati.remove(riga);  //rimozione grafica
-
-            rimuoviRecensioneDalFile(riga); //rimozione da file
-
+            dati.remove(riga);
+            GestioneRichieste.getInstance().inviaSolo("ELIM-REC", riga.getRawRecensioneId());
+            //TODO aggiornare la grafica della card dopo aver eliminato la recensione
             aggiornaMessaggioVuoto();
         }
     }
 
-    /**
-     * Riscrive il CSV ignorando la riga che corrisponde alla recensione eliminata.
-     *
-     * @author Matteo Franguelli
-     */
-    private void rimuoviRecensioneDalFile(ReviewRow riga) {
-        Session session = Session.getInstance();
-        int mioId = session.getID();
-        GestioneFile.rimuoviRecensione(
-                mioId,
-                riga.getRawRestaurantId(),
-                riga.getRating(),
-                riga.getText()
-        );
-    }
     /**
      * Carica dal server tutte le recensioni dell'utente corrente.
      *
