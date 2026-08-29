@@ -73,7 +73,7 @@ public class AddRestaurantController {
         boolean cucinaVuota      = segnalaSeVuoto(campoTipoCucina, erroreTipoCucina);
         boolean latitudineErrata  = segnalaSeNonNumerico(campoLatitudine, erroreLatitudine);
         boolean longitudineErrata = segnalaSeNonNumerico(campoLongitudine, erroreLongitudine);
-        boolean prezzoErrato      = segnalaSeNonNumerico(campoPrezzo, errorePrezzo);
+        boolean prezzoErrato      = segnalaSePrezzoErrato(campoPrezzo, errorePrezzo);
         boolean cucinaErrata      = segnalaSeFormatoCucinaErrato(campoTipoCucina, erroreTipoCucina);
 
         if (nomeVuoto || nazioneVuota || cittaVuota || indirizzoVuoto || latitudineVuota
@@ -140,6 +140,37 @@ public class AddRestaurantController {
     private boolean segnalaSeNonNumerico(TextField campo, Label errore) {
         try {
             Double.parseDouble(campo.getText().trim());
+            errore.setText("");
+            return false;
+        } catch (NumberFormatException e) {
+            errore.setText("Numero non valido");
+            return true;
+        }
+    }
+
+    /**
+     * Controlla che il prezzo sia un numero finito e non negativo.
+     * Se il campo e' vuoto conserva l'errore "Obbligatorio" gia' impostato.
+     * @param campo campo contenente il prezzo medio
+     * @param errore etichetta accanto al campo
+     * @return true se il prezzo non e' valido
+     * @author Michele Viselli
+     */
+    private boolean segnalaSePrezzoErrato(TextField campo, Label errore) {
+        String testo = campo.getText();
+        if (testo == null || testo.isBlank()) return false;
+
+        try {
+            double prezzo = Double.parseDouble(testo.trim());
+            if (!Double.isFinite(prezzo)) {
+                errore.setText("Numero non valido");
+                return true;
+            }
+            if (prezzo < 0) {
+                errore.setText("Il prezzo non può essere negativo");
+                return true;
+            }
+
             errore.setText("");
             return false;
         } catch (NumberFormatException e) {
