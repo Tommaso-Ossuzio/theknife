@@ -1,5 +1,7 @@
 package theknife.ui.javafx;
 
+import it.uninsubria.dto.RecensioneDTO;
+import it.uninsubria.dto.RistoranteDTO;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.layout.VBox;
@@ -7,68 +9,57 @@ import javafx.stage.Stage;
 import theknife.model.*;
 
 import java.io.*;
-import java.nio.charset.StandardCharsets;
-import java.time.LocalDateTime;
-import java.time.ZoneId;
-import java.util.ArrayList;
-import java.util.Date;
 import java.util.LinkedList;
-import java.util.List;
 
-//TODO da rivedere, vengono usati i file
-
+/**
+ * Controller per le risposte alle recensioni.
+ * @author Celestino Resteghini
+ * @author Matteo Franguelli
+ * @author Elia Toschi
+ */
 public class ReplyReviewsController {
 
-    private static final String NOME_CARTELLA = "data";
-    private static final String NOME_FILE_RECENSIONI = "recensioni.csv";
+    @FXML private ListView<RecensioneDTO> listaRecensioni;
 
-    @FXML private ListView<Recensione> listaRecensioni;
-
-    private List<Integer> mieiRistorantiIds = new ArrayList<>();
+    LinkedList<RistoranteDTO> ristoranti = new LinkedList<>();
 
 
     @FXML
-    private void initialize() {
+    private void initialize() throws IOException {
         caricaIMieiRistoranti();
         configuraLista();
         caricaRecensioniRicevute();
     }
 
-    private void caricaIMieiRistoranti() {
+    /**
+     * Metodo per ottenere i ristoranti del ristoratore loggato
+     * @author Celestino Resteghini
+     * @author Matteo Franguelli
+     * @throws IOException
+     */
+    private void caricaIMieiRistoranti() throws IOException {
         Session session = Session.getInstance();
-        if (!session.isRistoratore()) return;
-
-        String username = session.getUsername();
-        File fileUsers = new File("data", "users.csv");
-
-        try (java.io.BufferedReader br = new java.io.BufferedReader(new java.io.FileReader(fileUsers))) {
-            String linea;
-            while ((linea = br.readLine()) != null) {
-                String[] p = linea.split(";");
-                if (p.length > 0 && p[0].equals(username)) {
-                    if (p.length > 9 && !p[9].isBlank()) {
-                        String[] ids = p[9].split("-");
-                        for (String id : ids) {
-                            try { mieiRistorantiIds.add(Integer.parseInt(id.trim())); } catch (Exception e){}
-                        }
-                    }
-                }
-            }
-        } catch (Exception e) { e.printStackTrace(); }
+        ristoranti = (LinkedList<RistoranteDTO>) GestioneRichieste.getInstance().inviaEAttendi("RIST", session.getID());
     }
 
-    private void caricaRecensioniRicevute() {
-        List<Recensione> tutte = GestioneFile.leggiRecensioni();
-        List<Recensione> filtrate = new ArrayList<>();
-
-        for (Recensione r : tutte) {
-            if (mieiRistorantiIds.contains(r.get_id_Ristorante())) {
-                filtrate.add(r);
-            }
-        }
-        listaRecensioni.getItems().setAll(filtrate);
+    /**
+     * Metodo per caricare la lista delle recensioni senza risposta
+     * @author Celestino Resteghini
+     * @throws IOException
+     */
+    private void caricaRecensioniRicevute() throws IOException {
+        listaRecensioni.getItems().clear();
+        Session session = Session.getInstance();
+        LinkedList<RecensioneDTO> lista = (LinkedList<RecensioneDTO>) GestioneRichieste.getInstance().inviaEAttendi("REC-NO-RISP", session.getID());
+        listaRecensioni.getItems().addAll(lista);
     }
 
+    /**
+     * Metodo per configurare la lista che conterrà le recensioni senza risposta
+     * @author Matteo Franguelli
+     * @author Celestino Resteghini
+     * @author Elia Toschi
+     */
     private void configuraLista() {
         listaRecensioni.setCellFactory(lv -> new ListCell<>() {
 
@@ -96,16 +87,21 @@ public class ReplyReviewsController {
             }
 
             @Override
-            protected void updateItem(Recensione r, boolean empty) {
+            protected void updateItem(RecensioneDTO r, boolean empty) {
                 super.updateItem(r, empty);
 
                 if (empty || r == null) {
                     setGraphic(null);
                 } else {
-                    String nomeRist = trovaNomeRistorante(r.get_id_Ristorante());
+                    String nomeRist = "";
+                    try {
+                        nomeRist = trovaNomeRistorante(r.getIdRistorante());
+                    } catch (IOException e) {
+                        throw new RuntimeException(e);
+                    }
                     lblRistorante.setText("Ristorante: " + nomeRist);
                     lblStelle.setText("Voto: " + "★".repeat(r.getNumeroStelle()));
-                    lblTesto.setText("\"" + r.getText() + "\"");
+                    lblTesto.setText("\"" + r.getTesto() + "\"");
 
                     btnInvia.setOnAction(e -> {
                         String testoRisposta = areaRisposta.getText();
@@ -119,13 +115,11 @@ public class ReplyReviewsController {
 
                         // stampa per toschi
                         System.out.println("--------------------------------------------------");
-                        System.out.println("RECENSIONE A CUI SI RISPONDE: " + r.getText());
+                        System.out.println("RECENSIONE A CUI SI RISPONDE: " + r.getTesto());
                         System.out.println("VOTO: " + r.getNumeroStelle());
-                        System.out.println("NOME RISTORANTE: " + nomeRist);
+                        System.out.println("ID RISTORANTE: " + r.getIdRistorante());
                         System.out.println("RISPOSTA INVIATA: " + testoRisposta);
                         System.out.println("--------------------------------------------------");
-
-                        //salvaRisposta(r, testoRisposta);
 
                         areaRisposta.clear();
                         Alert a = new Alert(Alert.AlertType.INFORMATION, "Risposta inviata con successo!");
@@ -138,25 +132,18 @@ public class ReplyReviewsController {
         });
     }
 
-    private void salvaRisposta(Recensione recensione, String testoRisposta) {
-        File fileRisposte = new File("data", "recensioni.csv");
-
-        try (BufferedWriter bw = new BufferedWriter(new FileWriter(fileRisposte, true))) {
-            String riga = recensione.get_id_Ristorante() + ";" +
-                    recensione.getIdUtente() + ";" +
-                    "RISPOSTA: " + testoRisposta.replace(";", "").replace("\n", " ");
-
-            bw.write(riga);
-            bw.newLine();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-    private String trovaNomeRistorante(int id) {
-        GestioneRistoranti gr = GestioneRistoranti.getInstance();
-        for (Ristorante r : gr.listaRistoranti) {
-            if (r.getId() == id) return r.getNome();
+    /**
+     * Metodo che restituisce il nome del ristorante
+     * @param id
+     * @return nome del ristorante
+     * @throws IOException
+     * @author Celestino Resteghini
+     * @author Matteo Franguelli
+     */
+    private String trovaNomeRistorante(int id) throws IOException {
+        for (RistoranteDTO r : ristoranti)
+        {
+            if(r.getIdRistorante() == id) return r.getNome();
         }
         return "Sconosciuto (ID " + id + ")";
     }
@@ -175,8 +162,9 @@ public class ReplyReviewsController {
      * @param rec
      * @author Elia Toschi
      */
-    public void rispondiRecensione(Label rist, Label text, TextArea reply, Recensione rec) {
-        GestioneRistoranti gr = GestioneRistoranti.getInstance();
+    public void rispondiRecensione(Label rist, Label text, TextArea reply, RecensioneDTO rec) {
+        //TODO aggiungere RISP-REC e poi gestire la cancellazione nella lista
+        /*GestioneRistoranti gr = GestioneRistoranti.getInstance();
         File fileRecensioni = new File(NOME_CARTELLA, NOME_FILE_RECENSIONI);
         if (!fileRecensioni.exists()) {
             System.err.println("File utenti non trovato ");
@@ -271,7 +259,7 @@ public class ReplyReviewsController {
             e.printStackTrace();
         }
 
-        GestioneRecensioni.getInstance().ricaricaIndice();
+        GestioneRecensioni.getInstance().ricaricaIndice();*/
     }
 }
 

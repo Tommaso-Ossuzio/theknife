@@ -245,8 +245,7 @@ public class DashboardController {
     @FXML
     private void onRecensioniSenzaRisposta() throws IOException {
         Finestre.apriModale("reply_review.fxml", "Recensioni a cui rispondere");
-        //TODO mettere comando REC-NO-RISP e gestire RISP-REC
-        aggiornaTutto();
+        //aggiornaTutto();
     }
 
     /**
@@ -256,7 +255,7 @@ public class DashboardController {
     @FXML
     private void onAggiungiRistorante() throws IOException {
         Finestre.apriModale("add_restaurant.fxml", "Nuovo ristorante");
-        aggiornaTutto();
+        //aggiornaTutto();
     }
 
     /**
