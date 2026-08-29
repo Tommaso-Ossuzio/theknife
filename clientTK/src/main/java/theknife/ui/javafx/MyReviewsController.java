@@ -104,6 +104,7 @@ public class MyReviewsController {
      * Apre la finestra di modifica per la recensione selezionata.
      * @author Celestino Resteghini
      * @author Matteo Franguelli
+     * @author Michele Viselli
      */
     private void apriModificaRecensione(ReviewRow riga) throws IOException {
         RistoranteDTO ristorante = ristoranti == null ? null : ristoranti.stream()

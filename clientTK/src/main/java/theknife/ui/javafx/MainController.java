@@ -547,6 +547,7 @@ public class MainController implements ControllerAutenticazione {
     /**
      * Si occupa di mostrare la finestra per effettuare il login.
      * @author Matteo Franguelli
+     * @author Michele Viselli
      */
     @FXML
     private void onShowLogin() {
