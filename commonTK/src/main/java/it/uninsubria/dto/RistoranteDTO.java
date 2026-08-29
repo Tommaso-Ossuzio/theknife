@@ -64,14 +64,6 @@ public class RistoranteDTO implements Serializable {
         this.ristoratore = ristoratore;
     }
 
-    //TODO creato per comando mod rec
-    public RistoranteDTO(int idRistorante){
-        this.idRistorante = idRistorante;
-        //TODO creare un metodo che ottenga il numero di recensioni e la media stelle di un ristorante partendo dall'id
-        this.numeroRecensioni = numeroRecensioni;
-        this.mediaStelle = mediaStelle;
-    }
-
     public int getStelleMichelin() {
         return stelleMichelin;
     }

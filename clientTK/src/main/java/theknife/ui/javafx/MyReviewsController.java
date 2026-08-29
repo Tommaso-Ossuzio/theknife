@@ -32,6 +32,11 @@ public class MyReviewsController {
     @FXML private Label etichettaVuota;
 
     private final ObservableList<ReviewRow> dati = FXCollections.observableArrayList();
+    private ObservableList<RistoranteDTO> ristoranti;
+
+    public void setRistoranti(ObservableList<RistoranteDTO> ristoranti) {
+        this.ristoranti = ristoranti;
+    }
 
     /**
      * Inizializza la tabella, il menu contestuale e carica le recensioni.
@@ -101,9 +106,14 @@ public class MyReviewsController {
      * @author Matteo Franguelli
      */
     private void apriModificaRecensione(ReviewRow riga) throws IOException {
+        RistoranteDTO ristorante = ristoranti == null ? null : ristoranti.stream()
+                .filter(r -> r.getIdRistorante() == riga.getRawRestaurantId())
+                .findFirst()
+                .orElse(null);
+
         Finestre.apriModale("add_review.fxml", "Modifica Recensione",
                 (AddReviewController ctrl) -> {
-                    ctrl.setRestaurant(new RistoranteDTO(riga.getRawRestaurantId()));
+                    ctrl.setRestaurant(ristorante);
                     ctrl.setRestaurantName(riga.getRestaurant());
                     ctrl.setDatiPerModifica(riga);
                 });

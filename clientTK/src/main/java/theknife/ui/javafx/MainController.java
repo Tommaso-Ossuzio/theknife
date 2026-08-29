@@ -690,7 +690,8 @@ public class MainController implements ControllerAutenticazione {
      */
     @FXML
     private void onShowMyReviews() {
-        Finestre.apriModale("my_reviews.fxml", "Le mie recensioni");
+        Finestre.apriModale("my_reviews.fxml", "Le mie recensioni",
+                (MyReviewsController ctrl) -> ctrl.setRistoranti(ristoranti));
 
         aggiornaPaginazione();
     }
