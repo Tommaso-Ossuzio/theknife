@@ -16,6 +16,7 @@
     -color-text-muted:      #4F5F5A;
 
     -color-danger:          #B02B2B;
+    -color-avviso:          #8A5A00;
 
     -fx-accent:             -color-primary;
     -fx-focus-color:        -color-primary;
@@ -146,9 +147,45 @@
     -fx-padding: 4;
 }
 
-.log-area {
+.log-pane {
+    -fx-background-color: -color-surface;
+    -fx-border-color: -color-border-strong;
+    -fx-border-width: 1;
+    -fx-border-radius: 10;
+    -fx-background-radius: 10;
+    -fx-padding: 4;
+}
+
+.log-pane > .viewport {
+    -fx-background-color: -color-surface;
+}
+
+.log-flow {
+    -fx-padding: 10 12 10 12;
+    -fx-line-spacing: 2;
+}
+
+.log-riga {
     -fx-font-family: "Consolas", "Menlo", monospace;
     -fx-font-size: 12px;
+}
+
+.log-riga-normale {
+    -fx-fill: -color-text;
+}
+
+.log-riga-ok {
+    -fx-fill: -color-primary;
+    -fx-font-weight: bold;
+}
+
+.log-riga-avviso {
+    -fx-fill: -color-avviso;
+}
+
+.log-riga-errore {
+    -fx-fill: -color-danger;
+    -fx-font-weight: bold;
 }
 .text-area .content {
     -fx-background-color: -color-surface;

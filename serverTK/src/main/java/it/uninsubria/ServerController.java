@@ -12,9 +12,11 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
-import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
+import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.VBox;
+import javafx.scene.text.Text;
+import javafx.scene.text.TextFlow;
 
 /**
  * Controller della finestra di avvio del server.
@@ -30,7 +32,8 @@ public class ServerController {
     @FXML private Label etichettaStato;
     @FXML private VBox riquadroForm;
     @FXML private VBox riquadroLog;
-    @FXML private TextArea areaLog;
+    @FXML private ScrollPane pannelloLog;
+    @FXML private TextFlow flussoLog;
     @FXML private Button bottoneAvvia;
 
     /**
@@ -102,8 +105,34 @@ public class ServerController {
             public void write(byte[] b, int off, int len) {
                 originale.write(b, off, len);
                 String testo = new String(b, off, len, StandardCharsets.UTF_8);
-                Platform.runLater(() -> areaLog.appendText(testo));
+                Platform.runLater(() -> scrivi(testo));
             }
         }, true, StandardCharsets.UTF_8);
+    }
+
+    private void scrivi(String testo) {
+        for (String riga : testo.replace("\r", "").split("\n", -1)) {
+            if (riga.isEmpty()) {
+                continue;
+            }
+            Text nodo = new Text(riga + "\n");
+            nodo.getStyleClass().addAll("log-riga", classeRiga(riga));
+            flussoLog.getChildren().add(nodo);
+        }
+        pannelloLog.setVvalue(1);
+    }
+
+    private String classeRiga(String riga) {
+        String minuscola = riga.toLowerCase();
+        if (minuscola.contains("errore") || minuscola.contains("exception") || minuscola.startsWith("\tat ")) {
+            return "log-riga-errore";
+        }
+        if (minuscola.contains("attenzione") || minuscola.contains("warning")) {
+            return "log-riga-avviso";
+        }
+        if (minuscola.contains("ascolto") || minuscola.contains("successo") || minuscola.contains("pronte")) {
+            return "log-riga-ok";
+        }
+        return "log-riga-normale";
     }
 }
