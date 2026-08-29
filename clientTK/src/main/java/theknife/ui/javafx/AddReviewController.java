@@ -145,8 +145,18 @@ public class AddReviewController {
         RecensioneDTO recensioneDTO = new RecensioneDTO(testo, numeroStelle, idUtente, idRistorante);
         GestioneRichieste.getInstance().inviaSolo("AGG-REC", recensioneDTO);
 
-        //TODO fare il refresh della pagina sottostante
-        // Al momento funziona, ma dopo aver aggiunto la recensione non compare subito a livello grafico nel ristorante
+        int numeroRecensioniAttuale = ristoranteDTODestinazione.getNumeroRecensioni() == null
+                ? 0
+                : ristoranteDTODestinazione.getNumeroRecensioni();
+        double mediaAttuale = ristoranteDTODestinazione.getMediaStelle() == null
+                ? 0.0
+                : ristoranteDTODestinazione.getMediaStelle();
+        int nuovoNumeroRecensioni = numeroRecensioniAttuale + 1;
+        double nuovaMedia = (mediaAttuale * numeroRecensioniAttuale + numeroStelle)
+                / nuovoNumeroRecensioni;
+
+        ristoranteDTODestinazione.setNumeroRecensioni(nuovoNumeroRecensioni);
+        ristoranteDTODestinazione.setMediaStelle(nuovaMedia);
 
         chiudiFinestra();
     }
