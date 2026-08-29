@@ -648,7 +648,6 @@
     -fx-background-color: transparent;
     -fx-page-information-visible: true;
     -fx-page-information-alignment: bottom;
-    -fx-max-page-indicator-count: 7;
 }
 
 .pagination .pagination-control {

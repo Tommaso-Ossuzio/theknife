@@ -8,7 +8,7 @@
             fx:controller="theknife.ui.javafx.AddRestaurantController"
             stylesheets="@style.css"
             styleClass="dialog-root"
-            prefWidth="520" prefHeight="720">
+            prefWidth="700" prefHeight="760">
 
     <top>
         <VBox styleClass="dialog-header">
@@ -26,7 +26,7 @@
                     <Label text="NOME *" styleClass="field-label"/>
                     <HBox styleClass="field-row">
                         <TextField fx:id="campoNome" promptText="Nome ristorante" HBox.hgrow="ALWAYS"/>
-                        <Label fx:id="erroreNome" styleClass="error-label"/>
+                        <Label fx:id="erroreNome" styleClass="error-label" minWidth="-Infinity"/>
                     </HBox>
                 </VBox>
 
@@ -37,14 +37,14 @@
                         <Label text="NAZIONE *" styleClass="field-label"/>
                         <HBox styleClass="field-row">
                             <TextField fx:id="campoNazione" promptText="es. Italia" HBox.hgrow="ALWAYS"/>
-                            <Label fx:id="erroreNazione" styleClass="error-label"/>
+                            <Label fx:id="erroreNazione" styleClass="error-label" minWidth="-Infinity"/>
                         </HBox>
                     </VBox>
                     <VBox styleClass="field-group" HBox.hgrow="ALWAYS">
                         <Label text="CITTÀ *" styleClass="field-label"/>
                         <HBox styleClass="field-row">
                             <TextField fx:id="campoCitta" promptText="es. Milano" HBox.hgrow="ALWAYS"/>
-                            <Label fx:id="erroreCitta" styleClass="error-label"/>
+                            <Label fx:id="erroreCitta" styleClass="error-label" minWidth="-Infinity"/>
                         </HBox>
                     </VBox>
                 </HBox>
@@ -53,7 +53,7 @@
                     <Label text="INDIRIZZO *" styleClass="field-label"/>
                     <HBox styleClass="field-row">
                         <TextField fx:id="campoIndirizzo" promptText="Via..." HBox.hgrow="ALWAYS"/>
-                        <Label fx:id="erroreIndirizzo" styleClass="error-label"/>
+                        <Label fx:id="erroreIndirizzo" styleClass="error-label" minWidth="-Infinity"/>
                     </HBox>
                 </VBox>
 
@@ -62,14 +62,14 @@
                         <Label text="LATITUDINE *" styleClass="field-label"/>
                         <HBox styleClass="field-row">
                             <TextField fx:id="campoLatitudine" promptText="45.46" HBox.hgrow="ALWAYS"/>
-                            <Label fx:id="erroreLatitudine" styleClass="error-label"/>
+                            <Label fx:id="erroreLatitudine" styleClass="error-label" minWidth="-Infinity"/>
                         </HBox>
                     </VBox>
                     <VBox styleClass="field-group" HBox.hgrow="ALWAYS">
                         <Label text="LONGITUDINE *" styleClass="field-label"/>
                         <HBox styleClass="field-row">
                             <TextField fx:id="campoLongitudine" promptText="9.18" HBox.hgrow="ALWAYS"/>
-                            <Label fx:id="erroreLongitudine" styleClass="error-label"/>
+                            <Label fx:id="erroreLongitudine" styleClass="error-label" minWidth="-Infinity"/>
                         </HBox>
                     </VBox>
                 </HBox>
@@ -82,7 +82,7 @@
                     <Label text="NUMERO DI TELEFONO *" styleClass="field-label"/>
                     <HBox styleClass="field-row">
                         <TextField fx:id="campoTelefono" promptText="es. +39..." HBox.hgrow="ALWAYS"/>
-                        <Label fx:id="erroreTelefono" styleClass="error-label"/>
+                        <Label fx:id="erroreTelefono" styleClass="error-label" minWidth="-Infinity"/>
                     </HBox>
                 </VBox>
 
@@ -91,14 +91,14 @@
                         <Label text="PREZZO MEDIO (€) *" styleClass="field-label"/>
                         <HBox styleClass="field-row">
                             <TextField fx:id="campoPrezzo" promptText="es. 60" HBox.hgrow="ALWAYS"/>
-                            <Label fx:id="errorePrezzo" styleClass="error-label"/>
+                            <Label fx:id="errorePrezzo" styleClass="error-label" minWidth="-Infinity"/>
                         </HBox>
                     </VBox>
                     <VBox styleClass="field-group" HBox.hgrow="ALWAYS">
                         <Label text="TIPO DI CUCINA *" styleClass="field-label"/>
                         <HBox styleClass="field-row">
                             <TextField fx:id="campoTipoCucina" promptText="Italian, Gourmet..." HBox.hgrow="ALWAYS"/>
-                            <Label fx:id="erroreTipoCucina" styleClass="error-label"/>
+                            <Label fx:id="erroreTipoCucina" styleClass="error-label" minWidth="-Infinity"/>
                         </HBox>
                     </VBox>
                 </HBox>
