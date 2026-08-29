@@ -40,7 +40,6 @@ public class UtenteDTO implements Serializable {
 
     //usato dal client
     public UtenteDTO(String nome, String cognome, String email, Date dataNascita, LuogoDTO luogo, String password) {
-        this.idUtente = idUtente;
         this.nome = nome;
         this.cognome = cognome;
         this.email = email;

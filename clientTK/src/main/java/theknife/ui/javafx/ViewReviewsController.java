@@ -47,6 +47,7 @@ public class ViewReviewsController {
      * Imposta il ristorante ricevuto dal server.
      * @param r ristorante DTO di cui visualizzare le recensioni
      * @author Michele Viselli
+     * @author Celestino Resteghini
      */
     public void setRestaurant(RistoranteDTO r) throws IOException {
         impostaRistorante(
@@ -61,6 +62,7 @@ public class ViewReviewsController {
      * @param idRistorante identificativo del ristorante
      * @param nomeRistorante nome da mostrare nel titolo
      * @author Michele Viselli
+     * @author Celestino Resteghini
      */
     private void impostaRistorante(Integer idRistorante, String nomeRistorante) throws IOException {
         idRistoranteSelezionato = idRistorante;
@@ -79,6 +81,7 @@ public class ViewReviewsController {
      * bloccare il thread JavaFX.
      *
      * @author Michele Viselli
+     * @author Matteo Franguelli
      */
     private void caricaRecensioniSpecifiche() {
         recensioniData.clear();
@@ -135,6 +138,7 @@ public class ViewReviewsController {
      * Imposta la grafica personalizzata delle celle della lista recensioni.
      * @author Matteo Franguelli
      * @author Michele Viselli
+     * @author Elia Toschi
      */
     private void impostaGraficaCelle() {
         listaRecensioni.setCellFactory(param -> new ListCell<>() {
@@ -195,6 +199,11 @@ public class ViewReviewsController {
         stage.close();
     }
 
+    /**
+     * imposta le statistiche
+     * @author Matteo Fraqnguelli
+     * @author Michele Viselli
+     */
     private void calcolaStatistiche() {
         if (recensioniData.isEmpty()) {
             if (etichettaMedia != null) etichettaMedia.setText("Media stelle: N/D");
@@ -227,6 +236,7 @@ public class ViewReviewsController {
      * @return recensioni ricevute dal server, oppure una lista vuota se la
      *         risposta non è disponibile o la connessione fallisce
      * @author Michele Viselli
+     * @author Celestino Resteghini
      */
     public LinkedList<RecensioneDTO> getRecensioniPerRistorante(int idRistorante) {
         try {
