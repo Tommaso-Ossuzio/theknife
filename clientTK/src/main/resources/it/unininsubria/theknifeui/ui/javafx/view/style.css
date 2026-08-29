@@ -25,6 +25,7 @@
     -color-danger-soft:     #FBEAEA;
 
     -color-star-on:         #B26A00;
+    -color-star-michelin:   #C8102E;
     -color-star-off:        #C9D0CB;
 
     -color-rating-high-bg:  #D8F0E2;
@@ -821,6 +822,11 @@
     -fx-text-fill: -color-star-on;
 }
 
+.star-button-michelin.star-button-on,
+.star-button-michelin:hover {
+    -fx-text-fill: -color-star-michelin;
+}
+
 .star-button-small {
     -fx-font-size: 24px;
 }
@@ -832,7 +838,7 @@
 }
 
 .michelin-stars {
-    -fx-text-fill: -color-star-on;
+    -fx-text-fill: -color-star-michelin;
     -fx-font-size: 18px;
     -fx-font-weight: bold;
 }

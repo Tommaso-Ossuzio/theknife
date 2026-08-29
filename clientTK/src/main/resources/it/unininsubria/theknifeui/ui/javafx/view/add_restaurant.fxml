@@ -109,6 +109,23 @@
                 </VBox>
 
                 <VBox styleClass="field-group">
+                    <Label text="STELLE MICHELIN" styleClass="field-label"/>
+                    <HBox styleClass="card-line">
+                        <Button fx:id="stella1" text="★" onAction="#onStellaMichelinClicked" userData="1" styleClass="star-button, star-button-michelin"/>
+                        <Button fx:id="stella2" text="★" onAction="#onStellaMichelinClicked" userData="2" styleClass="star-button, star-button-michelin"/>
+                        <Button fx:id="stella3" text="★" onAction="#onStellaMichelinClicked" userData="3" styleClass="star-button, star-button-michelin"/>
+
+                        <Region prefWidth="8"/>
+
+                        <Button text="✖" onAction="#onAzzeraStelleMichelin" styleClass="btn-icon">
+                            <tooltip>
+                                <Tooltip text="Rimuovi stelle Michelin"/>
+                            </tooltip>
+                        </Button>
+                    </HBox>
+                </VBox>
+
+                <VBox styleClass="field-group">
                     <Label text="SERVIZI OFFERTI" styleClass="field-label"/>
                     <HBox styleClass="card-tags">
                         <CheckBox fx:id="checkConsegna" text="Consegna a domicilio"/>

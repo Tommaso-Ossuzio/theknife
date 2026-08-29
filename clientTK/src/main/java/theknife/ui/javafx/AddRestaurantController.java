@@ -2,6 +2,7 @@ package theknife.ui.javafx;
 
 import it.uninsubria.dto.RistoranteDTO;
 import it.uninsubria.dto.RistoratoreDTO;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.stage.Stage;
@@ -45,6 +46,9 @@ public class AddRestaurantController {
     @FXML private Label errorePrezzo;
     @FXML private Label erroreTipoCucina;
     @FXML private Button bottoneSalva;
+    @FXML private Button stella1, stella2, stella3;
+
+    private int stelleSelezionate = 0;
 
     /**
      * Permette di salvare il ristorante anche premendo Invio.
@@ -107,11 +111,12 @@ public class AddRestaurantController {
         String sito = campoSitoWeb.getText();
         boolean delivery = checkConsegna.isSelected();
         boolean booking = checkPrenotazione.isSelected();
-        int stelle=0; //TODO da mettere il risultato ottenuto dalla nuovo textBox che va ancora fatta
+        int stelle = stelleSelezionate;
         RistoratoreDTO ristoratore = new RistoratoreDTO(Session.getInstance().getID());
 
         RistoranteDTO nuovoRistorante = new RistoranteDTO(nome, nazione, citta, indirizzo, lat, longi, numTel, prezzo, cucine, sito, delivery, booking, stelle, ristoratore);
         GestioneRichieste.getInstance().inviaSolo("AGG-RIST",nuovoRistorante);
+        Utility.svuotaElenchi();
 
         // Avviso l'utente del successo
         Alert a = new Alert(Alert.AlertType.INFORMATION);
@@ -217,6 +222,42 @@ public class AddRestaurantController {
         boolean nonValido = !testo.matches("\\+?\\d+");
         errore.setText(nonValido ? "Telefono non valido" : "");
         return nonValido;
+    }
+
+    /**
+     * Imposta le stelle Michelin sul valore della stella premuta.
+     * @param event evento della stella premuta
+     * @author Matteo Franguelli
+     */
+    @FXML
+    private void onStellaMichelinClicked(ActionEvent event) {
+        Button premuta = (Button) event.getSource();
+        stelleSelezionate = Integer.parseInt((String) premuta.getUserData());
+        aggiornaGraficaStelle();
+    }
+
+    /**
+     * Riporta le stelle Michelin a zero.
+     * @author Matteo Franguelli
+     */
+    @FXML
+    private void onAzzeraStelleMichelin() {
+        stelleSelezionate = 0;
+        aggiornaGraficaStelle();
+    }
+
+    /**
+     * Colora le stelle fino al valore selezionato.
+     * @author Matteo Franguelli
+     */
+    private void aggiornaGraficaStelle() {
+        Button[] stelle = {stella1, stella2, stella3};
+        for (int i = 0; i < stelle.length; i++) {
+            stelle[i].getStyleClass().remove("star-button-on");
+            if (i < stelleSelezionate) {
+                stelle[i].getStyleClass().add("star-button-on");
+            }
+        }
     }
 
     /**
