@@ -36,16 +36,6 @@ public class AddReviewController {
     private int votoSelezionato = 5;
 
     /**
-     * Seleziona il ristorante
-     * @author Michele Viselli
-     * @author Matteo Franguelli
-     * @author Celestino Resteghini
-     */
-    public void setRestaurant() {
-        this.ristoranteDTODestinazione = null;
-    }
-
-    /**
      * Seleziona il ristorante ricevuto dal nuovo flusso server.
      *
      * @param restaurant ristorante DTO da recensire
@@ -152,12 +142,10 @@ public class AddReviewController {
             RecensioneDTO recensioneDTO = new RecensioneDTO(idRecensione, testo, numeroStelle, idUtente);
             GestioneRichieste.getInstance().inviaSolo("MOD-REC", recensioneDTO);
 
-            //TODO qua bisogna aggiornare la grafica solo della card ma mi servono getNumeroRecensioni e getMediaStelle
-
             if (ristoranteDTODestinazione != null) {
                 int vecchiVoto = recensioneOriginale.getRating();
                 int nuovoVoto = numeroStelle;
-                int delta = nuovoVoto - vecchiVoto; // Differenza di punti (es. da 3 a 5 stelle = +2)
+                int delta = nuovoVoto - vecchiVoto;
 
                 int numRec = ristoranteDTODestinazione.getNumeroRecensioni() == null ? 1 : ristoranteDTODestinazione.getNumeroRecensioni();
                 double mediaVecchia = ristoranteDTODestinazione.getMediaStelle() == null ? 0.0 : ristoranteDTODestinazione.getMediaStelle();
