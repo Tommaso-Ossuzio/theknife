@@ -250,19 +250,11 @@ public class SlaveThread extends Thread {
     private void gestisciModificaRecensione() throws IOException, ClassNotFoundException {
         RecensioneDTO recensione = (RecensioneDTO) in.readObject();
         System.out.println("MOD-REC: ricevuto: " + recensione.toString());
-        LinkedList<RecensioneDTO> recensioni = null;
         try (Connection conn = getConnection()) {
             recensioneDAO.modificaRecensione(conn,recensione);
-            recensioni = (LinkedList<RecensioneDTO>) recensioneDAO.getRecensioniDaUtente(conn,recensione.getIdUtente());
         } catch (SQLException e) {
             e.printStackTrace();
-
         }
-        if(recensioni == null)
-            recensioni = new LinkedList<>();
-        System.out.println("MOD-REC: invio: lista recensioni");
-        out.writeObject(recensioni);
-        out.flush();
     }
 
     /**

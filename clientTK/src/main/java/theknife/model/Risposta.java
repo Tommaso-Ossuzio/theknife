@@ -22,8 +22,6 @@ public class Risposta {
         this.text = text;
     }
 
-    public String getTextString()
-    {return text;}
     /**
      * stampa
      * @return stringa

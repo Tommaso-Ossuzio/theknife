@@ -49,6 +49,14 @@ public class RecensioneDTO implements Serializable {
         this.idRistorante = idRistorante;
     }
 
+    public RecensioneDTO(int idRecensione, String testo, int numeroStelle, int idUtente)
+    {
+        this.idUtente = idUtente;
+        this.idRecensione = idRecensione;
+        this.testo = testo;
+        this.numeroStelle = numeroStelle;
+    }
+
     public int getIdRecensione() {
         return idRecensione;
     }

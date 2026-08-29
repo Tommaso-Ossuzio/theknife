@@ -1,6 +1,7 @@
 package theknife.ui.javafx;
 
 import it.uninsubria.dto.RecensioneDTO;
+import it.uninsubria.dto.RistoranteDTO;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -19,6 +20,8 @@ import java.util.LinkedList;
  * delle recensioni scritte dall'utente corrente.
  *
  * @author Matteo Franguelli
+ * @author Michele Viselli
+ * @author Celestino Resteghini
  */
 public class MyReviewsController {
 
@@ -29,6 +32,11 @@ public class MyReviewsController {
     @FXML private Label etichettaVuota;
 
     private final ObservableList<ReviewRow> dati = FXCollections.observableArrayList();
+    private ObservableList<RistoranteDTO> ristoranti;
+
+    public void setRistoranti(ObservableList<RistoranteDTO> ristoranti) {
+        this.ristoranti = ristoranti;
+    }
 
     /**
      * Inizializza la tabella, il menu contestuale e carica le recensioni.
@@ -94,17 +102,20 @@ public class MyReviewsController {
     }
     /**
      * Apre la finestra di modifica per la recensione selezionata.
-     *
+     * @author Celestino Resteghini
      * @author Matteo Franguelli
+     * @author Michele Viselli
      */
     private void apriModificaRecensione(ReviewRow riga) throws IOException {
-        GestioneRistoranti gr = GestioneRistoranti.getInstance();
-        Ristorante r = gr.getRistorante(riga.getRawRestaurantId());
+        RistoranteDTO ristorante = ristoranti == null ? null : ristoranti.stream()
+                .filter(r -> r.getIdRistorante() == riga.getRawRestaurantId())
+                .findFirst()
+                .orElse(null);
 
         Finestre.apriModale("add_review.fxml", "Modifica Recensione",
                 (AddReviewController ctrl) -> {
-                    ctrl.setRestaurant();
-                    if (r != null) ctrl.setRestaurantName(r.getNome());
+                    ctrl.setRestaurant(ristorante);
+                    ctrl.setRestaurantName(riga.getRestaurant());
                     ctrl.setDatiPerModifica(riga);
                 });
 
@@ -150,6 +161,7 @@ public class MyReviewsController {
      *
      * @author Matteo Franguelli
      * @author Michele Viselli
+     * @author Celestino Resteghini
      */
     private void caricaLeMieRecensioni() throws IOException {
         dati.clear();
@@ -157,9 +169,7 @@ public class MyReviewsController {
         if (session.isGuest()) return;
 
         int mioId = session.getID();
-        LinkedList<RecensioneDTO> recensioni = (LinkedList<RecensioneDTO>) GestioneRichieste
-                .getInstance()
-                .inviaEAttendi("VIS-REC", session.getID());
+        LinkedList<RecensioneDTO> recensioni = (LinkedList<RecensioneDTO>) GestioneRichieste.getInstance().inviaEAttendi("VIS-REC", session.getID());
 
         for (RecensioneDTO r : recensioni) {
             if (r.getIdUtente() == mioId) {
@@ -167,7 +177,7 @@ public class MyReviewsController {
                 if (nomeRistorante == null || nomeRistorante.isBlank()) {
                     nomeRistorante = "Sconosciuto (ID " + r.getIdRistorante() + ")";
                 }
-                dati.add(new ReviewRow(nomeRistorante, r.getNumeroStelle(), r.getTesto(), r.getIdRistorante()));
+                dati.add(new ReviewRow(nomeRistorante, r.getNumeroStelle(), r.getTesto(), r.getIdRistorante(), r.getIdRecensione()));
             }
         }
     }
@@ -193,14 +203,17 @@ public class MyReviewsController {
         private final int rating;
         private final String text;
         private final int rawRestaurantId; // Serve per l'eliminazione
+        private final int rawRecensioneId; //Serve per la modifica
 
-        public ReviewRow(String restaurant, int rating, String text, int rawRestaurantId) {
+        public ReviewRow(String restaurant, int rating, String text, int rawRestaurantId, int rawRecensioneId) {
             this.restaurant = restaurant;
             this.rating = rating;
             this.text = text;
             this.rawRestaurantId = rawRestaurantId;
+            this.rawRecensioneId = rawRecensioneId;
         }
 
+        public int getRawRecensioneId() { return rawRecensioneId; }
         public String getRestaurant() { return restaurant; }
         public int getRating() { return rating; }
         public String getText() { return text; }

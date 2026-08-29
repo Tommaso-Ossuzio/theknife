@@ -58,14 +58,9 @@ public class Ristorante {
     }
 
     public String getNome(){return nome;}
-    public String getN_tel(){return numeroTelefono;}
-    public double getPrezzo() { return prezzo; }
-    public boolean isDelivery() { return delivery; }
-    public boolean isBooking() { return booking; }
     public LinkedList<String> getCucina(){return cucina;}
     public String getStringaCucina(){String s="";for(String c: cucina){s+=c+" ";}return s;}
     public Luogo getLuogo(){return luogo;}
-    public String getWebsite() { return website; }
     public  int getId() { return id;  }
 
     /**

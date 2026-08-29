@@ -36,17 +36,8 @@ public class Recensione {
         this.id = ++contatore;
     }
 
-    public int getNumeroStelle() {return numeroStelle;}
     public String getText() {return text;}
-    public int getIdUtente() {return id_utente_reg;}
-    public int get_id_Ristorante() {return id_ristorante;}
     public Risposta getRisposta() {return risposta;}
-    public Date getData() {return data;}
-
-    public void setData(Date date)
-    {
-        this.data= date;
-    }
 
     public void setRisposta(Risposta risposta) {
         this.risposta = risposta;
