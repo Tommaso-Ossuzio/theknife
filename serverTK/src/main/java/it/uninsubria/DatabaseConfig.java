@@ -77,6 +77,7 @@ public class DatabaseConfig {
 
     /**
      * Controlla se il database theknife_db esiste già.
+     * @author Elia Toschi
      */
     public static boolean databaseExists() {
         boolean exists = false;
@@ -97,6 +98,7 @@ public class DatabaseConfig {
 
     /**
      * Esegue fisicamente la query CREATE DATABASE theknife_db.
+     * @author Elia Toschi
      */
     public static void createDatabase() {
         try (Connection conn = DriverManager.getConnection(getDefaultUrl(), getUser(), getPassword())) {
@@ -113,6 +115,7 @@ public class DatabaseConfig {
 
     /**
      * Metodo di utilità che combina i due controlli precedenti (perfetto da chiamare all'avvio del server).
+     * @author Elia Toschi
      */
     public static void createDatabaseIfMissing() {
         if (!databaseExists()) {

@@ -91,7 +91,6 @@ public class Utility {
 
     /**
      * Calcola l'hash SHA-256 di una stringa.
-     *
      * @author Matteo Franguelli
      */
     public static String calcolaSha256(String input) {

@@ -13,6 +13,7 @@ import java.util.List;
 
 /**
  * RecensioneDAO rappresenta il punto di accesso al database delle informazioni delle recensioni e risposte
+ * @author Elia Toschi
  */
 public class RecensioneDAO {
     /**
