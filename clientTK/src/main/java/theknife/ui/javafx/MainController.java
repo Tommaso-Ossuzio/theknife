@@ -257,6 +257,8 @@ public class MainController implements ControllerAutenticazione {
      */
     private void inizializzaGriglia() {
         paginazione.setPageFactory(this::creaPagina);
+        paginazione.currentPageIndexProperty().addListener(
+                (osservato, precedente, corrente) -> deselezionaRistorante());
     }
 
     /**
