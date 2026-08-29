@@ -7,6 +7,8 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.stage.Stage;
+import javafx.util.StringConverter;
+import javafx.util.converter.LocalDateStringConverter;
 import theknife.model.GestioneRichieste;
 import theknife.utilities.Utility;
 
@@ -16,6 +18,7 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.time.LocalDate;
 import java.time.ZoneId;
+import java.time.format.DateTimeParseException;
 import java.util.Date;
 
 /**
@@ -47,6 +50,7 @@ public class RegisterController {
     @FXML private Button bottoneCrea;
 
     private ControllerAutenticazione controllerPrincipale;
+    private boolean testoDataNascitaNonValido;
 
     /**
      * Imposta il controller principale come riferimento.
@@ -68,6 +72,7 @@ public class RegisterController {
         }
         Utility.completamentoCitta(campoCitta);
         Utility.confermaConInvio(bottoneCrea, campoCitta);
+        configuraValidazioneDataNascita();
     }
 
     /**
@@ -104,6 +109,7 @@ public class RegisterController {
      *
      * @author Celestino Resteghini
      * @author Matteo Franguelli
+     * @author Michele Viselli
      */
     @FXML
     private void onCreate(ActionEvent event) throws IOException {
@@ -112,6 +118,7 @@ public class RegisterController {
         String email     = campoUsername.getText();
         String password     = campoPassword.getText();
         String citta        = campoCitta.getEditor().getText();
+        campoDataNascita.commitValue();
         LocalDate dataN = campoDataNascita.getValue();
 
         // Il ruolo è esclusivo: uno dei due è sempre e solo vero
@@ -125,26 +132,6 @@ public class RegisterController {
         boolean passwordVuota = segnalaSeVuoto(campoPassword, errorePassword);
         boolean cittaVuota    = segnalaSeVuoto(campoCitta.getEditor(), erroreCitta);
 
-        if (nomeVuoto || cognomeVuoto || emailVuota || passwordVuota || cittaVuota) {
-            etichettaErrore.setText("");
-            return;
-        }
-
-        if (!UtenteDTO.emailValida(email)) {
-            erroreUsername.setText("Email non valida");
-            etichettaErrore.setText("");
-            return;
-        }
-
-        if (!Utility.cittaEsiste(citta)) {
-            erroreCitta.setText("Luogo non presente");
-            etichettaErrore.setText("Luogo non presente, seleziona una città dall'elenco.");
-            campoCitta.requestFocus();
-            return;
-        }
-
-        String passwordHashed = Utility.calcolaSha256(password);
-
         Date dataNascita;
 
         if(dataN == null) {
@@ -153,12 +140,31 @@ public class RegisterController {
             dataNascita = Date.from(dataN.atStartOfDay(ZoneId.systemDefault()).toInstant());
         }
 
-        if (!UtenteDTO.dataNascitaValida(dataNascita)) {
-            erroreDataNascita.setText("Data non valida");
-            etichettaErrore.setText("");
+        boolean emailNonValida       = !emailVuota && !UtenteDTO.emailValida(email);
+        boolean cittaNonValida       = !cittaVuota && !Utility.cittaEsiste(citta);
+        boolean formatoDataNonValido = testoDataNascitaNonValido;
+        boolean etaNonValida         = !formatoDataNonValido
+                && !UtenteDTO.dataNascitaValida(dataNascita);
+
+        if (emailNonValida) erroreUsername.setText("Email non valida");
+        if (cittaNonValida) erroreCitta.setText("Città non presente");
+        if (formatoDataNonValido) {
+            erroreDataNascita.setText("Formato data non valido");
+        } else if (etaNonValida) {
+            erroreDataNascita.setText("Età minima: 14 anni");
+        } else {
+            erroreDataNascita.setText("");
+        }
+        etichettaErrore.setText(cittaNonValida
+                ? "Luogo non presente, seleziona una città dall'elenco."
+                : "");
+
+        if (nomeVuoto || cognomeVuoto || emailVuota || passwordVuota || cittaVuota
+                || emailNonValida || cittaNonValida || formatoDataNonValido || etaNonValida) {
             return;
         }
-        erroreDataNascita.setText("");
+
+        String passwordHashed = Utility.calcolaSha256(password);
 
         UtenteDTO utente = new UtenteDTO(nome,cognome,email,dataNascita, new LuogoDTO(new CittaDTO(citta)), passwordHashed);
         Boolean risposta = (Boolean) GestioneRichieste.getInstance().inviaEAttendi("REG",utente);
@@ -187,6 +193,49 @@ public class RegisterController {
             etichettaErrore.setText("Email già in uso. Usane un'altra.");
             return;
         }
+    }
+
+    /**
+     * Converte il testo della data senza lasciare propagare gli errori di formato
+     * generati dal converter predefinito del DatePicker.
+     *
+     * @author Michele Viselli
+     */
+    private void configuraValidazioneDataNascita() {
+        LocalDateStringConverter converterPredefinito = new LocalDateStringConverter();
+
+        campoDataNascita.setConverter(new StringConverter<>() {
+            @Override
+            public String toString(LocalDate data) {
+                return converterPredefinito.toString(data);
+            }
+
+            @Override
+            public LocalDate fromString(String testo) {
+                if (testo == null || testo.isBlank()) {
+                    testoDataNascitaNonValido = false;
+                    erroreDataNascita.setText("");
+                    return null;
+                }
+
+                try {
+                    LocalDate data = converterPredefinito.fromString(testo);
+                    testoDataNascitaNonValido = false;
+                    erroreDataNascita.setText("");
+                    return data;
+                } catch (DateTimeParseException e) {
+                    testoDataNascitaNonValido = true;
+                    erroreDataNascita.setText("Formato data non valido");
+                    return campoDataNascita.getValue();
+                }
+            }
+        });
+
+        campoDataNascita.valueProperty().addListener((osservato, precedente, corrente) -> {
+            if (corrente == precedente) return;
+            testoDataNascitaNonValido = false;
+            erroreDataNascita.setText("");
+        });
     }
 
     /**
