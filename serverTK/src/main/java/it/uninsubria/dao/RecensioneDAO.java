@@ -86,7 +86,8 @@ public class RecensioneDAO {
                 int idRistoratore = rs.getInt("id_utente");
 
                 UtenteDAO utenteDAO = new UtenteDAO();
-                RistoratoreDTO ristoratore = (RistoratoreDTO) utenteDAO.getUtente(conn, idRistoratore);
+                UtenteDTO utenteDTO =  utenteDAO.getUtente(conn, idRistoratore);
+                RistoratoreDTO ristoratore = new RistoratoreDTO(utenteDTO.getIdUtente(),utenteDTO.getNome(), utenteDTO.getCognome(),utenteDTO.getEmail(), utenteDTO.getDataNascita(), utenteDTO.getLuogo());
 
                 return new RispostaDTO(testoRisposta, idRecensione, ristoratore);
             }
