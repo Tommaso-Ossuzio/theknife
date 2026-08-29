@@ -40,10 +40,12 @@
         </HBox>
     </HBox>
 
-    <GridPane hgap="14" vgap="10" styleClass="details-info-panel">
+    <GridPane hgap="12" vgap="14" styleClass="details-info-panel">
         <columnConstraints>
-            <ColumnConstraints percentWidth="35"/>
-            <ColumnConstraints percentWidth="65"/>
+            <ColumnConstraints percentWidth="21"/>
+            <ColumnConstraints percentWidth="29"/>
+            <ColumnConstraints percentWidth="21"/>
+            <ColumnConstraints percentWidth="29"/>
         </columnConstraints>
         <children>
 
@@ -53,45 +55,55 @@
                 <Label text="💰" styleClass="emoticon"/>
                 <Label text="Prezzo medio" styleClass="details-label"/>
             </HBox>
-            <Label fx:id="valorePrezzo" GridPane.rowIndex="0" GridPane.columnIndex="1" styleClass="details-value"/>
+            <Label fx:id="valorePrezzo" GridPane.rowIndex="0" GridPane.columnIndex="1"
+                   GridPane.valignment="CENTER" styleClass="details-value"/>
+
+            <HBox styleClass="card-line" GridPane.rowIndex="0" GridPane.columnIndex="2">
+                <Label text="⭐" styleClass="emoticon"/>
+                <Label text="Stelle Michelin" styleClass="details-label"/>
+            </HBox>
+            <Label fx:id="valoreStelle" GridPane.rowIndex="0" GridPane.columnIndex="3"
+                   GridPane.valignment="CENTER" styleClass="michelin-stars"/>
 
             <HBox styleClass="card-line" GridPane.rowIndex="1" GridPane.columnIndex="0">
                 <Label text="🍽" styleClass="emoticon"/>
                 <Label text="Cucina" styleClass="details-label"/>
             </HBox>
-            <Label fx:id="valoreCucina" GridPane.rowIndex="1" GridPane.columnIndex="1" styleClass="details-value"/>
+            <Label fx:id="valoreCucina" GridPane.rowIndex="1" GridPane.columnIndex="1"
+                   GridPane.columnSpan="3" GridPane.valignment="CENTER"
+                   wrapText="true" styleClass="details-value"/>
 
-            <HBox styleClass="card-line" GridPane.rowIndex="2" GridPane.columnIndex="0">
-                <Label text="🚚" styleClass="emoticon"/>
-                <Label text="Consegna" styleClass="details-label"/>
-            </HBox>
-            <Label fx:id="valoreConsegna" GridPane.rowIndex="2" GridPane.columnIndex="1" styleClass="details-value"/>
+            <Separator GridPane.rowIndex="2" GridPane.columnIndex="0" GridPane.columnSpan="4"/>
 
             <HBox styleClass="card-line" GridPane.rowIndex="3" GridPane.columnIndex="0">
-                <Label text="📅" styleClass="emoticon"/>
-                <Label text="Prenotazione" styleClass="details-label"/>
-            </HBox>
-            <Label fx:id="valorePrenotazione" GridPane.rowIndex="3" GridPane.columnIndex="1" styleClass="details-value"/>
-
-            <HBox styleClass="card-line" GridPane.rowIndex="4" GridPane.columnIndex="0">
                 <Label text="📞" styleClass="emoticon"/>
                 <Label text="Telefono" styleClass="details-label"/>
             </HBox>
-            <Label fx:id="valoreTelefono" GridPane.rowIndex="4" GridPane.columnIndex="1" styleClass="details-value"/>
+            <Label fx:id="valoreTelefono" GridPane.rowIndex="3" GridPane.columnIndex="1"
+                   GridPane.columnSpan="3" GridPane.valignment="CENTER" styleClass="details-value"/>
+
+            <HBox styleClass="card-line" GridPane.rowIndex="4" GridPane.columnIndex="0">
+                <Label text="🌐" styleClass="emoticon"/>
+                <Label text="Sito web" styleClass="details-label"/>
+            </HBox>
+            <Hyperlink fx:id="linkSitoWeb" GridPane.rowIndex="4" GridPane.columnIndex="1"
+                       GridPane.columnSpan="3" GridPane.valignment="CENTER" maxWidth="Infinity"/>
 
             <!-- TODO aggiungere media recensioni-->
 
             <HBox styleClass="card-line" GridPane.rowIndex="5" GridPane.columnIndex="0">
-                <Label text="⭐" styleClass="emoticon"/>
-                <Label text="Stelle Michelin" styleClass="details-label"/>
+                <Label text="🚚" styleClass="emoticon"/>
+                <Label text="Consegna" styleClass="details-label"/>
             </HBox>
-            <Label fx:id="valoreStelle" GridPane.rowIndex="5" GridPane.columnIndex="1" styleClass="michelin-stars"/>
+            <Label fx:id="valoreConsegna" GridPane.rowIndex="5" GridPane.columnIndex="1"
+                   GridPane.valignment="CENTER" styleClass="details-value"/>
 
-            <HBox styleClass="card-line" GridPane.rowIndex="6" GridPane.columnIndex="0">
-                <Label text="🌐" styleClass="emoticon"/>
-                <Label text="Sito web" styleClass="details-label"/>
+            <HBox styleClass="card-line" GridPane.rowIndex="5" GridPane.columnIndex="2">
+                <Label text="📅" styleClass="emoticon"/>
+                <Label text="Prenotazione" styleClass="details-label"/>
             </HBox>
-            <Hyperlink fx:id="linkSitoWeb" GridPane.rowIndex="6" GridPane.columnIndex="1"/>
+            <Label fx:id="valorePrenotazione" GridPane.rowIndex="5" GridPane.columnIndex="3"
+                   GridPane.valignment="CENTER" styleClass="details-value"/>
         </children>
     </GridPane>
 
