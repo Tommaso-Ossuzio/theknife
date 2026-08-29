@@ -100,7 +100,7 @@ public class MyReviewsController {
 
         Finestre.apriModale("add_review.fxml", "Modifica Recensione",
                 (AddReviewController ctrl) -> {
-                    ctrl.setRestaurant(r);
+                    ctrl.setRestaurant();
                     if (r != null) ctrl.setRestaurantName(r.getNome());
                     ctrl.setDatiPerModifica(riga);
                 });
