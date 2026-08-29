@@ -53,6 +53,8 @@ public class AddRestaurantController {
     @FXML
     private void initialize() {
         Utility.confermaConInvio(bottoneSalva);
+        campoTelefono.setTextFormatter(new TextFormatter<>(modifica ->
+                modifica.getControlNewText().matches("\\+?\\d*") ? modifica : null));
     }
 
     /**
@@ -73,12 +75,14 @@ public class AddRestaurantController {
         boolean cucinaVuota      = segnalaSeVuoto(campoTipoCucina, erroreTipoCucina);
         boolean latitudineErrata  = segnalaSeNonNumerico(campoLatitudine, erroreLatitudine);
         boolean longitudineErrata = segnalaSeNonNumerico(campoLongitudine, erroreLongitudine);
+        boolean telefonoErrato    = segnalaSeTelefonoErrato(campoTelefono, erroreTelefono);
         boolean prezzoErrato      = segnalaSePrezzoErrato(campoPrezzo, errorePrezzo);
         boolean cucinaErrata      = segnalaSeFormatoCucinaErrato(campoTipoCucina, erroreTipoCucina);
 
         if (nomeVuoto || nazioneVuota || cittaVuota || indirizzoVuoto || latitudineVuota
                 || longitudineVuota || telefonoVuoto || prezzoVuoto || cucinaVuota
-                || latitudineErrata || longitudineErrata || prezzoErrato || cucinaErrata) {
+                || latitudineErrata || longitudineErrata || telefonoErrato
+                || prezzoErrato || cucinaErrata) {
             return;
         }
 
@@ -177,6 +181,23 @@ public class AddRestaurantController {
             errore.setText("Numero non valido");
             return true;
         }
+    }
+
+    /**
+     * Controlla che il telefono contenga soltanto cifre e, facoltativamente,
+     * un unico segno + all'inizio.
+     * @param campo campo contenente il numero di telefono
+     * @param errore etichetta accanto al campo
+     * @return true se il telefono non e' valido
+     * @author Michele Viselli
+     */
+    private boolean segnalaSeTelefonoErrato(TextField campo, Label errore) {
+        String testo = campo.getText();
+        if (testo == null || testo.isBlank()) return false;
+
+        boolean nonValido = !testo.matches("\\+?\\d+");
+        errore.setText(nonValido ? "Telefono non valido" : "");
+        return nonValido;
     }
 
     /**
