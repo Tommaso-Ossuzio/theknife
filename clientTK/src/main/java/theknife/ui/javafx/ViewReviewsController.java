@@ -10,14 +10,17 @@ import javafx.geometry.Insets;
 import javafx.scene.control.*;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
-import theknife.model.GestioneRecensioni;
-import theknife.model.Ristorante;
+import theknife.model.GestioneRichieste;
 
+import java.io.IOException;
+import java.util.LinkedList;
 import java.util.List;
 
 
 /**
  * Controller della vista che mostra le recensioni di un ristorante selezionato.
+ * @author Michele Viselli
+ * @author Celestino Resteghini
  * @author Matteo Franguelli
  */
 public class ViewReviewsController {
@@ -29,7 +32,6 @@ public class ViewReviewsController {
 
     private Integer idRistoranteSelezionato;
     private final ObservableList<RecensioneDTO> recensioniData = FXCollections.observableArrayList();
-    private final GestioneRecensioni gestioneRecensioni = GestioneRecensioni.getInstance();
 
     /**
      * Inizializza la lista delle recensioni e la grafica delle celle.
@@ -42,25 +44,11 @@ public class ViewReviewsController {
     }
 
     /**
-     * Imposta il ristorante corrente e carica le relative recensioni.
-     * @author Matteo Franguelli
-     * @author Michele Viselli
-     */
-    public void setRestaurant(Ristorante r) {
-        impostaRistorante(
-                r == null ? null : r.getId(),
-                r == null ? null : r.getNome()
-        );
-    }
-
-    /**
-     * Imposta il ristorante ricevuto dal nuovo flusso server.
-     *
+     * Imposta il ristorante ricevuto dal server.
      * @param r ristorante DTO di cui visualizzare le recensioni
-     *
      * @author Michele Viselli
      */
-    public void setRestaurant(RistoranteDTO r) {
+    public void setRestaurant(RistoranteDTO r) throws IOException {
         impostaRistorante(
                 r == null ? null : r.getIdRistorante(),
                 r == null ? null : r.getNome()
@@ -70,12 +58,11 @@ public class ViewReviewsController {
     /**
      * Imposta i dati comuni ai due tipi di ristorante ancora presenti nel
      * client e avvia il caricamento delle recensioni dal server.
-     *
      * @param idRistorante identificativo del ristorante
      * @param nomeRistorante nome da mostrare nel titolo
      * @author Michele Viselli
      */
-    private void impostaRistorante(Integer idRistorante, String nomeRistorante) {
+    private void impostaRistorante(Integer idRistorante, String nomeRistorante) throws IOException {
         idRistoranteSelezionato = idRistorante;
 
         if (idRistorante == null) return;
@@ -106,7 +93,7 @@ public class ViewReviewsController {
         Task<List<RecensioneDTO>> richiesta = new Task<>() {
             @Override
             protected List<RecensioneDTO> call() {
-                return gestioneRecensioni.getRecensioniPerRistorante(idRistorante);
+                return getRecensioniPerRistorante(idRistorante);
             }
         };
 
@@ -191,7 +178,6 @@ public class ViewReviewsController {
                         boxRisposta.getChildren().addAll(lblTitolo, lblRisposta);
                         box.getChildren().add(boxRisposta);
                     }
-                    // ---------------------------------------------
 
                     setGraphic(box);
                 }
@@ -229,5 +215,38 @@ public class ViewReviewsController {
         if (etichettaConteggio != null) {
             etichettaConteggio.setText("Numero di recensioni: " + recensioniData.size());
         }
+    }
+
+    /**
+     * Richiede al server le recensioni associate a un ristorante.
+     *
+     * <p>Il metodo è bloccante perché attende la risposta della socket; deve
+     * quindi essere richiamato da un thread diverso da quello JavaFX.</p>
+     *
+     * @param idRistorante identificativo del ristorante
+     * @return recensioni ricevute dal server, oppure una lista vuota se la
+     *         risposta non è disponibile o la connessione fallisce
+     * @author Michele Viselli
+     */
+    public LinkedList<RecensioneDTO> getRecensioniPerRistorante(int idRistorante) {
+        try {
+            Object risposta = GestioneRichieste.getInstance()
+                    .inviaEAttendi("REC", idRistorante);
+
+            if (risposta instanceof List<?>) {
+                LinkedList<RecensioneDTO> risultato = new LinkedList<>();
+
+                for (Object elemento : (List<?>) risposta) {
+                    if (elemento instanceof RecensioneDTO) {
+                        risultato.add((RecensioneDTO) elemento);
+                    }
+                }
+                return risultato;
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        return new LinkedList<>();
     }
 }

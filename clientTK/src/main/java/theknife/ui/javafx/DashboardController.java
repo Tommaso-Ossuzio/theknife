@@ -233,9 +233,15 @@ public class DashboardController {
      * @author Matteo Franguelli
      */
     private void apriRecensioniDi(RistoranteDTO r) throws IOException {
-        aggiornaTutto();
         Finestre.apriModale("view_reviews.fxml", "Recensioni di " + r.getNome(),
-                (ViewReviewsController ctrl) -> ctrl.setRestaurant(r));
+                (ViewReviewsController ctrl) -> {
+                    try {
+                        ctrl.setRestaurant(r);
+                    } catch (IOException e) {
+                        throw new RuntimeException(e);
+                    }
+                });
+        aggiornaTutto();
     }
 
     /**

@@ -19,6 +19,7 @@ import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.function.Supplier;
 
@@ -244,7 +245,7 @@ public class Utility {
      * @author Matteo Franguelli
      */
     private static List<String> elencoDalServer(String comando) {
-        List<String> ricevuti = new ArrayList<>();
+        List<String> ricevuti = new LinkedList<>();
 
         try {
             Object risposta = GestioneRichieste.getInstance().inviaEAttendi(comando);
