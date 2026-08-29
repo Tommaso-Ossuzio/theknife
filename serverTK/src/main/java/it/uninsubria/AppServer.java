@@ -4,16 +4,15 @@ package it.uninsubria;
 import java.io.*;
 import java.net.*;
 
+import javafx.application.Application;
+
 /**
  * Classe padre che esegue gli slave thread
  * @author Celestino Resteghini
  */
 public class AppServer {
     public static void main(String[] args) throws IOException {
-        System.out.println("Avvio del Server TheKnife...");
-
-        DatabaseConfig.inizializzaDatabaseCompleto();
-        exec();
+        Application.launch(ServerApp.class, args);
 
     }
 
