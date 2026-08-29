@@ -134,7 +134,7 @@ public class MyReviewsController {
      */
     private void rimuoviRecensioneDalFile(ReviewRow riga) {
         Session session = Session.getInstance();
-        int mioId = GestioneFile.recuperaId(session.getUsername());
+        int mioId = session.getID();
         GestioneFile.rimuoviRecensione(
                 mioId,
                 riga.getRawRestaurantId(),
@@ -152,7 +152,7 @@ public class MyReviewsController {
         Session session = Session.getInstance();
         if (session.isGuest()) return;
 
-        int mioId = GestioneFile.recuperaId(session.getUsername());
+        int mioId = session.getID();
         List<Recensione> tutteLeRecensioni = GestioneFile.leggiRecensioni();
 
         for (Recensione r : tutteLeRecensioni) {

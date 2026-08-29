@@ -24,12 +24,13 @@ import java.util.List;
  * @author Elia Toschi
  * @author Matteo Franguelli
  * @author Celestino Resteghini
+ * @author Michele Viselli
  */
 public class AddReviewController {
 
-    private static final String NOME_CARTELLA = "data";
-    private static final String NOME_FILE_RECENSIONI = "recensioni.csv";
-    private static final String NOME_FILE_USER = "users.csv";
+    //private static final String NOME_CARTELLA = "data";
+    //private static final String NOME_FILE_RECENSIONI = "recensioni.csv";
+    //private static final String NOME_FILE_USER = "users.csv";
 
     private boolean modalitaModifica = false;
     private MyReviewsController.ReviewRow recensioneOriginale;
@@ -92,10 +93,6 @@ public class AddReviewController {
         Utility.confermaConInvio(bottonePubblica);
     }
 
-    /* =========================
-       GESTIONE STELLE
-       ========================= */
-
     /**
      * Gestisce l'azione click delle stelle
      * @author Matteo Franguelli
@@ -125,9 +122,6 @@ public class AddReviewController {
             }
         }
     }
-    /* =========================
-       AZIONI SALVA / ANNULLA
-       ========================= */
 
     /**
      * gestisce l'operazione di annullamento
@@ -148,14 +142,15 @@ public class AddReviewController {
     }
 
     /**
-     * Aggiunge e sceive la recensione su file
+     * Aggiunge e scrive la recensione su file
      * @author Elia Toschi
      * @author Matteo Franguelli
      * @author Michele Viselli
      */
     @FXML
     private void onCreate() {
-        if (modalitaModifica) {
+        //TODO mettere AGG-REC
+        /*if (modalitaModifica) {
             rimuoviVecchiaEAgungiNuova();
             return;
         }
@@ -205,13 +200,12 @@ public class AddReviewController {
         }
 
         gestRest.ricaricaIndice();
-
+*/
         chiudiFinestra();
     }
 
     /**
      * Metodo usato per modificare una recensione.
-     * @author Celestino Resteghini
      * @author Matteo Franguelli
      */
     public void setDatiPerModifica(MyReviewsController.ReviewRow recensioneVecchia) {
@@ -232,7 +226,7 @@ public class AddReviewController {
      * @author Matteo Franguelli
      */
     //Todo va aggiunta anche la riscrittura della risposta
-    private void rimuoviVecchiaEAgungiNuova() {
+    /*private void rimuoviVecchiaEAgungiNuova() {
         File file = new File(NOME_CARTELLA, NOME_FILE_RECENSIONI);
         List<String> righe = new LinkedList<>();
 
@@ -277,9 +271,9 @@ public class AddReviewController {
         GestioneRecensioni.getInstance().ricaricaIndice();
 
         chiudiFinestra();
-    }
+    }*/
  //todo verifica e avvia
-    public void rispondiRecensione()
+    /*public void rispondiRecensione()
     {
         GestioneRecensioni gestRest =  GestioneRecensioni.getInstance();
 
@@ -355,7 +349,7 @@ public class AddReviewController {
             e.printStackTrace();
         }
 
-    }
+    }*/
 
 
 
