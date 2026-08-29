@@ -73,8 +73,10 @@ public class AddRestaurantController {
         boolean telefonoVuoto    = segnalaSeVuoto(campoTelefono, erroreTelefono);
         boolean prezzoVuoto      = segnalaSeVuoto(campoPrezzo, errorePrezzo);
         boolean cucinaVuota      = segnalaSeVuoto(campoTipoCucina, erroreTipoCucina);
-        boolean latitudineErrata  = segnalaSeNonNumerico(campoLatitudine, erroreLatitudine);
-        boolean longitudineErrata = segnalaSeNonNumerico(campoLongitudine, erroreLongitudine);
+        boolean latitudineErrata  = segnalaSeCoordinataErrata(
+                campoLatitudine, erroreLatitudine, -90, 90, "Latitudine");
+        boolean longitudineErrata = segnalaSeCoordinataErrata(
+                campoLongitudine, erroreLongitudine, -180, 180, "Longitudine");
         boolean telefonoErrato    = segnalaSeTelefonoErrato(campoTelefono, erroreTelefono);
         boolean prezzoErrato      = segnalaSePrezzoErrato(campoPrezzo, errorePrezzo);
         boolean cucinaErrata      = segnalaSeFormatoCucinaErrato(campoTipoCucina, erroreTipoCucina);
@@ -135,15 +137,32 @@ public class AddRestaurantController {
     }
 
     /**
-     * Scrive "Numero non valido" di fianco al campo se non contiene un numero.
-     * @param campo campo numerico da controllare
+     * Controlla che una coordinata sia un numero finito compreso nel suo
+     * intervallo geografico. Se il campo e' vuoto conserva "Obbligatorio".
+     * @param campo campo contenente la coordinata
      * @param errore etichetta accanto al campo
-     * @return true se il valore non è un numero
-     * @author Matteo Franguelli
+     * @param minimo valore minimo ammesso
+     * @param massimo valore massimo ammesso
+     * @param nome nome della coordinata mostrato nel messaggio
+     * @return true se la coordinata non e' valida
+     * @author Michele Viselli
      */
-    private boolean segnalaSeNonNumerico(TextField campo, Label errore) {
+    private boolean segnalaSeCoordinataErrata(TextField campo, Label errore,
+                                               double minimo, double massimo, String nome) {
+        String testo = campo.getText();
+        if (testo == null || testo.isBlank()) return false;
+
         try {
-            Double.parseDouble(campo.getText().trim());
+            double coordinata = Double.parseDouble(testo.trim());
+            if (!Double.isFinite(coordinata)) {
+                errore.setText("Numero non valido");
+                return true;
+            }
+            if (coordinata < minimo || coordinata > massimo) {
+                errore.setText(nome + " tra " + (int) minimo + " e " + (int) massimo);
+                return true;
+            }
+
             errore.setText("");
             return false;
         } catch (NumberFormatException e) {
