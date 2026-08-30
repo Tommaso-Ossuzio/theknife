@@ -45,48 +45,24 @@ public class FiltroRistoranteDTO implements Serializable {
         return luogo;
     }
 
-    public void setLuogo(String luogo) {
-        this.luogo = luogo;
-    }
-
     public String getCucina() {
         return cucina;
-    }
-
-    public void setCucina(String cucina) {
-        this.cucina = cucina;
     }
 
     public String getFasciaPrezzo() {
         return fasciaPrezzo;
     }
 
-    public void setFasciaPrezzo(String fasciaPrezzo) {
-        this.fasciaPrezzo = fasciaPrezzo;
-    }
-
     public Double getMediaStelleMinima() {
         return mediaStelleMinima;
-    }
-
-    public void setMediaStelleMinima(Double mediaStelleMinima) {
-        this.mediaStelleMinima = mediaStelleMinima;
     }
 
     public Boolean getDelivery() {
         return delivery;
     }
 
-    public void setDelivery(Boolean delivery) {
-        this.delivery = delivery;
-    }
-
     public Boolean getPrenotazione() {
         return prenotazione;
-    }
-
-    public void setPrenotazione(Boolean prenotazione) {
-        this.prenotazione = prenotazione;
     }
 
     @Override

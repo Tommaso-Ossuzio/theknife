@@ -52,10 +52,6 @@
                          Application.launch(MainApp.class): senza di esso la JVM
                          rifiuterebbe di avviare una sottoclasse di Application -->
                     <mainClass>theknife.TheKnife</mainClass>
-                    <!-- I CSV in data/ stanno nella radice del progetto e vengono
-                         letti con percorsi relativi: senza questa riga il plugin
-                         partirebbe da clientTK/ e non li troverebbe -->
-                    <workingDirectory>${project.parent.basedir}</workingDirectory>
                 </configuration>
                 <executions>
                     <execution>

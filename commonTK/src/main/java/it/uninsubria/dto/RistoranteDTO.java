@@ -68,88 +68,44 @@ public class RistoranteDTO implements Serializable {
         return stelleMichelin;
     }
 
-    public void setStelleMichelin(int stelleMichelin) {
-        this.stelleMichelin = stelleMichelin;
-    }
-
     public int getIdRistorante() {
         return idRistorante;
-    }
-
-    public void setIdRistorante(int idRistorante) {
-        this.idRistorante = idRistorante;
     }
 
     public String getNome() {
         return nome;
     }
 
-    public void setNome(String nome) {
-        this.nome = nome;
-    }
-
     public String getTelefono() {
         return telefono;
-    }
-
-    public void setTelefono(String telefono) {
-        this.telefono = telefono;
     }
 
     public String getSitoWeb() {
         return sitoWeb;
     }
 
-    public void setSitoWeb(String sitoWeb) {
-        this.sitoWeb = sitoWeb;
-    }
-
     public boolean isDelivery() {
         return delivery;
-    }
-
-    public void setDelivery(boolean delivery) {
-        this.delivery = delivery;
     }
 
     public boolean isPrenotazioneOnline() {
         return prenotazioneOnline;
     }
 
-    public void setPrenotazioneOnline(boolean prenotazioneOnline) {
-        this.prenotazioneOnline = prenotazioneOnline;
-    }
-
     public String getFasciaPrezzo() {
         return fasciaPrezzo;
-    }
-
-    public void setFasciaPrezzo(String fasciaPrezzo) {
-        this.fasciaPrezzo = fasciaPrezzo;
     }
 
     public List<String> getCucine() {
         return cucine;
     }
 
-    public void setCucine(List<String> cucine) {
-        this.cucine = cucine;
-    }
-
     public LuogoDTO getLuogo() {
         return luogo;
     }
 
-    public void setLuogo(LuogoDTO luogo) {
-        this.luogo = luogo;
-    }
-
     public RistoratoreDTO getRistoratore() {
         return ristoratore;
-    }
-
-    public void setRistoratore(RistoratoreDTO ristoratore) {
-        this.ristoratore = ristoratore;
     }
 
     public Double getMediaStelle() {
@@ -170,10 +126,6 @@ public class RistoranteDTO implements Serializable {
 
     public Integer getNumeroRecensioniSenzaRisposta() {
         return numeroRecensioniSenzaRisposta;
-    }
-
-    public void setNumeroRecensioniSenzaRisposta(Integer numeroRecensioniSenzaRisposta) {
-        this.numeroRecensioniSenzaRisposta = numeroRecensioniSenzaRisposta;
     }
 
     @Override

@@ -179,40 +179,6 @@ public class Session {
     }
 
     /**
-     * Imposta lo stato "autenticato / non autenticato".
-     * Se impostato a false → logout.
-     * Se impostato a true e il ruolo attuale è GUEST → diventa CLIENTE.
-     * @author Matteo Franguelli
-     */
-    public void setAuthenticated(boolean autenticato) {
-        if (!autenticato) {
-            logout();
-        } else {
-            // se non aveva un ruolo definito, diventa un cliente normale
-            if (this.ruolo == Role.GUEST) {
-                this.ruolo = Role.CLIENTE;
-                this.permessiCliente = true;
-            }
-        }
-    }
-
-    /**
-     * Aggiorna lo username dell’utente loggato.
-     * @author Matteo Franguelli
-     */
-    public void setUsername(String username) {
-        this.username = username;
-    }
-
-    /**
-     * Aggiorna solo il ruolo principale dell’utente loggato.
-     * @author Matteo Franguelli
-     */
-    public void setRole(Role ruolo) {
-        this.ruolo = (ruolo == null ? Role.GUEST : ruolo);
-    }
-
-    /**
      * Restituisce lo username dell'utente attualmente loggato.
      * @author Matteo Franguelli
      */
@@ -227,20 +193,5 @@ public class Session {
      */
     public int getID() {
         return id;
-    }
-
-    /**
-     * Imposta il valore dell'id utente attualmente loggato
-     * @author Celestino Resteghini
-     * @param id
-     */
-    public void setID(int id) {this.id = id;}
-
-    /**
-     * Restituisce il ruolo principale dell'utente.
-     * @author Matteo Franguelli
-     */
-    public Role getRole() {
-        return ruolo;
     }
 }

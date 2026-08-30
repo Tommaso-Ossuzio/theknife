@@ -1,7 +1,6 @@
 package it.uninsubria.dto;
 
 import java.io.Serializable;
-import java.sql.Timestamp;
 
 /**
  * Rappresenta i dati della recensione
@@ -73,64 +72,24 @@ public class RecensioneDTO implements Serializable {
         this.nomeRistorante = nomeRistorante;
     }
 
-    public void setIdUtente(int idUtente) {
-        this.idUtente = idUtente;
-    }
-
     public int getIdRistorante() {
         return idRistorante;
-    }
-
-    public void setIdRistorante(int idRecensione) {
-        this.idRistorante = idRistorante;
     }
 
     public String getTesto() {
         return testo;
     }
 
-    public void setTesto(String testo) {
-        this.testo = testo;
-    }
-
     public int getNumeroStelle() {
         return numeroStelle;
-    }
-
-    public void setNumeroStelle(int numeroStelle) {
-        this.numeroStelle = numeroStelle;
-    }
-
-    public String getOra() {
-        return ora;
-    }
-
-    public void setOra(String ora) {
-        this.ora = ora;
-    }
-
-    public String getData() {
-        return data;
-    }
-
-    public void setData(String data) {
-        this.data = data;
     }
 
     public int getIdUtente() {
         return idUtente;
     }
 
-    public void setIdUtente(UtenteDTO utente) {
-        this.idUtente = idUtente;
-    }
-
     public RispostaDTO getRisposta() {
         return risposta;
-    }
-
-    public void setRisposta(RispostaDTO risposta) {
-        this.risposta = risposta;
     }
 
     @Override

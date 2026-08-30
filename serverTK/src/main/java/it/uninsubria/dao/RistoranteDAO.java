@@ -27,37 +27,6 @@ public class RistoranteDAO {
     private record RiferimentoRicerca(String citta, double latitudine, double longitudine) { }
 
     /**
-     * Ottien il ristorante cercato per nome
-     * @param conn
-     * @param nomeCercato
-     * @return List<RistoranteDTO>
-     * @author Elia Toschi
-     * @author Celestino Resteghini
-     */
-    public List<RistoranteDTO> cercaPerNome(Connection conn, String nomeCercato)
-    {
-        String sql=" SELECT * FROM RISTORANTE WHERE NOME ILIKE ?";
-
-        try(PreparedStatement ps=conn.prepareStatement(sql))
-        {
-            ps.setString(1, "%"+nomeCercato+"%");
-            ResultSet rs=ps.executeQuery();
-            LinkedList<RistoranteDTO> array = new LinkedList<>();
-
-            while(rs.next())
-            {
-                array.add(costruisciRistoranteDaResultSet(conn, rs));
-            }
-            return array;
-
-        }catch (SQLException e)
-        {
-            e.printStackTrace();
-        }
-        return null;
-    }
-
-    /**
      * Restituisce la lista dei ristoranti preferiti di un utente
      * @param conn
      * @param idUtenteCercato

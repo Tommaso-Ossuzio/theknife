@@ -28,29 +28,12 @@ public class CittaDTO implements Serializable {
         this.nazione = nazione;
     }
 
-
-    public int getId_citta() {
-        return id_citta;
-    }
-
-    public void setId_citta(int id_citta) {
-        this.id_citta = id_citta;
-    }
-
     public String getNome() {
         return nome;
     }
 
-    public void setNome(String nome) {
-        this.nome = nome;
-    }
-
     public String getNazione() {
         return nazione;
-    }
-
-    public void setNazione(String nazione) {
-        this.nazione = nazione;
     }
 
     @Override

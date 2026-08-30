@@ -25,28 +25,12 @@ public class CoordinateDTO implements Serializable {
         this.longitudine = longitudine;
     }
 
-    public int getId_coordinate() {
-        return id_coordinate;
-    }
-
-    public void setId_coordinate(int id_coordinate) {
-        this.id_coordinate = id_coordinate;
-    }
-
     public double getLatitudine() {
         return latitudine;
     }
 
-    public void setLatitudine(double latitudine) {
-        this.latitudine = latitudine;
-    }
-
     public double getLongitudine() {
         return longitudine;
-    }
-
-    public void setLongitudine(double longitudine) {
-        this.longitudine = longitudine;
     }
 
     @Override

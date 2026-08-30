@@ -25,7 +25,6 @@
         </executions>
         <configuration>
           <mainClass>theknife.TheKnife</mainClass>
-          <workingDirectory>${project.parent.basedir}</workingDirectory>
         </configuration>
       </plugin>
       <plugin>

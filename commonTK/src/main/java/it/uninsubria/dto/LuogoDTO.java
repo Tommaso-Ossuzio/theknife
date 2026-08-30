@@ -33,20 +33,8 @@ public class LuogoDTO implements Serializable {
         this.citta = citta;
     }
 
-    public int getId() {
-        return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
-    }
-
     public String getVia() {
         return via;
-    }
-
-    public void setVia(String via) {
-        this.via = via;
     }
 
     public CittaDTO getCitta() {
@@ -59,10 +47,6 @@ public class LuogoDTO implements Serializable {
 
     public CoordinateDTO getCoordinate() {
         return coordinate;
-    }
-
-    public void setCoordinate(CoordinateDTO coordinate) {
-        this.coordinate = coordinate;
     }
 
     @Override

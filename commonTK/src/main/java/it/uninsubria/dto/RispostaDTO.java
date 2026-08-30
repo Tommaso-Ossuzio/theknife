@@ -31,16 +31,8 @@ public class RispostaDTO implements Serializable {
         return testo;
     }
 
-    public void setTesto(String testo) {
-        this.testo = testo;
-    }
-
     public RistoratoreDTO getRistoratore() {
         return ristoratore;
-    }
-
-    public void setRistoratore(RistoratoreDTO ristoratore) {
-        this.ristoratore = ristoratore;
     }
 
     @Override
