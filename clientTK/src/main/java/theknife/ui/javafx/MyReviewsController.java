@@ -127,6 +127,7 @@ public class MyReviewsController {
      * Chiede conferma ed elimina la recensione selezionata
      *
      * @author Matteo Franguelli
+     * @author Michele Viselli
      */
     private void chiediConfermaEdElimina(ReviewRow riga) throws IOException {
         Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
@@ -137,7 +138,28 @@ public class MyReviewsController {
         if (alert.showAndWait().orElse(ButtonType.CANCEL) == ButtonType.OK) {
             dati.remove(riga);
             GestioneRichieste.getInstance().inviaSolo("ELIM-REC", riga.getRawRecensioneId());
-            //TODO aggiornare la grafica della card dopo aver eliminato la recensione
+
+            RistoranteDTO ristorante = ristoranti == null ? null : ristoranti.stream()
+                    .filter(r -> r.getIdRistorante() == riga.getRawRestaurantId())
+                    .findFirst()
+                    .orElse(null);
+
+            if (ristorante != null) {
+                int numeroRecensioni = ristorante.getNumeroRecensioni() == null
+                        ? 0
+                        : ristorante.getNumeroRecensioni();
+                double mediaStelle = ristorante.getMediaStelle() == null
+                        ? 0.0
+                        : ristorante.getMediaStelle();
+                int nuovoNumeroRecensioni = Math.max(0, numeroRecensioni - 1);
+                double nuovaMedia = nuovoNumeroRecensioni == 0
+                        ? 0.0
+                        : (mediaStelle * numeroRecensioni - riga.getRating()) / nuovoNumeroRecensioni;
+
+                ristorante.setNumeroRecensioni(nuovoNumeroRecensioni);
+                ristorante.setMediaStelle(nuovaMedia);
+            }
+
             aggiornaMessaggioVuoto();
         }
     }
