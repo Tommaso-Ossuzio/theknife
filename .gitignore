@@ -36,6 +36,3 @@ build/
 
 ### Mac OS ###
 .DS_Store
-
-# Ignora le credenziali locali del database
-**/db.properties
