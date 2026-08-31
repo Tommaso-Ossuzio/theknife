@@ -111,8 +111,8 @@ cd theknife
 ./mvnw package
 ```
 
-I due archivi eseguibili vengono creati in `serverTK/target/serverTK-4.0.jar` e
-`clientTK/target/clientTK-4.0.jar`. Su Windows si usa `mvnw.cmd` al posto di `./mvnw`.
+I due archivi eseguibili vengono creati in `bin/serverTK-4.0.jar` e
+`bin/clientTK-4.0.jar`. Su Windows si usa `mvnw.cmd` al posto di `./mvnw`.
 
 ## Esecuzione
 
