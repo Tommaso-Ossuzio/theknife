@@ -100,8 +100,14 @@ Il progetto è un applicativo Maven multi-modulo diviso in tre parti:
 ### Pacchetto già compilato
 
 1. Scaricare ed estrarre l'archivio `.zip` distribuito dagli autori.
-2. Verificare che nella cartella `bin/` siano presenti `serverTK-4.0.jar` e `clientTK-4.0.jar`.
+2. Verificare che nella cartella `bin/` siano presenti gli archivi per il proprio sistema:
+   `serverTK-4.0.jar` e `clientTK-4.0.jar` per Windows,
+   `serverTK-4.0-mac-aarch64.jar` e `clientTK-4.0-mac-aarch64.jar` per macOS.
 3. Assicurarsi che il servizio PostgreSQL sia in esecuzione.
+
+> **Nota per macOS.** Gli archivi con il suffisso `-mac-aarch64` contengono le librerie native di
+> JavaFX in formato `.dylib` e girano sui Mac con Apple Silicon. Per un Mac con processore Intel
+> si rigenerano con `./mvnw package -Djavafx.platform=mac`.
 
 ### Compilazione dal sorgente
 
@@ -121,8 +127,8 @@ città e senza di esso non è in grado di mostrare alcun dato.
 
 ### Avvio rapido
 
-Gli script nella cartella principale avviano il server, attendono che sia in ascolto e aprono
-l'applicazione da soli.
+Gli script nella cartella principale chiedono quante finestre dell'applicazione aprire (da 1 a 5,
+una se si preme invio), avviano il server, attendono che sia in ascolto e aprono da soli i client.
 
 | Sistema | Comando |
 |---|---|
@@ -137,10 +143,10 @@ compilato.
 
 ```bash
 # 1. server: si apre la finestra di configurazione del database
-java -jar bin/serverTK-4.0.jar
+java -jar bin/serverTK-4.0.jar          # su macOS: bin/serverTK-4.0-mac-aarch64.jar
 
 # 2. dopo che il registro riporta "Server in ascolto sulla porta 8999"
-java -jar bin/clientTK-4.0.jar
+java -jar bin/clientTK-4.0.jar          # su macOS: bin/clientTK-4.0-mac-aarch64.jar
 ```
 
 Su Windows si può usare `javaw -jar` per non lasciare aperta la finestra del terminale.

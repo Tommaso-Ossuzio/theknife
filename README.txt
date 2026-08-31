@@ -89,9 +89,16 @@ piu' e l'applicazione non si avvia.
 --------------------------------------------------------------------
 Pacchetto gia' compilato
   1. scaricare ed estrarre l'archivio .zip distribuito dagli autori;
-  2. verificare che nella cartella bin/ siano presenti
-     serverTK-4.0.jar e clientTK-4.0.jar;
+  2. verificare che nella cartella bin/ siano presenti gli archivi per
+     il proprio sistema: serverTK-4.0.jar e clientTK-4.0.jar per
+     Windows, serverTK-4.0-mac-aarch64.jar e
+     clientTK-4.0-mac-aarch64.jar per macOS;
   3. assicurarsi che il servizio PostgreSQL sia in esecuzione.
+
+  Nota per macOS: gli archivi con il suffisso -mac-aarch64 contengono
+  le librerie native di JavaFX in formato .dylib e girano sui Mac con
+  Apple Silicon. Per un Mac con processore Intel si rigenerano con
+  ./mvnw package -Djavafx.platform=mac
 
 Compilazione dal sorgente
      git clone https://github.com/sonoFrangu/theknife.git
@@ -110,8 +117,10 @@ chiede al server l'elenco delle citta' e senza di esso non e' in
 grado di mostrare alcun dato.
 
 Avvio rapido
-  Gli script nella cartella principale avviano il server, attendono
-  che sia in ascolto e aprono l'applicazione da soli.
+  Gli script nella cartella principale chiedono quante finestre
+  dell'applicazione aprire (da 1 a 5, una se si preme invio),
+  avviano il server, attendono che sia in ascolto e aprono da soli
+  i client.
 
     Windows          doppio clic su avvioWindows.bat
     macOS e Linux    chmod +x avvioMacOS.command (una sola volta),
@@ -126,6 +135,9 @@ Avvio manuale
     (dopo che il registro riporta "Server in ascolto sulla porta
     8999")
     java -jar bin/clientTK-4.0.jar
+
+  Su macOS gli archivi da lanciare sono
+  bin/serverTK-4.0-mac-aarch64.jar e bin/clientTK-4.0-mac-aarch64.jar.
 
   Su Windows si puo' usare javaw -jar per non lasciare aperta la
   finestra del terminale.

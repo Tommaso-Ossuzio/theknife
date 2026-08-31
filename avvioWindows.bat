@@ -15,6 +15,20 @@ if errorlevel 1 goto :senzaJava
 if not exist "%SERVER%" goto :senzaArchivi
 if not exist "%CLIENT%" goto :senzaArchivi
 
+:chiedi
+set "QUANTI="
+set /p "QUANTI=Quanti client vuoi aprire? [1-5, invio per 1]: "
+if "!QUANTI!"=="" set "QUANTI=1"
+if "!QUANTI!"=="1" goto :avvia
+if "!QUANTI!"=="2" goto :avvia
+if "!QUANTI!"=="3" goto :avvia
+if "!QUANTI!"=="4" goto :avvia
+if "!QUANTI!"=="5" goto :avvia
+echo Indicare un numero da 1 a 5.
+goto :chiedi
+
+:avvia
+echo.
 echo Avvio del server TheKnife...
 start "TheKnife - server" javaw -jar "%SERVER%"
 
@@ -30,12 +44,15 @@ netstat -an | findstr ":8999" | findstr "LISTENING" >nul 2>&1
 if not errorlevel 1 goto :avviaClient
 set /a tentativi+=1
 if !tentativi! geq 300 goto :scaduto
-timeout /t 2 /nobreak >nul
+ping -n 3 127.0.0.1 >nul
 goto :attesa
 
 :avviaClient
-echo Server pronto: avvio dell'applicazione.
-start "TheKnife" javaw -jar "%CLIENT%"
+if "!QUANTI!"=="1" (echo Server pronto: avvio dell'applicazione.) else (echo Server pronto: avvio di !QUANTI! client.)
+for /l %%i in (1,1,!QUANTI!) do (
+    start "TheKnife" javaw -jar "%CLIENT%"
+    ping -n 2 127.0.0.1 >nul
+)
 exit /b 0
 
 :scaduto
