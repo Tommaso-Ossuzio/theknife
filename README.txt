@@ -1,98 +1,174 @@
-# TheKnife Project
----
-## Requisiti di Sistema
+====================================================================
+ THEKNIFE
+ Trova, recensisci e gestisci ristoranti.
+ Laboratorio Interdisciplinare A
+ Universita' degli Studi dell'Insubria - sede di Varese
+====================================================================
 
-Per l’utilizzo dell’applicazione è necessario disporre di un ambiente di esecuzione compatibile con **Java**.
+INDICE
+  1. Panoramica
+  2. Funzionalita'
+  3. Architettura
+  4. Requisiti
+  5. Installazione
+  6. Esecuzione
+  7. Struttura del repository
+  8. Documentazione
+  9. Autori
 
-L’applicazione richiede la presenza del **Java Runtime Environment (JRE)**, che consente l’esecuzione di programmi Java senza la necessità di strumenti di sviluppo.
 
-## Requisiti software
+1. PANORAMICA
+--------------------------------------------------------------------
+TheKnife e' una piattaforma che permette di cercare ristoranti in
+tutto il mondo e di filtrarli per citta', tipo di cucina, fascia di
+prezzo, valutazione media, consegna a domicilio e prenotazione in
+linea. I clienti registrati possono salvare i preferiti e scrivere
+recensioni; i ristoratori inseriscono i propri locali, seguono
+l'andamento delle valutazioni e rispondono ai giudizi ricevuti.
 
-- **Java Runtime Environment (JRE)** versione **21** o compatibile  
-- **JavaFX**
-- Sistema operativo compatibile con Java:
-  - Windows
-  - macOS
-  - Linux
+Il catalogo di partenza e' quello della Guida Michelin: circa 17.700
+ristoranti, importati automaticamente in un database PostgreSQL al
+primo avvio del server.
 
-Una volta installato il JRE, l’applicazione può essere avviata eseguendo il file con estensione `.jar` senza ulteriori configurazioni su **Windows**.  
-Per macOS fare riferimento alla sezione [Avviare l'applicazione con macOS](#avviare-lapplicazione-con-macos).
+Le immagini dell'applicazione sono riportate nel file README.md e
+nella cartella doc/img.
 
----
 
-## Installazione del Programma
+2. FUNZIONALITA'
+--------------------------------------------------------------------
+Ospite
+  - ricerca per citta' e filtri avanzati
+  - scheda del ristorante con il sito web integrato
+  - lettura delle recensioni
 
-Per poter eseguire l’applicazione è necessario scaricare il software eseguibile sul proprio dispositivo seguendo questi passaggi:
+Cliente (comprende quanto sopra)
+  - preferiti
+  - scrittura, modifica ed eliminazione delle proprie recensioni
 
-1. Fare clic per scaricare la cartella compressa presente su **OneDrive**
-2. Fare clic con il tasto destro sul file con estensione `.zip` e selezionare **Estrai i file...**, quindi scegliere il percorso desiderato  
-   - In alternativa è possibile utilizzare software come **WinRAR** per l'estrazione
+Ristoratore (comprende le funzioni di ricerca e consultazione)
+  - inserimento di nuovi ristoranti
+  - riepilogo dell'attivita' e risposta alle recensioni ricevute
 
----
+Il ruolo viene scelto in fase di registrazione ed e' esclusivo.
+L'interfaccia e' disponibile in tema chiaro e in tema scuro, con i
+contrasti verificati secondo le linee guida WCAG.
 
-## Esecuzione e Utilizzo
 
-### Avviare l'applicazione
+3. ARCHITETTURA
+--------------------------------------------------------------------
+Il progetto e' un applicativo Maven multi-modulo diviso in tre parti:
 
-In base al sistema operativo utilizzato, seguire le istruzioni riportate di seguito.
+  clientTK   interfaccia grafica JavaFX: viste FXML, controller,
+             gestione della sessione e del tema
+  serverTK   server multi-thread: protocollo su socket, DAO JDBC,
+             creazione dello schema e importazione dei dati
+  commonTK   DTO serializzabili scambiati fra i due lati e regole di
+             validazione condivise
 
----
+Il client non accede mai al database: apre una connessione TCP verso
+il server sulla porta 8999 e gli inoltra ogni ricerca, recensione o
+salvataggio. Il server accoglie ogni client con un thread dedicato,
+quindi piu' utenti possono lavorare contemporaneamente. Lo schema del
+database e' versionato con Flyway e viene creato al primo avvio.
 
-## Windows
 
-### Prima alternativa
+4. REQUISITI
+--------------------------------------------------------------------
+  Java (JRE o JDK)   da 21 a 25 (la 21 e' la versione di riferimento)
+  PostgreSQL         12 o successiva (collaudato sulla 18)
+  Sistema operativo  Windows 10/11, macOS, Linux
+  Memoria            almeno 256 MB liberi
 
-È sufficiente fare doppio clic sul file:
+IMPORTANTE: non utilizzare Java 26 o versioni successive. Il
+componente WebView di JavaFX, usato per mostrare il sito dei
+ristoranti, richiede il modulo jdk.jsobject che da Java 26 non esiste
+piu' e l'applicazione non si avvia.
 
-```
-avvioWindows.bat
-```
 
-presente nella cartella principale scelta durante l'installazione.
+5. INSTALLAZIONE
+--------------------------------------------------------------------
+Pacchetto gia' compilato
+  1. scaricare ed estrarre l'archivio .zip distribuito dagli autori;
+  2. verificare che nella cartella bin/ siano presenti
+     serverTK-4.0.jar e clientTK-4.0.jar;
+  3. assicurarsi che il servizio PostgreSQL sia in esecuzione.
 
-### Seconda alternativa (da terminale)
+Compilazione dal sorgente
+     git clone https://github.com/sonoFrangu/theknife.git
+     cd theknife
+     ./mvnw package
 
-1. Spostarsi nel percorso in cui è stato scaricato il file `.jar`:
-   ```bash
-   cd [percorso]
-   ```
-2. Digitare:
-   ```bash
-   javaw -jar "TheKnife-4.0.jar"
-   ```
-3. L'applicazione verrà avviata
+I due archivi eseguibili vengono creati in
+serverTK/target/serverTK-4.0.jar e clientTK/target/clientTK-4.0.jar.
+Su Windows si usa mvnw.cmd al posto di ./mvnw.
 
----
 
-## Avviare l'applicazione con macOS
+6. ESECUZIONE
+--------------------------------------------------------------------
+Il server va sempre avviato per primo: il client, all'apertura,
+chiede al server l'elenco delle citta' e senza di esso non e' in
+grado di mostrare alcun dato.
 
-### Prima alternativa
+Avvio rapido
+  Gli script nella cartella principale avviano il server, attendono
+  che sia in ascolto e aprono l'applicazione da soli.
 
-Prima di avviare l'applicazione è necessario eseguire il seguente passaggio **una sola volta**:
+    Windows          doppio clic su avvioWindows.bat
+    macOS e Linux    chmod +x avvioMacOS.command (una sola volta),
+                     poi doppio clic su avvioMacOS.command
 
-```bash
-chmod +x AvvioMacOS.command
-```
+  Gli script cercano gli archivi prima in bin/, poi nelle cartelle
+  target/ prodotte dalla compilazione: funzionano quindi sia con il
+  pacchetto distribuito sia con il progetto appena compilato.
 
-> È possibile trascinare il file `AvvioMacOS.command` direttamente nel terminale dopo aver digitato `chmod +x `
+Avvio manuale
+    java -jar bin/serverTK-4.0.jar
+    (dopo che il registro riporta "Server in ascolto sulla porta
+    8999")
+    java -jar bin/clientTK-4.0.jar
 
-Successivamente, per avviare l'applicazione è sufficiente fare doppio clic su:
+  Su Windows si puo' usare javaw -jar per non lasciare aperta la
+  finestra del terminale.
 
-```
-avvioMacOS.command
-```
+Primo avvio
+  Nella finestra del server vanno indicati indirizzo, porta, utente e
+  password di PostgreSQL; i campi sono gia' compilati con i valori
+  piu' comuni (localhost, 5432, postgres). Alla prima esecuzione il
+  server crea da solo il database theknife_db, genera le tabelle e
+  importa il catalogo: questa fase puo' richiedere qualche minuto.
+  Gli avvii successivi riconoscono che i dati ci sono gia' e sono
+  immediati.
 
-presente nella cartella principale.
 
-### Seconda alternativa (da terminale)
+7. STRUTTURA DEL REPOSITORY
+--------------------------------------------------------------------
+  clientTK/            applicazione JavaFX (viste FXML, controller,
+                       foglio di stile)
+  serverTK/            server socket, DAO, migrazioni Flyway e
+                       importazione dei dati
+  commonTK/            DTO condivisi fra client e server
+  bin/                 archivi eseguibili del pacchetto distribuito
+  doc/                 manuali in PDF, diagrammi UML ed ER, Javadoc
+  avvioWindows.bat
+  avvioMacOS.command
+  pom.xml              POM padre del progetto multi-modulo
 
-1. Spostarsi nel percorso in cui è stato scaricato il file `.jar`:
-   ```bash
-   cd [percorso]
-   ```
-2. Digitare:
-   ```bash
-   java -jar TheKnife-4.0.jar
-   ```
-3. L'applicazione verrà avviata
 
+8. DOCUMENTAZIONE
+--------------------------------------------------------------------
+  - Manuale Utente e Manuale Tecnico in formato PDF nella cartella
+    doc/
+  - Javadoc dei tre moduli in doc/javadoc, rigenerabile con
+    ./mvnw javadoc:aggregate
+  - diagramma ER e diagrammi UML nella cartella doc/
+
+
+9. AUTORI
+--------------------------------------------------------------------
+  Matteo Franguelli      matricola 761133   Varese
+  Elia Toschi            matricola 760873   Varese
+  Celestino Resteghini   matricola 760865   Varese
+  Michele Viselli        matricola 763016   Varese
+
+Progetto realizzato per il corso di Laboratorio Interdisciplinare A,
+anno accademico 2025/2026.
