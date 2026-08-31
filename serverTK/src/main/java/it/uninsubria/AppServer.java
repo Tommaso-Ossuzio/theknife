@@ -33,10 +33,16 @@ public class AppServer {
         try {
             while (true) {
                 Socket socket = s.accept();
-                new SlaveThread(socket).start();
+                try {
+                    new SlaveThread(socket).start();
+                } catch (IOException | ClassNotFoundException e) {
+                    // Una connessione chiusa prima dell'handshake non deve
+                    // terminare il server (può capitare con probe o client
+                    // interrotti durante l'avvio).
+                    try { socket.close(); } catch (IOException ignored) { }
+                    System.err.println("Connessione client non valida: " + e.getMessage());
+                }
             }
-        } catch (ClassNotFoundException e) {
-            throw new RuntimeException(e);
         } finally {
             s.close();
         }
