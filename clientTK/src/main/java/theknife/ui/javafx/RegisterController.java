@@ -9,6 +9,7 @@ package theknife.ui.javafx;
 
 import it.uninsubria.dto.CittaDTO;
 import it.uninsubria.dto.LuogoDTO;
+import it.uninsubria.dto.RistoratoreDTO;
 import it.uninsubria.dto.UtenteDTO;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -170,8 +171,16 @@ public class RegisterController {
 
         String passwordHashed = Utility.calcolaSha256(password);
 
-        UtenteDTO utente = new UtenteDTO(nome,cognome,email,dataNascita, new LuogoDTO(new CittaDTO(citta)), passwordHashed);
-        Boolean risposta = (Boolean) GestioneRichieste.getInstance().inviaEAttendi("REG",utente);
+        Boolean risposta=false;
+
+        if(isCliente) {
+            UtenteDTO utente = new UtenteDTO(nome, cognome, email, dataNascita, new LuogoDTO(new CittaDTO(citta)), passwordHashed);
+            risposta = (Boolean) GestioneRichieste.getInstance().inviaEAttendi("REG",utente);
+        }else{
+            RistoratoreDTO utente = new RistoratoreDTO(nome, cognome, email, dataNascita, new LuogoDTO(new CittaDTO(citta)), passwordHashed);
+            risposta = (Boolean) GestioneRichieste.getInstance().inviaEAttendi("REG",utente);
+        }
+
 
         // true se la registrazione è andata a buon fine
         if(risposta) {
