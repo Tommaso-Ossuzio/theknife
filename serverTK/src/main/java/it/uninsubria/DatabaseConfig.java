@@ -18,33 +18,10 @@ public class DatabaseConfig {
     public static final String DB_NAME = "theknife_db";
 
 
-    static {
-        try {
-            // Prima cerca il file "db.properties" ESTERNO
-            // todo bisogna avere il file properties all'esterno del .jar
-            File externalFile = new File("db.properties");
 
-            if (externalFile.exists()) {
-                System.out.println("Caricamento configurazione DB da file esterno...");
-                try (InputStream input = new FileInputStream(externalFile)) {
-                    props.load(input);
-                }
-            } else {
-                //  Se non c'è, cerca quello INTERNO
-                System.out.println("File esterno non trovato. Caricamento configurazione DB da resources interne...");
-                try (InputStream input = DatabaseConfig.class.getClassLoader().getResourceAsStream("db.properties")) {
-                    if (input != null) {
-                        props.load(input);
-                    } else {
-                        System.err.println("ATTENZIONE: Nessun db.properties trovato! Verranno usati i valori di default.");
-                    }
-                }
-            }
-        } catch (Exception e) {
-            System.err.println("Errore nel caricamento della configurazione del database:");
-            e.printStackTrace();
-        }
-    }
+        // La configurazione viene ora caricata esclusivamente tramite
+        // l'interfaccia grafica (ServerController) che chiama il metodo configura().
+        // I valori di default si trovano all'interno della classe o come fallback nelle properties.
 
     /**
      * Imposta le credenziali indicate all'avvio del server.
