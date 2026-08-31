@@ -79,6 +79,7 @@ public class UtenteDTO implements Serializable {
         return email;
     }
 
+
     /**
      * Controlla che l'email abbia la forma qualcosa@qualcosa.qualcosa.
      * @param email indirizzo da controllare

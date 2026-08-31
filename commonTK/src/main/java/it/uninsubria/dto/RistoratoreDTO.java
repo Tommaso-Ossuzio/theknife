@@ -24,6 +24,10 @@ public class RistoratoreDTO extends UtenteDTO implements Serializable
         super(idUtente, nome, cognome, email, dataNascita, luogo);
     }
 
+    public RistoratoreDTO(String nome, String cognome, String email, Date dataNascita, LuogoDTO luogo, String password) {
+        super(nome, cognome, email, dataNascita, luogo, password);
+    }
+
     /**
      * Ristoratore di cui serve soltanto l'identificativo, per indicare chi
      * possiede un ristorante o chi ha scritto una risposta.

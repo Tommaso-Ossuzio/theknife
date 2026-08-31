@@ -489,6 +489,10 @@
     -fx-text-fill: -color-primary;
 }
 
+.date-picker-popup .month-year-pane .label {
+    -fx-text-fill: #000000;
+}
+
 .hyperlink {
     -fx-text-fill: -color-primary;
     -fx-border-color: transparent;
