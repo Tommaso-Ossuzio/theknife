@@ -1,4 +1,10 @@
-module:it.uninsubria.theknifeui
+module:clientTK
 theknife
-theknife.model
 theknife.ui.javafx
+theknife.utilities
+module:commonTK
+it.uninsubria
+it.uninsubria.dto
+module:serverTK
+it.uninsubria
+it.uninsubria.dao

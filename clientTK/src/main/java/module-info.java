@@ -1,4 +1,4 @@
-module it.uninsubria.theknifeui {
+module clientTK {
     requires commonTK;
     requires javafx.controls;
     requires javafx.fxml;
