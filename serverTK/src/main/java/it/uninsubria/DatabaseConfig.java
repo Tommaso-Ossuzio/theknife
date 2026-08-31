@@ -1,11 +1,14 @@
+/*
+ Cognome     Nome       Matricola  Sede
+ Franguelli  Matteo     761133     VA
+ Toschi      Elia       760873     VA
+ Resteghini  Celestino  760865     VA
+ Viselli     Michele    763016     VA
+*/
 package it.uninsubria;
 
 import org.flywaydb.core.Flyway;
 import org.flywaydb.core.api.FlywayException;
-
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.InputStream;
 import java.sql.*;
 import java.util.Properties;
 

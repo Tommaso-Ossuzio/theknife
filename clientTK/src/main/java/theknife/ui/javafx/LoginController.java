@@ -1,9 +1,14 @@
+/*
+ Cognome     Nome       Matricola  Sede
+ Franguelli  Matteo     761133     VA
+ Toschi      Elia       760873     VA
+ Resteghini  Celestino  760865     VA
+ Viselli     Michele    763016     VA
+*/
 package theknife.ui.javafx;
 
 import it.uninsubria.dto.AuthDTO;
-import it.uninsubria.dto.CittaDTO;
-import it.uninsubria.dto.LuogoDTO;
-import it.uninsubria.dto.UtenteDTO;
+
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
@@ -15,9 +20,6 @@ import theknife.model.GestioneRichieste;
 import theknife.utilities.Utility;
 
 import java.io.*;
-import java.nio.charset.StandardCharsets;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
 import java.util.HashMap;
 
 /**

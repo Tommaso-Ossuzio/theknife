@@ -1,3 +1,10 @@
+/*
+ Cognome     Nome       Matricola  Sede
+ Franguelli  Matteo     761133     VA
+ Toschi      Elia       760873     VA
+ Resteghini  Celestino  760865     VA
+ Viselli     Michele    763016     VA
+*/
 package theknife.ui.javafx;
 
 import javafx.collections.FXCollections;
@@ -8,7 +15,6 @@ import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
 
-//TODO da rivedere, vengono usati i file
 
 /**
  * Controller della tabella dei ristoranti posseduti dal ristoratore.

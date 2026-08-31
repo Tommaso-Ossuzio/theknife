@@ -1,3 +1,10 @@
+/*
+ Cognome     Nome       Matricola  Sede
+ Franguelli  Matteo     761133     VA
+ Toschi      Elia       760873     VA
+ Resteghini  Celestino  760865     VA
+ Viselli     Michele    763016     VA
+*/
 package theknife.ui.javafx;
 
 import javafx.application.Application;
@@ -5,12 +12,10 @@ import javafx.fxml.FXMLLoader;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.layout.Region;
 import javafx.scene.image.Image;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
 import theknife.model.GestioneRichieste;
-import theknife.utilities.Finestre;
 import theknife.utilities.Temi;
 
 import java.io.IOException;
@@ -18,7 +23,7 @@ import java.net.URL;
 import java.awt.Taskbar;
 import javax.imageio.ImageIO;
 
-//TODO da rivedere
+
 
 /**
  * Applicazione JavaFX del client: apre la finestra sulla schermata di benvenuto.
@@ -85,7 +90,6 @@ public class MainApp extends Application {
 
         finestra.setOnCloseRequest(event -> {
             try{
-                //TODO va messa solo qua?
                 GestioneRichieste.getInstance().chiudiConnessione();
             }catch (IOException e)
             {

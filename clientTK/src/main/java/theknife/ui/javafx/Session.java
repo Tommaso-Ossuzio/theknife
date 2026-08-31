@@ -1,6 +1,12 @@
+/*
+ Cognome     Nome       Matricola  Sede
+ Franguelli  Matteo     761133     VA
+ Toschi      Elia       760873     VA
+ Resteghini  Celestino  760865     VA
+ Viselli     Michele    763016     VA
+*/
 package theknife.ui.javafx;
 
-//TODO da rivedere, non avremo più 4 tipi di utenti, ma solo 3
 
 import theknife.model.GestioneRichieste;
 

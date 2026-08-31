@@ -1,3 +1,10 @@
+/*
+ Cognome     Nome       Matricola  Sede
+ Franguelli  Matteo     761133     VA
+ Toschi      Elia       760873     VA
+ Resteghini  Celestino  760865     VA
+ Viselli     Michele    763016     VA
+*/
 package theknife.ui.javafx;
 
 import it.uninsubria.dto.FiltroRistoranteDTO;
@@ -7,7 +14,6 @@ import javafx.scene.control.*;
 import javafx.stage.Stage;
 import theknife.utilities.Utility;
 
-//TODO da rivedere
 
 /**
  * Classe che si occupa della gestione del Filtro Avanzato.

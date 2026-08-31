@@ -18,7 +18,6 @@
         </VBox>
     </top>
 
-    <!-- TODO una volta scritta la risposta va tolta dalla lista -->
 
     <center>
         <VBox styleClass="content-pane">

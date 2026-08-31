@@ -1,3 +1,10 @@
+/*
+ Cognome     Nome       Matricola  Sede
+ Franguelli  Matteo     761133     VA
+ Toschi      Elia       760873     VA
+ Resteghini  Celestino  760865     VA
+ Viselli     Michele    763016     VA
+*/
 package theknife.model;
 import java.io.*;
 import java.net.*;
@@ -28,8 +35,6 @@ public class GestioneRichieste {
         }
         return instance;
     }
-
-    // TODO implementare metodo alla chiusura della gui
 
     /**
      * Metodo per chiudere la Socket alla chiusura della GUI

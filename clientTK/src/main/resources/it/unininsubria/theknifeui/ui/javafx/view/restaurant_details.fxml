@@ -49,7 +49,6 @@
         </columnConstraints>
         <children>
 
-            <!-- TODO mettere range da a, conme nel msg sul gruppo-->
 
             <HBox styleClass="card-line" GridPane.rowIndex="0" GridPane.columnIndex="0">
                 <Label text="💰" styleClass="emoticon"/>
@@ -89,7 +88,6 @@
             <Hyperlink fx:id="linkSitoWeb" GridPane.rowIndex="4" GridPane.columnIndex="1"
                        GridPane.columnSpan="3" GridPane.valignment="CENTER" maxWidth="Infinity"/>
 
-            <!-- TODO aggiungere media recensioni-->
 
             <HBox styleClass="card-line" GridPane.rowIndex="5" GridPane.columnIndex="0">
                 <Label text="🚚" styleClass="emoticon"/>

@@ -1,7 +1,13 @@
+/*
+ Cognome     Nome       Matricola  Sede
+ Franguelli  Matteo     761133     VA
+ Toschi      Elia       760873     VA
+ Resteghini  Celestino  760865     VA
+ Viselli     Michele    763016     VA
+*/
 package theknife.ui.javafx;
 
 import it.uninsubria.dto.CittaDTO;
-import it.uninsubria.dto.CoordinateDTO;
 import it.uninsubria.dto.FiltroRistoranteDTO;
 import it.uninsubria.dto.LuogoDTO;
 import it.uninsubria.dto.RistoranteDTO;
@@ -26,7 +32,6 @@ import java.io.IOException;
 import java.util.LinkedList;
 import java.util.List;
 
-//TODO da rivedere, vengono usati i file
 
 /**
  * Controller della schermata principale: elenco dei ristoranti, ricerca e
@@ -89,7 +94,6 @@ public class MainController implements ControllerAutenticazione {
 
         ristoranti.addListener((javafx.collections.ListChangeListener<RistoranteDTO>) c -> aggiornaPaginazione());
 
-        //todo da cancellare caricaCatalogo();
         aggiornaPaginazione();
         aggiornaInterfaccia();
         aggiornaPulsanteTema();
