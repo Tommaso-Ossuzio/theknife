@@ -3,7 +3,7 @@ package it.uninsubria.dto;
 import java.io.Serializable;
 
 /**
- * Indica il modello del luogo con cittaDTO e CoordinateDTO
+ * Indirizzo completo di un ristorante o di un utente: via, città e coordinate.
  * @author Elia Toschi
  * @author Celestino Resteghini
  */
@@ -16,6 +16,10 @@ public class LuogoDTO implements Serializable {
     private CittaDTO citta;
     private CoordinateDTO coordinate;
 
+    /**
+     * Luogo completo, come arriva dal database.
+     * @author Elia Toschi
+     */
     public LuogoDTO(int id, String via, CittaDTO citta, CoordinateDTO coordinate) {
         this.id = id;
         this.via = via;
@@ -23,12 +27,20 @@ public class LuogoDTO implements Serializable {
         this.coordinate = coordinate;
     }
 
+    /**
+     * Luogo di un ristorante appena inserito, non ancora salvato.
+     * @author Celestino Resteghini
+     */
     public LuogoDTO(String via, CittaDTO citta, CoordinateDTO coordinate) {
         this.via = via;
         this.citta = citta;
         this.coordinate = coordinate;
     }
 
+    /**
+     * Domicilio di un utente, di cui interessa soltanto la città.
+     * @author Celestino Resteghini
+     */
     public LuogoDTO(CittaDTO citta) {
         this.citta = citta;
     }

@@ -14,11 +14,10 @@ import java.util.HashMap;
 import java.util.LinkedList;
 
 /**
- * Classe che si occupa della gestione dei ristoranti preferiti.
+ * Controller della finestra dei ristoranti preferiti.
  * @author Celestino Resteghini
  * @author Matteo Franguelli
- * version 2
- *
+ * @version 2
  */
 public class FavoritesController {
 
@@ -30,7 +29,7 @@ public class FavoritesController {
     private final ObservableList<RestaurantRow> preferiti = FXCollections.observableArrayList();
 
     /**
-     * Inizializza la grafica della lista
+     * Prepara la tabella e carica i preferiti dell'utente.
      * @author Celestino Resteghini
      */
     @FXML
@@ -50,7 +49,7 @@ public class FavoritesController {
     }
 
     /**
-     * Si occupa di aggiungere la lista di ristoranti preferiti nella TableView.
+     * Chiede al server i preferiti dell'utente e riempie la tabella.
      * @author Celestino Resteghini
      */
     public void addFavorite() throws IOException {
@@ -72,10 +71,9 @@ public class FavoritesController {
     }
 
     /**
-     * Metodo per rimuovere un ristorante preferito dal db
+     * Chiede al server di togliere il ristorante dai preferiti.
+     * @param idDaRimuovere ristorante da togliere
      * @author Celestino Resteghini
-     * @param idDaRimuovere
-     * @throws IOException
      */
     private void rimuoviPreferito(int idDaRimuovere) throws IOException {
         Session session = Session.getInstance();
@@ -88,7 +86,7 @@ public class FavoritesController {
 
 
     /**
-     * Si occupa di mostrare l'etichetta che indica i ristoranti preferiti.
+     * Mostra il messaggio di elenco vuoto quando non ci sono preferiti.
      * @author Matteo Franguelli
      */
     private void aggiornaMessaggioVuoto() {
@@ -99,6 +97,10 @@ public class FavoritesController {
         tabellaPreferiti.setVisible(!nessunElemento);
     }
 
+    /**
+     * Riga della tabella dei preferiti.
+     * @author Celestino Resteghini
+     */
     public static class RestaurantRow {
         private final String nome;
         private final String luogo;
@@ -116,7 +118,7 @@ public class FavoritesController {
     }
 
     /**
-     * Crea il menu contestuale (tasto destro) con la sola opzione Elimina.
+     * Crea il menu del tasto destro con la voce per togliere il preferito.
      * @author Matteo Franguelli
      */
     private void menuTastoDestro() {
@@ -149,7 +151,7 @@ public class FavoritesController {
     }
 
     /**
-     * Chiede, tramite un popup di conferma, se la rimozione e' volontaria
+     * Chiede conferma e poi toglie il ristorante dai preferiti.
      * @author Matteo Franguelli
      */
     private void chiediConfermaERimuovi(RestaurantRow riga) throws IOException {

@@ -3,7 +3,7 @@ package it.uninsubria.dto;
 import java.io.Serializable;
 
 /**
- * Rappresenta i dati della recensione
+ * Recensione lasciata da un cliente, con l'eventuale risposta del ristoratore.
  * @author Elia Toschi
  */
 public class RecensioneDTO implements Serializable {
@@ -19,6 +19,10 @@ public class RecensioneDTO implements Serializable {
     private int idRecensione ;
     private String nomeRistorante;
 
+    /**
+     * Recensione letta dal database quando il suo identificativo non serve.
+     * @author Elia Toschi
+     */
     public RecensioneDTO( String testo, int numeroStelle, String data, String ora, int idUtente,int idRistorante, RispostaDTO risposta) {
         this.idRistorante = idRistorante;
         this.testo = testo;
@@ -30,6 +34,10 @@ public class RecensioneDTO implements Serializable {
 
     }
 
+    /**
+     * Recensione completa letta dal database.
+     * @author Elia Toschi
+     */
     public RecensioneDTO(int idRistorante, String testo, int numeroStelle, String data, String ora, int idUtente, RispostaDTO risposta, int idRecensione) {
         this.idRistorante = idRistorante;
         this.testo = testo;
@@ -41,6 +49,10 @@ public class RecensioneDTO implements Serializable {
         this.idRecensione = idRecensione;
     }
 
+    /**
+     * Recensione appena scritta dal cliente, da inviare al server.
+     * @author Elia Toschi
+     */
     public RecensioneDTO(String testo, int numeroStelle, int idUtente, int idRistorante){
         this.testo = testo;
         this.numeroStelle = numeroStelle;
@@ -48,6 +60,10 @@ public class RecensioneDTO implements Serializable {
         this.idRistorante = idRistorante;
     }
 
+    /**
+     * Recensione modificata: al server servono solo il nuovo voto e il nuovo testo.
+     * @author Elia Toschi
+     */
     public RecensioneDTO(int idRecensione, String testo, int numeroStelle, int idUtente)
     {
         this.idUtente = idUtente;

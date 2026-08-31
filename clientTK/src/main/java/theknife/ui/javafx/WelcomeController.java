@@ -28,10 +28,8 @@ public class WelcomeController implements ControllerAutenticazione {
     private List<String> cittaDisponibili;
 
     /**
-     * Prepara la schermata e avvia la lettura del catalogo.
-     * Finché il catalogo non è pronto l'ingresso come ospite resta disabilitato:
-     * senza l'elenco delle città non ci sarebbe nulla da scegliere.
-     *
+     * Prepara la schermata e chiede l'elenco delle città, senza il quale
+     * l'ingresso come ospite resta disabilitato.
      * @author Matteo Franguelli
      */
     @FXML
@@ -48,9 +46,7 @@ public class WelcomeController implements ControllerAutenticazione {
     }
 
     /**
-     * Chiede le città al server in un thread separato e, al termine, abilita
-     * l'ingresso come ospite sul thread grafico.
-     *
+     * Carica le città in un thread separato e poi abilita l'ingresso come ospite.
      * @author Matteo Franguelli
      */
     private void caricaTendina() {
@@ -87,9 +83,7 @@ public class WelcomeController implements ControllerAutenticazione {
     }
 
     /**
-     * Chiamato da accesso e registrazione quando vanno a buon fine:
-     * porta l'utente alla schermata giusta per il suo ruolo.
-     *
+     * Porta l'utente alla schermata adatta al suo ruolo dopo accesso o registrazione.
      * @author Matteo Franguelli
      * @author Celestino Resteghini
      * @author Michele Viselli
@@ -109,10 +103,7 @@ public class WelcomeController implements ControllerAutenticazione {
     }
 
     /**
-     * Entra come ospite dopo aver verificato il luogo indicato.
-     * Il luogo è obbligatorio e deve esistere nel catalogo: così l'ospite non
-     * si ritrova davanti a una lista vuota per un errore di battitura.
-     *
+     * Entra come ospite, ma solo se la città indicata esiste nel catalogo.
      * @author Matteo Franguelli
      */
     @FXML
@@ -145,10 +136,9 @@ public class WelcomeController implements ControllerAutenticazione {
     }
 
     /**
-     * Cerca una città fra quelle del database ignorando maiuscole e minuscole e
-     * restituisce il nome esatto con cui è scritta.
-     *
-     * @return il nome della città, oppure null se non esiste nel database
+     * Cerca una città ignorando maiuscole e minuscole.
+     * @param scritta nome digitato dall'utente
+     * @return il nome esatto della città, null se non esiste nel catalogo
      * @author Matteo Franguelli
      */
     private String trovaCitta(String scritta) {
@@ -181,9 +171,7 @@ public class WelcomeController implements ControllerAutenticazione {
     }
 
     /**
-     * Sostituisce il contenuto della finestra con la schermata principale,
-     * impostando la città di partenza della ricerca.
-     *
+     * Mostra l'elenco dei ristoranti nella stessa finestra.
      * @param cittaIniziale città con cui pre-compilare la ricerca, può essere null
      * @author Matteo Franguelli
      */
@@ -203,9 +191,7 @@ public class WelcomeController implements ControllerAutenticazione {
     }
 
     /**
-     * Carica una vista e la mette al posto della schermata di benvenuto,
-     * riutilizzando la stessa finestra invece di aprirne una nuova.
-     *
+     * Sostituisce la schermata di benvenuto con un'altra vista, senza aprire finestre.
      * @param nomeFxml nome del file FXML da caricare
      * @return il controller della vista caricata, oppure null in caso di errore
      * @author Matteo Franguelli
@@ -215,7 +201,8 @@ public class WelcomeController implements ControllerAutenticazione {
     }
 
     /**
-     * Mostra un messaggio di errore sotto il campo del luogo.
+     * Mostra un messaggio di errore sotto il campo della città.
+     * @param messaggio testo da mostrare
      * @author Matteo Franguelli
      */
     private void mostraErrore(String messaggio) {

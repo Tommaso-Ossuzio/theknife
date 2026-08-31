@@ -3,7 +3,7 @@ package it.uninsubria.dto;
 import java.io.Serializable;
 
 /**
- * Rappresenta il DTO delle coordinate
+ * Latitudine e longitudine di un luogo, usate per aprirlo su Google Maps.
  * @author Elia Toschi
  * @author Celestino Resteghini
  */
@@ -14,12 +14,20 @@ public class CoordinateDTO implements Serializable {
     private double latitudine;
     private double longitudine;
 
+    /**
+     * Coordinate lette dal database.
+     * @author Elia Toschi
+     */
     public CoordinateDTO(int id_coordinate, double latitudine, double longitudine) {
         this.id_coordinate = id_coordinate;
         this.latitudine = latitudine;
         this.longitudine = longitudine;
     }
 
+    /**
+     * Coordinate di un luogo non ancora salvato, quindi senza identificativo.
+     * @author Celestino Resteghini
+     */
     public CoordinateDTO(double latitudine, double longitudine) {
         this.latitudine = latitudine;
         this.longitudine = longitudine;

@@ -29,12 +29,8 @@ import java.util.List;
 //TODO da rivedere, vengono usati i file
 
 /**
- * * Controller principale dell'applicazione.
- *  * <p>
- *  * Coordina l'interazione tra vista e logica applicativa,
- *  * gestendo le azioni dell'utente e l'inizializzazione
- *  * dei componenti principali.
- *
+ * Controller della schermata principale: elenco dei ristoranti, ricerca e
+ * azioni disponibili in base al ruolo dell'utente.
  * @author Celestino Resteghini
  * @author Matteo Franguelli
  * @author Elia Toschi
@@ -64,7 +60,7 @@ public class MainController implements ControllerAutenticazione {
     @FXML private ComboBox<String> campoLuogo;
     @FXML private ComboBox<String> campoCucina;
 
-    // Lista dei ristoranti mostrata dalla UI. I dati arrivano dal server come DTO.
+    /** Ristoranti attualmente mostrati a schermo. */
     private final ObservableList<RistoranteDTO> ristoranti = FXCollections.observableArrayList();
 
     /** Quante card mostrare in ogni pagina della griglia. */
@@ -80,10 +76,7 @@ public class MainController implements ControllerAutenticazione {
     private Node cardSelezionata;
 
     /**
-     * Esegue compiti di inizializzazione:
-     * - Richiedere i ristoranti al server come DTO
-     * - Imposta come la lista deve mostrare i ristoranti
-     * - Imposta i pulsanti in base al ruolo (default: Ospite)
+     * Prepara la griglia, i campi di ricerca e i pulsanti del ruolo in corso.
      * @author Matteo Franguelli
      * @author Michele Viselli
      */
@@ -105,9 +98,6 @@ public class MainController implements ControllerAutenticazione {
 
     /**
      * Imposta la città da cui parte la ricerca e applica subito il filtro.
-     * Viene chiamato dalla schermata di benvenuto con il luogo indicato
-     * dall'ospite o con la città dell'utente appena entrato.
-     *
      * @param citta città con cui pre-compilare la ricerca
      * @author Matteo Franguelli
      */
@@ -141,7 +131,7 @@ public class MainController implements ControllerAutenticazione {
     }
 
     /**
-     * Mostra il catalogo dei ristoranti vicini al domicilio.
+     * Ripropone i ristoranti della città dell'utente, senza altri criteri.
      * @author Matteo Franguelli
      * @author Celestino Resteghini
      */
@@ -157,17 +147,8 @@ public class MainController implements ControllerAutenticazione {
     }
 
     /**
-     * Applica un filtro ricevuto dalla schermata principale o dal filtro
-     * avanzato.
-     *
-     * <p>{@link #filtraRistoranti(FiltroRistoranteDTO)} è
-     * bloccante perché attende la risposta della socket. Per questo motivo la
-     * chiamata viene eseguita dentro un {@link Task}; gli aggiornamenti della
-     * lista e della paginazione avvengono poi sul thread JavaFX tramite gli
-     * handler di completamento.</p>
-     *
+     * Esegue la ricerca in un thread separato e aggiorna l'elenco al termine.
      * @param filtro criteri da inviare al server
-     *
      * @author Michele Viselli
      */
     public void applicaFiltro(FiltroRistoranteDTO filtro) {
@@ -207,14 +188,10 @@ public class MainController implements ControllerAutenticazione {
     }
 
     /**
-     * Invia al server i criteri del filtro e restituisce i ristoranti ricevuti.
-     * Il metodo viene eseguito dal {@link Task} creato in
-     * {@link #applicaFiltro(FiltroRistoranteDTO)}, quindi non blocca il thread
-     * JavaFX.
-     *
+     * Chiede i ristoranti al server; è bloccante, va chiamato fuori dal thread grafico.
      * @param filtro criteri della ricerca
-     * @return ristoranti filtrati, oppure una lista vuota se la risposta non è
-     *         disponibile o la connessione al server fallisce
+     * @return i ristoranti trovati, lista vuota se il server non risponde
+     * @author Michele Viselli
      */
     private LinkedList<RistoranteDTO> filtraRistoranti(FiltroRistoranteDTO filtro) {
         if (filtro == null) {
@@ -242,16 +219,9 @@ public class MainController implements ControllerAutenticazione {
         return new LinkedList<>();
     }
 
-    /* =========================================================
-       GRIGLIA DI CARD IMPAGINATA
-       Le card sono solo presentazione: i dati restano nella
-       ObservableList "ristoranti", che non cambia comportamento.
-       ========================================================= */
-
     /**
-     * Collega la paginazione alla lista dei ristoranti:
-     * ogni pagina costruisce la propria griglia di card su richiesta,
-     * così non vengono mai creati migliaia di nodi tutti insieme.
+     * Collega la paginazione all'elenco: ogni pagina costruisce le sue card solo
+     * quando viene aperta.
      * @author Celestino Resteghini
      * @author Matteo Franguelli
      */
@@ -262,9 +232,7 @@ public class MainController implements ControllerAutenticazione {
     }
 
     /**
-     * Ricalcola il numero di pagine dopo un caricamento o un filtro,
-     * aggiorna il conteggio dei risultati e mostra lo stato vuoto
-     * quando non c'è nulla da elencare.
+     * Ricalcola le pagine, il conteggio dei risultati e il messaggio di elenco vuoto.
      * @author Matteo Franguelli
      */
     private void aggiornaPaginazione() {
@@ -296,9 +264,8 @@ public class MainController implements ControllerAutenticazione {
     }
 
     /**
-     * Costruisce la griglia di card corrispondente a una singola pagina.
-     *
-     * @param indicePagina pagina richiesta dal controllo di paginazione (parte da 0)
+     * Costruisce la griglia di card di una singola pagina.
+     * @param indicePagina pagina richiesta dalla paginazione, la prima è la 0
      * @author Matteo Franguelli
      */
     private Node creaPagina(int indicePagina) {
@@ -318,9 +285,7 @@ public class MainController implements ControllerAutenticazione {
     }
 
     /**
-     * Crea la card di un singolo ristorante: nome, indirizzo, prezzo,
-     * badge del tipo di cucina e dei servizi, link al sito.
-     * Un click seleziona la card, il doppio click apre i dettagli.
+     * Crea la card di un ristorante: un click la seleziona, il doppio click apre la scheda.
      * @author Matteo Franguelli
      * @author Michele Viselli
      */
@@ -412,8 +377,7 @@ public class MainController implements ControllerAutenticazione {
     }
 
     /**
-     * Evidenzia la card cliccata e memorizza il ristorante scelto,
-     * usato poi dai pulsanti "Aggiungi recensione" e "Visualizza recensioni".
+     * Evidenzia la card cliccata e ricorda su quale ristorante agiscono i pulsanti in basso.
      * @author Matteo Franguelli
      */
     private void selezionaRistorante(RistoranteDTO r, Node card) {
@@ -504,9 +468,7 @@ public class MainController implements ControllerAutenticazione {
     }
 
     /**
-     * Restituisce il luogo scelto dall'ospite all'ingresso, da mostrare
-     * accanto alla dicitura "Ospite", oppure una stringa vuota se non c'è.
-     *
+     * Restituisce la città dell'ospite da mostrare accanto al ruolo, vuota se non c'è.
      * @author Matteo Franguelli
      */
     private String luogoCorrente(Session s) {
@@ -515,8 +477,7 @@ public class MainController implements ControllerAutenticazione {
     }
 
     /**
-     * Metodo chiamato sia da login che da register, permette l'aggiornamento dell'interfaccia
-     * basandosi sulla Session
+     * Porta l'utente alla schermata adatta al suo ruolo dopo accesso o registrazione.
      * @author Matteo Franguelli
      * @author Michele Viselli
      */
@@ -566,8 +527,7 @@ public class MainController implements ControllerAutenticazione {
                 (RegisterController ctrl) -> ctrl.setParentController(this));
     }
     /**
-     * Si occupa di disconnettere l'utente nel caso di click
-     * sul pulsante logout.
+     * Disconnette l'utente e torna alla schermata di benvenuto.
      * @author Matteo Franguelli
      */
     @FXML
@@ -627,8 +587,7 @@ public class MainController implements ControllerAutenticazione {
     }
 
     /**
-     * Quando viene premuto il pulsante filtro si occupa dell'applicazione dei parametri
-     * di ricerca.
+     * Applica i criteri scritti nella barra di ricerca.
      * @author Celestino Resteghini
      * @author Matteo Franguelli
      */
@@ -653,7 +612,7 @@ public class MainController implements ControllerAutenticazione {
     }
 
     /**
-     * Metodo che permette di inizializzare i metodi di ricerca
+     * Azzera i criteri di ricerca e ripropone i ristoranti della propria città.
      * @author Matteo Franguelli
      */
     @FXML
@@ -731,9 +690,9 @@ public class MainController implements ControllerAutenticazione {
 
 
     /**
-     * Metodo generico per mostrare errori.
-     * @param titolo
-     * @param messaggio
+     * Mostra un avviso di errore.
+     * @param titolo intestazione dell'avviso
+     * @param messaggio testo che spiega il problema
      * @author Matteo Franguelli
      */
     private void mostraErrore(String titolo, String messaggio) {
@@ -744,8 +703,7 @@ public class MainController implements ControllerAutenticazione {
         alert.showAndWait();
     }
     /**
-     * Restituisce la stringa se non è null, altrimenti stringa vuota.
-     * Utile per evitare NullPointerException nelle concatenazioni.
+     * Restituisce la stringa, oppure una stringa vuota se è null.
      * @author Matteo Franguelli
      */
     private String valoreNonNullo(String s) {
@@ -753,8 +711,8 @@ public class MainController implements ControllerAutenticazione {
     }
 
     /**
-     * Aggiunge la lista di ristoranti alla grafica
-     * @param nuovaLista
+     * Sostituisce i ristoranti mostrati a schermo.
+     * @param nuovaLista ristoranti da mostrare, può essere null o vuota
      * @author Matteo Franguelli
      */
     public void mostraRistoranti(List<RistoranteDTO> nuovaLista) {
@@ -765,10 +723,9 @@ public class MainController implements ControllerAutenticazione {
     }
 
     /**
-     * Normalizza valori come luogo e cucina
-     * @param valore
-     * @return
-     *
+     * Toglie gli spazi ai bordi di un criterio di ricerca.
+     * @param valore testo digitato dall'utente
+     * @return il testo ripulito, null se era vuoto
      * @author Michele Viselli
      */
     private String normalizza(String valore) {

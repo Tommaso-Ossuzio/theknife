@@ -7,18 +7,14 @@ import theknife.model.GestioneRichieste;
 import java.io.IOException;
 
 /**
- * Gestisce lo stato dell'utente attualmente loggato nell'applicazione.
- * È un singleton: esiste una sola Session per tutta l'app.
- * Mantiene sia il ruolo principale (per visualizzazione) che i permessi specifici.
+ * Stato dell'utente collegato: ruolo, permessi, città e identificativo.
+ * È un singleton, ne esiste una sola per tutta l'applicazione.
  * @author Matteo Franguelli
  */
 public class Session {
 
     /**
-     * Ruoli possibili dell'utente (usati principalmente per etichette UI).
-     * CLIENTE → utente standard
-     * RISTORATORE → gestore di ristoranti
-     * GUEST → utente non autenticato
+     * Ruolo con cui l'utente sta usando l'applicazione.
      * @author Matteo Franguelli
      */
     public enum Role {
@@ -38,7 +34,7 @@ public class Session {
     private int id;
 
     /**
-     * Costruttore privato: la sessione parte come "ospite" senza permessi.
+     * La sessione parte sempre come ospite, senza permessi.
      * @author Matteo Franguelli
      */
     private Session() {
@@ -48,8 +44,7 @@ public class Session {
     }
 
     /**
-     * Restituisce l'unica istanza della Session,
-     * creandola se non esiste ancora.
+     * Restituisce l'unica sessione, creandola al primo utilizzo.
      * @author Matteo Franguelli
      */
     public static Session getInstance() {
@@ -59,14 +54,18 @@ public class Session {
         return instance;
     }
 
+    /**
+     * Restituisce la città da cui l'utente sta cercando.
+     * @author Matteo Franguelli
+     */
     public String getCitta() {
         return citta;
     }
 
     /**
-     * Effettua il login impostando username e ruolo principale.
-     * I permessi specifici vengono resettati in base al ruolo,
-     * ma è consigliabile usare setPermessi() subito dopo per precisione.
+     * Registra l'accesso di un utente, azzerando i dati di quello precedente.
+     * @param username email dell'utente, null per un ospite
+     * @param ruolo ruolo con cui entra
      * @author Matteo Franguelli
      * @author Michele Viselli
      */
@@ -92,10 +91,8 @@ public class Session {
     }
 
     /**
-     * Ricarica dal server i dati della sessione legati all'utente autenticato.
-     * Va chiamato dopo login o registrazione, prima di aggiornare la GUI.
-     *
-     * @throws IOException se non è possibile inizializzare la connessione
+     * Chiede al server identificativo e domicilio dell'utente appena entrato.
+     * @throws IOException se la connessione al server non è disponibile
      * @author Michele Viselli
      */
     public void aggiornaDatiUtente() throws IOException {
@@ -117,9 +114,7 @@ public class Session {
     }
 
     /**
-     * Imposta esplicitamente i permessi dell'utente.
-     * Utile quando un utente ha il doppio ruolo (es. ristoratore che vuole recensire).
-     *
+     * Imposta i permessi dell'utente, indipendenti dal ruolo mostrato a schermo.
      * @param isCliente true se l'utente può lasciare recensioni e avere preferiti
      * @param isRistoratore true se l'utente può aggiungere ristoranti
      * @author Matteo Franguelli
@@ -129,12 +124,16 @@ public class Session {
         this.permessiRistoratore = isRistoratore;
     }
 
+    /**
+     * Imposta la città da cui l'utente sta cercando.
+     * @author Matteo Franguelli
+     */
     public void setCitta(String citta) {
         this.citta = citta;
     }
 
     /**
-     * Restituisce true se l'utente ha i permessi da Cliente (es. recensioni).
+     * Indica se l'utente può lasciare recensioni e salvare preferiti.
      * @author Matteo Franguelli
      */
     public boolean isCliente() {
@@ -142,7 +141,7 @@ public class Session {
     }
 
     /**
-     * Restituisce true se l'utente ha i permessi da ristoratore (es. aggiunta ristoranti).
+     * Indica se l'utente può inserire ristoranti e rispondere alle recensioni.
      * @author Matteo Franguelli
      */
     public boolean isRistoratore() {
@@ -163,7 +162,7 @@ public class Session {
     }
 
     /**
-     * Ritorna true se l’utente è un ospite (non loggato).
+     * Indica se l'utente non ha effettuato l'accesso.
      * @author Matteo Franguelli
      */
     public boolean isGuest() {
@@ -171,7 +170,7 @@ public class Session {
     }
 
     /**
-     * Ritorna true se l’utente NON è ospite.
+     * Indica se l'utente ha effettuato l'accesso.
      * @author Matteo Franguelli
      */
     public boolean isAuthenticated() {
@@ -187,9 +186,9 @@ public class Session {
     }
 
     /**
-     * Restituisce l'id dell'utente attualmente loggato
+     * Restituisce l'identificativo dell'utente collegato.
+     * @return l'identificativo, 0 se nessuno ha effettuato l'accesso
      * @author Celestino Resteghini
-     * @return id
      */
     public int getID() {
         return id;

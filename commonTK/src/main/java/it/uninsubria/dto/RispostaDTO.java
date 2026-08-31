@@ -3,7 +3,7 @@ package it.uninsubria.dto;
 import java.io.Serializable;
 
 /**
- * Rappresenta i dati della risposta
+ * Risposta pubblica di un ristoratore a una recensione.
  * @author Elia Toschi
  */
 public class RispostaDTO implements Serializable {

@@ -20,17 +20,13 @@ import java.util.HashMap;
 import java.util.LinkedList;
 
 /**
- * Controller della finestra dei ristoranti.
- * @author Matteo FRanguelli
+ * Controller della scheda di un ristorante, con i suoi dati e il suo sito web.
+ * @author Matteo Franguelli
  * @author Elia Toschi
  * @author Celestino Resteghini
  */
 public class RestaurantDetailsController {
-    /**
-     * Impedisce alle pagine remote di installare cursori basati su immagini.
-     * JavaFX WebKit 21 genera una NPE quando il frame di un cursore CSS custom
-     * non viene decodificato, invece di ripiegare sul cursore standard.
-     */
+    /** Foglio di stile che impedisce ai siti aperti di cambiare il cursore del mouse. */
     private static final String STILE_CURSORE_WEB_SICURO =
             "data:text/css;charset=utf-8;base64,KiB7IGN1cnNvcjogYXV0byAhaW1wb3J0YW50OyB9";
 
@@ -58,6 +54,10 @@ public class RestaurantDetailsController {
     LinkedList<RistoranteDTO> preferiti;
     int idUtente;
 
+    /**
+     * Prepara la WebView in cui viene mostrato il sito del ristorante.
+     * @author Matteo Franguelli
+     */
     @FXML
     private void initialize() {
         // Il foglio utente ha precedenza anche sui cursor custom dei siti
@@ -71,6 +71,12 @@ public class RestaurantDetailsController {
                 });
     }
 
+    /**
+     * Riempie la scheda con i dati del ristorante e ne carica il sito.
+     * @param ristorante ristorante da mostrare
+     * @author Matteo Franguelli
+     * @author Elia Toschi
+     */
     public void setRestaurantData(RistoranteDTO ristorante) throws IOException {
         this.ristoranteDTO = ristorante;
         LuogoDTO luogo = ristorante.getLuogo();
@@ -122,8 +128,7 @@ public class RestaurantDetailsController {
     }
 
     /**
-     * Costruisce l'URL per Google Maps utilizzando le coordinate di latitudine e longitudine
-     * del ristorante.
+     * Chiede al server le coordinate del ristorante e prepara il link a Google Maps.
      * @author Matteo Franguelli
      * @author Elia Toschi
      */
@@ -153,9 +158,8 @@ public class RestaurantDetailsController {
     }
 
     /**
-     * Gestisce l'evento di click sul pulsante "Apri in Maps".
-     * Apre il link generato nel browser predefinito del sistema.
-     *@author Matteo Franguelli
+     * Apre la posizione del ristorante nel browser predefinito.
+     * @author Matteo Franguelli
      * @author Elia Toschi
      */
     @FXML
@@ -165,8 +169,7 @@ public class RestaurantDetailsController {
     }
 
     /**
-     * Controlla se l'utente corrente ha i permessi da Cliente per visualizzare il pulsante "Aggiungi ai preferiti".
-     *
+     * Mostra il pulsante dei preferiti solo a chi ha i permessi da Cliente.
      * @author Matteo Franguelli
      */
     private void aggiornaVisibilitaPreferiti() {
@@ -179,12 +182,9 @@ public class RestaurantDetailsController {
     }
 
     /**
-     * Gestisce l'azione di aggiunta del ristorante corrente alla lista dei preferiti.
-     * Recupera l'ID del ristorante e la lista dei ristoranti e nel caso lo aggiunge nel db
-     * Mostra un avviso in caso di successo o errore (ristorante già presente nei preferiti).
+     * Salva il ristorante fra i preferiti, avvisando se c'era già.
      * @author Celestino Resteghini
      * @author Matteo Franguelli
-     * @throws IOException
      */
     @FXML
     private void onAggiungiAiPreferiti() throws IOException {
@@ -220,8 +220,7 @@ public class RestaurantDetailsController {
     }
 
     /**
-     * Chiude la finestra corrente dei dettagli del ristorante.
-     *
+     * Chiude la scheda del ristorante.
      * @author Matteo Franguelli
      */
     @FXML
@@ -231,10 +230,8 @@ public class RestaurantDetailsController {
     }
 
     /**
-     * Carica un URL specifico all'interno del componente WebView.
-     * Aggiunge automaticamente il protocollo http:// se mancante.
-     *
-     * @param url L'indirizzo web da caricare.
+     * Carica un sito nella WebView, aggiungendo http:// se manca.
+     * @param url indirizzo del sito
      * @author Matteo Franguelli
      */
     private void apriInWebView(String url) {
@@ -251,8 +248,7 @@ public class RestaurantDetailsController {
     }
 
     /**
-     * Visualizza un messaggio HTML se un ristorante non possiede un sito web, in modo da poter mantenere coerente la grafica.
-     *
+     * Mostra un messaggio al posto del sito quando il ristorante non ne ha uno.
      * @author Matteo Franguelli
      */
     private void mostraMessaggioNessunSito() {
@@ -270,9 +266,7 @@ public class RestaurantDetailsController {
     }
 
     /**
-     * Visualizza un messaggio HTML quando il sito specificato non puo' essere
-     * caricato nella WebView.
-     *
+     * Mostra un messaggio quando il sito del ristorante non si riesce a caricare.
      * @author Michele Viselli
      */
     private void mostraMessaggioSitoNonDisponibile() {
@@ -290,9 +284,8 @@ public class RestaurantDetailsController {
     }
 
     /**
-     * Apre un URL esterno utilizzando il browser predefinito del sistema operativo
-     *
-     * @param url
+     * Apre un indirizzo nel browser predefinito del sistema.
+     * @param url indirizzo da aprire
      * @author Matteo Franguelli
      */
     private void apriNelBrowser(String url) {
@@ -307,10 +300,9 @@ public class RestaurantDetailsController {
     }
 
     /**
-     * Restituisce la stringa in input oppure una stringa vuota se l'input è null.
-     *
-     * @param s
-     * @return La stringa originale o "" se null.
+     * Restituisce la stringa, oppure una stringa vuota se è null.
+     * @param s stringa da controllare
+     * @return la stringa originale, "" se era null
      * @author Matteo Franguelli
      */
     private String valoreNonNullo(String s) {
@@ -318,11 +310,8 @@ public class RestaurantDetailsController {
     }
 
     /**
-     * Visualizza graficamente il numero di stelle Michelin (da 1 a 3)
-     * aggiornando il testo e lo stile dell'etichetta.
-     *
-     * @param stelleMichelin numero di stelle Michelin, oppure {@code null}
-     *                       quando il dato non è disponibile
+     * Mostra le stelle Michelin, da 1 a 3, oppure che il ristorante non ne ha.
+     * @param stelleMichelin numero di stelle, null se il dato non è disponibile
      * @author Matteo Franguelli
      */
     private void mostraStelleMichelin(Integer stelleMichelin) {
@@ -356,11 +345,10 @@ public class RestaurantDetailsController {
     }
 
     /**
-     * Metodo per salvare un ristorante preferito nel db
+     * Chiede al server di salvare il ristorante fra i preferiti dell'utente.
+     * @param idRistorante ristorante da salvare
      * @author Matteo Franguelli
      * @author Celestino Resteghini
-     * @param idRistorante
-     * @throws IOException
      */
     private void aggiungiRistorante(int idRistorante) throws IOException {
        HashMap<String, Integer> id = new HashMap<>();

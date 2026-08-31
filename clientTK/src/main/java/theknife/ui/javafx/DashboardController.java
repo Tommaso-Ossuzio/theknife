@@ -20,7 +20,7 @@ import java.util.Locale;
 
 
 /**
- * Controller della dashboard del ristoratore.
+ * Controller del riepilogo dell'attività di un ristoratore.
  * @author Celestino Resteghini
  * @author Matteo Franguelli
  */
@@ -42,11 +42,7 @@ public class DashboardController {
     /** Ristoranti di cui l'utente collegato è proprietario. */
     private LinkedList<RistoranteDTO> mieiRistoranti = new LinkedList<>();
 
-    /**
-     * Le classi che colorano il riquadro della media, tenute qui per poterle
-     * togliere tutte prima di rimettere quella giusta: senza, a ogni
-     * aggiornamento il riquadro accumulerebbe i colori dei voti precedenti.
-     */
+    /** Colori possibili del riquadro della media, da togliere prima di rimettere quello giusto. */
     private static final String[] CLASSI_MEDIA = {
             "stat-tile-rating-high",
             "stat-tile-rating-mid",
@@ -54,7 +50,7 @@ public class DashboardController {
     };
 
     /**
-     * Prepara la dashboard con i dati del ristoratore collegato.
+     * Prepara il riepilogo con i dati del ristoratore collegato.
      * @author Celestino Resteghini
      * @author Matteo Franguelli
      */
@@ -70,8 +66,6 @@ public class DashboardController {
 
     /**
      * Rilegge i propri ristoranti e ridisegna numeri ed elenco.
-     * Va richiamato dopo ogni operazione che può averli cambiati.
-     *
      * @author Matteo Franguelli
      */
     private void aggiornaTutto() throws IOException {
@@ -81,7 +75,7 @@ public class DashboardController {
     }
 
     /**
-     * Recupera dal db i ristoranti posseduti.
+     * Chiede al server i ristoranti posseduti dall'utente.
      * @author Celestino Resteghini
      * @author Matteo Franguelli
      */
@@ -141,13 +135,8 @@ public class DashboardController {
     }
 
     /**
-     * Tinge il riquadro della media con il colore che spetta al voto:
-     * verde dalle 4 stelle in su, giallo fra le 2 e le 4, rosso sotto le 2.
-     * Con un voto negativo (nessuna recensione) il riquadro resta neutro,
-     * perché non c'è nessun giudizio da rappresentare.
-     *
-     * @param media media delle recensioni, oppure un valore negativo se non
-     *              ci sono ancora recensioni
+     * Colora il riquadro della media: verde da 4 stelle in su, giallo fra 2 e 4, rosso sotto.
+     * @param media media delle recensioni, negativa se non ce ne sono ancora
      * @author Matteo Franguelli
      */
     private void coloraRiquadroMedia(double media) {
@@ -180,9 +169,7 @@ public class DashboardController {
     }
 
     /**
-     * Crea la riga di un ristorante gestito: nome e città a sinistra, media e
-     * riconoscimenti a destra. Cliccandola si aprono le sue recensioni.
-     *
+     * Crea la riga di un ristorante gestito; cliccandola si aprono le sue recensioni.
      * @param r ristorante da rappresentare
      * @author Celestino Resteghini
      * @author Matteo Franguelli
@@ -230,6 +217,7 @@ public class DashboardController {
 
     /**
      * Apre le recensioni di un singolo ristorante gestito.
+     * @param r ristorante di cui mostrare le recensioni
      * @author Matteo Franguelli
      */
     private void apriRecensioniDi(RistoranteDTO r) throws IOException {

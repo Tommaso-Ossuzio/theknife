@@ -9,7 +9,7 @@ import java.util.Date;
 import java.util.regex.Pattern;
 
 /**
- * Rappresenta il modello degli utenti. Contiene il luogoDTO della sua residenza
+ * Utente registrato, con il luogo in cui vive.
  * @author Elia Toschi
  * @author Celestino Resteghini
  */
@@ -75,7 +75,7 @@ public class UtenteDTO implements Serializable {
     /**
      * Controlla che l'email abbia la forma qualcosa@qualcosa.qualcosa.
      * @param email indirizzo da controllare
-     * @return true se il formato e' valido
+     * @return true se il formato è valido
      * @author Matteo Franguelli
      */
     public static boolean emailValida(String email) {
@@ -87,11 +87,9 @@ public class UtenteDTO implements Serializable {
     }
 
     /**
-     * Controlla che la data di nascita sia plausibile: non nel futuro e con
-     * un'eta' compresa fra 14 e 120 anni. La data e' facoltativa, quindi null
-     * e' accettato.
-     * @param dataNascita data da controllare
-     * @return true se la data e' accettabile
+     * Controlla che la data di nascita non sia nel futuro e che l'età sia fra 14 e 120 anni.
+     * @param dataNascita data da controllare, può essere null perché il campo è facoltativo
+     * @return true se la data è accettabile
      * @author Matteo Franguelli
      */
     public static boolean dataNascitaValida(Date dataNascita) {

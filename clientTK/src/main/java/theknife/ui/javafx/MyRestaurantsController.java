@@ -11,9 +11,9 @@ import javafx.scene.control.cell.PropertyValueFactory;
 //TODO da rivedere, vengono usati i file
 
 /**
- * Si occupa della gestione dei ristoranti di cui l'utente è proprietario.
+ * Controller della tabella dei ristoranti posseduti dal ristoratore.
  * @author Celestino Resteghini
- * version 2
+ * @version 2
  */
 public class MyRestaurantsController {
     @FXML private TableColumn<RistoranteRow, String> colonnaNome;
@@ -29,6 +29,10 @@ public class MyRestaurantsController {
 
     @FXML private Label etichettaVuota;
 
+    /**
+     * Collega le colonne della tabella ai campi di ogni riga.
+     * @author Celestino Resteghini
+     */
     @FXML
     private void initialize() {
         colonnaNome.setCellValueFactory(
@@ -61,10 +65,7 @@ public class MyRestaurantsController {
     }
 
     /**
-     * Aggiorna la visibilità del campo grafico "etichettaVuota" quando
-     * a tabella dei ristoranti è vuota o contiene elementi.
-     * Il messaggio viene mostrato solo se la tabella non
-     * contiene alcun ristorante.
+     * Mostra il messaggio di elenco vuoto quando non ci sono ristoranti.
      * @author Matteo Franguelli
      */
     private void aggiornaMessaggioVuoto() {
@@ -75,6 +76,10 @@ public class MyRestaurantsController {
         tabellaRistoranti.setVisible(!nessunElemento);
     }
 
+    /**
+     * Riga della tabella dei propri ristoranti.
+     * @author Celestino Resteghini
+     */
     public static class RistoranteRow {
         private final String nome;
         private final String citta;

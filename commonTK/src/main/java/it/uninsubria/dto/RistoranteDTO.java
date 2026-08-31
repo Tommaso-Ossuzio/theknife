@@ -4,7 +4,7 @@ import java.io.Serializable;
 import java.util.List;
 
 /**
- * Rappresenta il modello DTO del ristorante e contiene luogoDTO, RistoratoreDTO
+ * Ristorante con il suo luogo, il proprietario e la sintesi delle recensioni ricevute.
  * @author  Elia Toschi
  * @author Michele Viselli
  * @author Celestino Resteghini
@@ -30,6 +30,11 @@ public class RistoranteDTO implements Serializable {
 
 
 
+    /**
+     * Ristorante completo letto dal database.
+     * @author Elia Toschi
+     * @author Michele Viselli
+     */
     public RistoranteDTO(int idRistorante, String nome, String telefono, String sitoWeb,
                          boolean delivery, boolean prenotazioneOnline, String fasciaPrezzo,
                          List<String> cucine, LuogoDTO luogo, RistoratoreDTO ristoratore,
@@ -51,6 +56,11 @@ public class RistoranteDTO implements Serializable {
         this.stelleMichelin = stelleMichelin;
     }
 
+    /**
+     * Ristorante appena compilato dal ristoratore nel modulo di inserimento.
+     * @param prezzo prezzo medio in euro, convertito nella fascia della guida Michelin
+     * @author Celestino Resteghini
+     */
     public RistoranteDTO(String nome, String nazione, String citta, String indirizzo, double latitudine, double longitudine, String telefono, double prezzo, List<String> cucine, String sitoWeb, boolean delivery, boolean prenotazioneOnline, int stelleMichelin, RistoratoreDTO ristoratore) {
         this.nome = nome;
         this.luogo = new LuogoDTO(indirizzo,new CittaDTO(citta, nazione), new CoordinateDTO(latitudine, longitudine));
@@ -149,22 +159,10 @@ public class RistoranteDTO implements Serializable {
     }
 
     /**
-     * Convertitore da prezzo a range di prezzo
-     *
-     * come indicato nel sito ufficiale della guida michelin:
-     * € → meno di 35 €
-     * €€ → tra 35 € e 60 €
-     * €€€ → tra 60 € e 100 €
-     * €€€€ → oltre 100 €
-     *
-     * descritti anche nel seguente modo:
-     * € = “per tutte le tasche”
-     * €€ = “costo ragionevole”
-     * €€€ = “occasione speciale”
-     * €€€€ = “piccola follia”
-     *
-     * @param prezzo
-     * @autor  Celestino Resteghini
+     * Converte il prezzo medio nella fascia usata dalla guida Michelin.
+     * @param prezzo prezzo medio in euro
+     * @return la fascia corrispondente, "ERRORE" se il prezzo non rientra in nessuna
+     * @author Celestino Resteghini
      */
     public static String ConvertiPrezzoRange(Double prezzo)
     {

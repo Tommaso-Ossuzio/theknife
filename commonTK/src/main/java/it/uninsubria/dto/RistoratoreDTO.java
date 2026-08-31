@@ -4,7 +4,7 @@ import java.io.Serializable;
 import java.util.Date;
 
 /**
- * Indica il modello del ristoratore e estende la classe UtenteDTO
+ * Utente proprietario di uno o più ristoranti.
  * @author Elia Toschi
  * @author Celestino Resteghini
  */
@@ -17,6 +17,11 @@ public class RistoratoreDTO extends UtenteDTO implements Serializable
         super(idUtente, nome, cognome, email, dataNascita, luogo);
     }
 
+    /**
+     * Ristoratore di cui serve soltanto l'identificativo, per indicare chi
+     * possiede un ristorante o chi ha scritto una risposta.
+     * @author Celestino Resteghini
+     */
     public RistoratoreDTO(int idUtente) {
         super(idUtente);
     }

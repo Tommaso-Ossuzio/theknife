@@ -21,20 +21,14 @@ import javax.imageio.ImageIO;
 //TODO da rivedere
 
 /**
- * Classe principale JavaFX dell'applicazione.
- * Si occupa di:
- * - inizializzare la Session come ospite
- * - caricare la view principale (main.fxml)
- * - impostare titolo e icona della finestra
+ * Applicazione JavaFX del client: apre la finestra sulla schermata di benvenuto.
  * @author Matteo Franguelli
  * @version 2
  */
 public class MainApp extends Application {
 
     /**
-     * Avvia l'applicazione JavaFX inizializzando la sessione come ospite
-     * e caricando l'interfaccia grafica principale.
-     *
+     * Prepara la sessione come ospite e mostra la schermata di benvenuto.
      * @param finestra finestra principale dell'applicazione
      * @throws Exception se il caricamento della scena fallisce
      * @author Matteo Franguelli
@@ -103,7 +97,7 @@ public class MainApp extends Application {
     }
 
     /**
-     * Metodo main: avvia l'applicazione JavaFX usando MainApp come entry point.
+     * Avvia l'applicazione.
      * @author Matteo Franguelli
      */
     public static void main(String[] args) {

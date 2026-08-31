@@ -3,15 +3,7 @@ package it.uninsubria.dto;
 import java.io.Serializable;
 
 /**
- * Parametri della richiesta di ricerca dei ristoranti ({@code FILTRO}).
- *
- * <p>Quando {@code luogo} è valorizzato, il server usa un ristorante della
- * città indicata come riferimento e restituisce sia i ristoranti della città
- * sia quelli entro 10 km. Quando è {@code null}, non viene applicato alcun
- * criterio geografico e può essere restituito l'intero catalogo. Anche gli
- * altri campi possono essere {@code null}: in quel caso il server non applica
- * il relativo criterio di ricerca.</p>
- *
+ * Criteri della ricerca dei ristoranti: i campi lasciati a null non vengono applicati.
  * @author Michele Viselli
  */
 public class FiltroRistoranteDTO implements Serializable {
@@ -25,6 +17,10 @@ public class FiltroRistoranteDTO implements Serializable {
     private Boolean delivery;
     private Boolean prenotazione;
 
+    /**
+     * @param luogo città da cui cercare: la ricerca comprende anche i ristoranti entro 10 km
+     * @author Michele Viselli
+     */
     public FiltroRistoranteDTO(
             String luogo,
             String cucina,

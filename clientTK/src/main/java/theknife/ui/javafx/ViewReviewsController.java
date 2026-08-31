@@ -18,7 +18,7 @@ import java.util.List;
 
 
 /**
- * Controller della vista che mostra le recensioni di un ristorante selezionato.
+ * Controller della finestra che elenca le recensioni di un ristorante.
  * @author Michele Viselli
  * @author Celestino Resteghini
  * @author Matteo Franguelli
@@ -44,8 +44,8 @@ public class ViewReviewsController {
     }
 
     /**
-     * Imposta il ristorante ricevuto dal server.
-     * @param r ristorante DTO di cui visualizzare le recensioni
+     * Indica di quale ristorante mostrare le recensioni.
+     * @param r ristorante scelto
      * @author Michele Viselli
      * @author Celestino Resteghini
      */
@@ -57,8 +57,7 @@ public class ViewReviewsController {
     }
 
     /**
-     * Imposta i dati comuni ai due tipi di ristorante ancora presenti nel
-     * client e avvia il caricamento delle recensioni dal server.
+     * Scrive il titolo e avvia il caricamento delle recensioni.
      * @param idRistorante identificativo del ristorante
      * @param nomeRistorante nome da mostrare nel titolo
      * @author Michele Viselli
@@ -77,9 +76,7 @@ public class ViewReviewsController {
     }
 
     /**
-     * Richiede al server le recensioni del ristorante selezionato senza
-     * bloccare il thread JavaFX.
-     *
+     * Carica le recensioni in un thread separato, senza bloccare la finestra.
      * @author Michele Viselli
      * @author Matteo Franguelli
      */
@@ -123,8 +120,7 @@ public class ViewReviewsController {
     }
 
     /**
-     * Aggiorna il messaggio mostrato quando la lista non contiene elementi.
-     *
+     * Cambia il messaggio mostrato quando non ci sono recensioni.
      * @param testo messaggio da mostrare
      * @author Michele Viselli
      */
@@ -135,7 +131,7 @@ public class ViewReviewsController {
     }
 
     /**
-     * Imposta la grafica personalizzata delle celle della lista recensioni.
+     * Disegna ogni recensione con le stelle, il testo e l'eventuale risposta.
      * @author Matteo Franguelli
      * @author Michele Viselli
      * @author Elia Toschi
@@ -200,8 +196,8 @@ public class ViewReviewsController {
     }
 
     /**
-     * imposta le statistiche
-     * @author Matteo Fraqnguelli
+     * Ricalcola media e numero di recensioni mostrati in alto.
+     * @author Matteo Franguelli
      * @author Michele Viselli
      */
     private void calcolaStatistiche() {
@@ -227,14 +223,9 @@ public class ViewReviewsController {
     }
 
     /**
-     * Richiede al server le recensioni associate a un ristorante.
-     *
-     * <p>Il metodo è bloccante perché attende la risposta della socket; deve
-     * quindi essere richiamato da un thread diverso da quello JavaFX.</p>
-     *
+     * Chiede le recensioni al server; è bloccante, va chiamato fuori dal thread grafico.
      * @param idRistorante identificativo del ristorante
-     * @return recensioni ricevute dal server, oppure una lista vuota se la
-     *         risposta non è disponibile o la connessione fallisce
+     * @return le recensioni ricevute, lista vuota se il server non risponde
      * @author Michele Viselli
      * @author Celestino Resteghini
      */

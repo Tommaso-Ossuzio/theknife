@@ -21,8 +21,8 @@ import java.security.NoSuchAlgorithmException;
 import java.util.HashMap;
 
 /**
- * Controller della finestra di login.
- * Gestisce l'accesso richiedendo i permessi specifici al DB
+ * Controller della finestra di accesso: verifica le credenziali sul server e
+ * imposta la sessione con i permessi corrispondenti.
  * @author Matteo Franguelli
  * @author Celestino Resteghini
  */
@@ -45,9 +45,8 @@ public class LoginController {
     }
 
     /**
-     * Esclude la possibilità di agire a comandi su altre finestre
-     * oltre a quella corrente.
-     * @param parentController
+     * Indica la schermata da avvisare quando l'accesso va a buon fine.
+     * @param parentController schermata che ha aperto la finestra di accesso
      * @author Matteo Franguelli
      */
     public void setParentController(ControllerAutenticazione parentController) {
@@ -55,10 +54,8 @@ public class LoginController {
     }
 
     /**
-     * Metodo che si occupa della finestra di Login.
+     * Controlla i campi, tenta l'accesso e segnala le credenziali non valide.
      * @author Matteo Franguelli
-     * @param event
-     * @throws IOException
      */
     @FXML
     private void onLogin(ActionEvent event) throws IOException {
@@ -82,7 +79,6 @@ public class LoginController {
 
     /**
      * Chiude la finestra senza accedere.
-     * @param event
      * @author Matteo Franguelli
      */
     @FXML
@@ -91,13 +87,12 @@ public class LoginController {
     }
 
     /**
-     * Cerca l'utente nel DB e, se presente, imposta la sessione con i permessi corretti.
+     * Chiede al server di verificare le credenziali e, se corrette, apre la sessione.
+     * @param email email inserita dall'utente
+     * @param password password in chiaro, cifrata prima dell'invio
+     * @return true se le credenziali sono valide
      * @author Matteo Franguelli
      * @author Celestino Resteghini
-     * @param email
-     * @param password
-     * @return true se la ricerca è andata a buon fine
-     * @throws IOException
      */
     private boolean eseguiLogin(String email, String password) throws IOException {
         AuthDTO credenziali = new AuthDTO(email, Utility.calcolaSha256(password));
@@ -115,7 +110,7 @@ public class LoginController {
     }
 
     /**
-     * Chiude la finestra di Login.
+     * Chiude la finestra di accesso.
      * @author Matteo Franguelli
      */
     private void chiudiFinestra() {
