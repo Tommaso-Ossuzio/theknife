@@ -21,11 +21,6 @@ public class DatabaseConfig {
     public static final String DB_NAME = "theknife_db";
 
 
-
-        // La configurazione viene ora caricata esclusivamente tramite
-        // l'interfaccia grafica (ServerController) che chiama il metodo configura().
-        // I valori di default si trovano all'interno della classe o come fallback nelle properties.
-
     /**
      * Imposta le credenziali indicate all'avvio del server.
      * @author Elia Toschi

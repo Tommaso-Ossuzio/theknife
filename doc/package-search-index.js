@@ -1,1 +1,0 @@
-packageSearchIndex = [{"l":"All Packages","u":"allpackages-index.html"},{"m":"serverTK","l":"it.uninsubria"},{"m":"serverTK","l":"it.uninsubria.dao"},{"m":"commonTK","l":"it.uninsubria.dto"},{"m":"clientTK","l":"theknife"},{"m":"clientTK","l":"theknife.model"},{"m":"clientTK","l":"theknife.ui.javafx"},{"m":"clientTK","l":"theknife.utilities"}];updateSearchResults();
