@@ -22,7 +22,23 @@ if [ ! -f "$SERVER" ] || [ ! -f "$CLIENT" ]; then
 fi
 
 portaAperta() {
-    (exec 3<>/dev/tcp/127.0.0.1/8999) >/dev/null 2>&1
+    # Non aprire una connessione di prova: il server usa ObjectInputStream e
+    # interpretarebbe una connessione vuota come un client interrotto.
+    if command -v lsof >/dev/null 2>&1; then
+        lsof -nP -iTCP:8999 -sTCP:LISTEN 2>/dev/null |
+            awk 'NR > 1 { trovato = 1 } END { exit(trovato ? 0 : 1) }'
+        return $?
+    fi
+
+    if command -v ss >/dev/null 2>&1; then
+        ss -ltn 2>/dev/null |
+            awk '$4 ~ /(^|:)8999$/ { trovato = 1 } END { exit(trovato ? 0 : 1) }'
+        return $?
+    fi
+
+    netstat -an 2>/dev/null |
+        awk '$0 ~ /(^|[.:])8999[[:space:]].*LISTEN/ { trovato = 1 }
+             END { exit(trovato ? 0 : 1) }'
 }
 
 echo "Avvio del server TheKnife..."
